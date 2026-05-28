@@ -1,0 +1,4 @@
+interface:
+  display_name: "Free Media Fetcher"
+  short_description: "Search/download free 16:9 or 9:16 stock images and videos"
+  default_prompt: "Use $free-media-fetcher to find free stock images and videos for my topic. Default to horizontal 16:9 unless I explicitly ask for vertical 9:16, keep manifest metadata, and cite provider pages."
