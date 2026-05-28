@@ -1,10 +1,10 @@
 ---
 name: rss-digest-writer
-description: 从 Reddit、YouTube、WeChat RSS 和通用 RSS 聚合 AI 相关热门信息，并由 Codex 自己完成筛选、摘要和记录归档。不需要配置任何外部 LLM API。当用户要求“找 AI 热门信息”“追踪 Reddit/YouTube/公众号/RSS 更新”“整理近两天 AI 圈热点”时触发。
+description: 从 Reddit、YouTube、WeChat RSS 和通用 RSS 聚合热点信息，并由 Codex 自己完成筛选、摘要和记录归档。不需要配置任何外部 LLM API。默认用于 AI 热点发现；当用户指定其他领域、关键词、RSS feeds、source pack、subreddit、YouTube 频道或公众号 RSS 时，切换为对应话题的热点调研。默认时间窗口为近 5 天，除非用户指定今天、昨天、近 N 天或日期区间。
 allowed-tools: Bash,Write,WebSearch,WebFetch
 ---
 
-# AI Trend Recorder
+# RSS Digest Writer
 
 这是一个纯 Codex 技能。
 
@@ -24,22 +24,39 @@ allowed-tools: Bash,Write,WebSearch,WebFetch
 - 热门度判断、去重、筛选、总结和记录整理必须由 Codex 在当前会话里完成。
 - 不要扩展到发布、飞书、图片和公众号后台链路，除非用户另提要求。
 
+## 主题模式
+
+默认模式：
+
+- 当用户只说“热点”“最近热门话题”“AI 热点”“AI 圈更新”或没有指定领域时，使用内置 `default-ai-source-pack.json` 做 AI 热点发现。
+- 默认时间窗口为近 `5` 个自然日。
+
+指定话题模式：
+
+- 当用户明确指定非 AI 领域、关键词、公司、行业、国家、事件、RSS feed、source pack、subreddit、YouTube 频道或公众号 RSS 时，切换为该话题的热点调研。
+- 指定话题模式可以继续使用 RSS 抓取脚本，但应优先使用用户提供的 `--feed`、`--feeds-file` 或 `--source-pack`。
+- 如果用户只给了话题但没有给 sources，先用网页搜索补抓该话题的近 `5` 天高信号来源，再用 Codex 完成去重、归类和摘要。
+- 不要把 AI source pack 的结果当成非 AI 话题的主要证据；AI 默认源只用于默认 AI 模式。
+
 ## 触发信号
 
 以下表达都应优先使用本技能：
 
 - 找 AI 相关热门信息
-- 看近两天 AI 圈发生了什么
+- 看近五天 AI 圈发生了什么
 - 追踪 Reddit / YouTube / 公众号 / RSS 更新
 - 做 AI 热点监测笔记
 - 根据这些 RSS 和社媒来源做总结记录
 - 看看最近有哪些 AI 热门帖子 / 视频 / 文章
+- 找某个指定领域或关键词的热门信息
+- 追踪某个行业、公司、产品、开源项目、政策、论文方向或社群的近期热点
+- 根据用户提供的 RSS feed、feeds 文件、source pack、subreddit 或 YouTube 频道做热点摘要
 
 如果用户只给了单篇文章链接，而不是监测需求，不用本技能。
 
 ## 默认来源
 
-本技能不再只依赖单一 RSS feed 列表，而是用一个默认 source pack：
+默认 AI 模式使用一个内置 source pack：
 
 - [default-ai-source-pack.json](references/default-ai-source-pack.json)
 
@@ -60,12 +77,12 @@ allowed-tools: Bash,Write,WebSearch,WebFetch
 
 - [local-wechat-rss-feeds.txt](references/local-wechat-rss-feeds.txt)
 
-默认行为：
+默认 AI 模式行为：
 
 1. 使用 source pack 中的 RSS 兼容源跑辅助脚本。
 2. 自动尝试合并本地 `WeChat RSS` 文件中的 feed。
 3. 把 `Reddit` 和 `YouTube` 作为延迟源保留下来，由 Codex 后续用 MCP 或网页能力补抓。
-4. 如果用户没有指定时间范围，默认查近 `2` 个自然日。
+4. 如果用户没有指定时间范围，默认查近 `5` 个自然日。
 
 注意：
 
@@ -75,26 +92,27 @@ allowed-tools: Bash,Write,WebSearch,WebFetch
 
 ## 工作流
 
-1. 判断是不是“AI 热门信息 / 多源监测”请求。
-2. 若是，默认启用 source pack，并合并用户额外提供的 feeds。
-3. 若用户未指定时间范围，默认使用近 `2` 天窗口。
-4. 先用辅助脚本拉取 RSS 兼容源：
+1. 判断用户是否指定了话题、领域或 sources。
+2. 如果未指定，按默认 AI 模式启用内置 source pack，并合并用户额外提供的 feeds。
+3. 如果已指定非 AI 话题，优先使用用户给出的 feeds/source pack；没有 sources 时改用网页搜索和定点打开补抓该话题。
+4. 若用户未指定时间范围，默认使用近 `5` 天窗口。
+5. 先用辅助脚本拉取 RSS 兼容源：
    - 通用 RSS
    - 可直接解析的 YouTube upload feeds
    - 本地 WeChat RSS
    - 默认每个来源只先保留少量候选，避免单一高频源挤满结果
-5. 读取脚本输出中的 `deferred_sources`。
-6. 对 `deferred_sources`：
+6. 读取脚本输出中的 `deferred_sources`。
+7. 对 `deferred_sources`：
    - 若当前环境已有对应 MCP，优先用 MCP
    - 否则改用网页搜索和定点打开补抓
-7. 合并全部候选内容后，由 Codex 自己完成：
+8. 合并全部候选内容后，由 Codex 自己完成：
    - 去重与降噪
    - 热门度判断
    - 相关性判断
    - 摘要提炼
    - 主题归类
    - 结构化记录整理
-8. 如果用户要文件，就落成 Markdown 或 JSON；否则直接在回复里给结果。
+9. 如果用户要文件，就落成 Markdown 或 JSON；否则直接在回复里给结果。
 
 ## 来源策略
 
@@ -108,6 +126,16 @@ allowed-tools: Bash,Write,WebSearch,WebFetch
 - 研究 feed
 - arXiv
 - 用户自己通过 `we-mp-rss` 或类似工具转出来的公众号 RSS
+
+### 指定话题 Sources
+
+当用户指定非 AI 话题时：
+
+- 如果用户提供 RSS URL，直接用 `--feed`。
+- 如果用户提供多个 feed，写入临时 `feeds.txt` 并用 `--feeds-file`。
+- 如果用户提供 source pack，使用 `--source-pack`；只有需要内置 AI 预设时才加 `--use-default-ai-sources`。
+- 如果用户只提供自然语言话题，使用网页搜索查询该话题近 `5` 天的高信号来源，再按“热门度判断”筛选。
+- 如果话题有明显社群，例如 Reddit subreddit、YouTube 频道、GitHub 项目或官方博客，优先定点补抓这些来源。
 
 ### Reddit
 
@@ -125,7 +153,7 @@ allowed-tools: Bash,Write,WebSearch,WebFetch
 
 如果网页抓取结果很多，优先看：
 
-- 最近 `2` 天
+- 最近 `5` 天
 - 讨论密度高的帖子
 - 明显对应产品发布、模型更新、重要论文和工具链变化的帖子
 
@@ -134,7 +162,7 @@ allowed-tools: Bash,Write,WebSearch,WebFetch
 优先顺序：
 
 1. 如果 source pack 里给了可用的 upload feed，先交给脚本。
-2. 如果没有可用 feed，改用网页能力查看默认频道近两天视频。
+2. 如果没有可用 feed，改用网页能力查看默认频道近五天视频。
 
 重点看：
 
@@ -146,10 +174,10 @@ allowed-tools: Bash,Write,WebSearch,WebFetch
 
 当用户要求“热门信息”时，Codex 按下面的优先级综合判断：
 
-1. 最近 `2` 天或用户指定区间内的新内容优先。
+1. 最近 `5` 天或用户指定区间内的新内容优先。
 2. 多来源同时覆盖的主题优先。
 3. Reddit 讨论热、YouTube 快速跟进、博客同时发文的主题优先。
-4. 大模型发布、重要论文、重大产品发布、基础设施变化优先。
+4. 默认 AI 模式下，大模型发布、重要论文、重大产品发布、基础设施变化优先；指定话题模式下，按该领域的重要发布、政策变化、产品变化、重大讨论、关键数据和多源共振判断。
 5. 技术细节密度高、后续影响大的内容优先。
 6. 纯营销、轻量活动、招聘和无实质信息的内容降权。
 
@@ -157,14 +185,14 @@ allowed-tools: Bash,Write,WebSearch,WebFetch
 
 ## 时间范围规则
 
-- 用户未指定区间且请求 AI 热点：默认 `近 2 天`
+- 用户未指定区间：默认 `近 5 天`
 - 用户指定 `今天/昨天/某日`：按指定日期
 - 用户指定 `从 A 到 B`：按明确区间
 - 用户只说“最新”：抓最新若干条
 
 优先用脚本参数表达范围：
 
-- `--days-back 2`
+- `--days-back 5`
 - `--date YYYY-MM-DD`
 - `--date-from YYYY-MM-DD --date-to YYYY-MM-DD`
 
@@ -177,6 +205,7 @@ allowed-tools: Bash,Write,WebSearch,WebFetch
 - 默认按来源做软限额，避免 arXiv 之类的高频源独占候选。
 - Reddit 和 YouTube 只补抓最关键的一小批，不要无上限展开。
 - 不要写成日报、专栏、文章或综述体；默认输出为摘要列表、主题要点和记录条目。
+- 指定话题模式下，先说明实际使用的 sources；如果没有稳定 RSS 或 source pack，明确说明主要依赖网页搜索补抓。
 - 如果用户要“热门信息”，结果中先给热点条目，再给主题归纳。
 
 ## 辅助脚本
@@ -205,7 +234,7 @@ fi
 ```bash
 "$PYTHON_BIN" "$RSS_COLLECT_SCRIPT" \
   --use-default-ai-sources \
-  --days-back 2 \
+  --days-back 5 \
   --limit 15 \
   --fetch-content \
   --content-chars 8000 \
@@ -218,7 +247,7 @@ fi
 "$PYTHON_BIN" "$RSS_COLLECT_SCRIPT" \
   --use-default-ai-sources \
   --feeds-file ./feeds.txt \
-  --days-back 2 \
+  --days-back 5 \
   --limit 15 \
   --fetch-content \
   --output ./tmp/ai-trend-sources.json
@@ -276,7 +305,7 @@ fi
 
 ## Codex 在脚本之后要做什么
 
-拿到 `ai-trend-sources.json` 后，不要再跑额外 LLM 脚本。直接在会话里完成下面几步：
+拿到 `ai-trend-sources.json` 或 `topic-trend-sources.json` 后，不要再跑额外 LLM 脚本。直接在会话里完成下面几步：
 
 1. 读 JSON，先处理 `items`。
 2. 再看 `deferred_sources`，补抓最关键的 Reddit / YouTube 来源。
@@ -299,7 +328,7 @@ fi
 
 推荐的默认记录结构：
 
-1. `热点概览`：这个窗口里最值得关注的 AI 主题。
+1. `热点概览`：这个窗口里最值得关注的主题；默认是 AI，指定话题时改为对应领域。
 2. `热点条目`：按重要性列出 5 到 10 条。
 3. `主题归纳`：把相近事件合并说明。
 4. `观察记录`：值得继续跟踪的变化、发布、研究方向。

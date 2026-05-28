@@ -1,4 +1,4 @@
 interface:
-  display_name: "AI Trend Recorder"
-  short_description: "用 Reddit、YouTube、WeChat RSS 和 RSS 聚合来源整理近两天 AI 热点记录"
-  default_prompt: "使用 $rss-digest-writer 从默认的 Reddit、YouTube、WeChat RSS 和 RSS 聚合来源中查近两天 AI 热点，抓取可用内容后整理成一份摘要记录。"
+  display_name: "RSS Digest Writer"
+  short_description: "默认整理近五天 AI 热点，也可按指定话题聚合 RSS、Reddit、YouTube 和公众号来源"
+  default_prompt: "使用 $rss-digest-writer 从默认 AI source pack 中查近五天热点；如果我指定其他话题，请改为调研该话题的近期热门信息，并整理成摘要记录。"

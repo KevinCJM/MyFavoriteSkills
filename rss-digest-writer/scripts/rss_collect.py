@@ -91,7 +91,7 @@ class SimpleArticleExtractor(HTMLParser):
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Collect RSS-compatible sources for AI trend monitoring.")
+    parser = argparse.ArgumentParser(description="Collect RSS-compatible sources for trend monitoring. Defaults can use the bundled AI source pack.")
     parser.add_argument("--feed", action="append", default=[], help="RSS or Atom feed URL. Repeat for multiple feeds.")
     parser.add_argument("--feeds-file", help="Path to a file containing one feed URL per line.")
     parser.add_argument("--use-default-ai-sources", action="store_true", help="Include the bundled AI source pack.")
