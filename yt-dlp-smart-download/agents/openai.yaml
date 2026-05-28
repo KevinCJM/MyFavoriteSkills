@@ -1,0 +1,4 @@
+interface:
+  display_name: "YT-DLP 智能下载"
+  short_description: "输入视频链接后自动选优格式，下载视频并抓取可用字幕"
+  default_prompt: "使用 $yt-dlp-smart-download 下载这个视频链接，并自动选择最佳格式与字幕。"
