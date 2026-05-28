@@ -1,0 +1,12 @@
+# Legacy feed list retained for backward compatibility.
+# The skill now prefers default-ai-source-pack.json instead.
+
+https://openai.com/blog/rss.xml
+https://huggingface.co/blog/feed.xml
+https://blog.google/technology/ai/rss/
+https://deepmind.google/blog/rss.xml
+https://research.google/blog/rss/
+https://bair.berkeley.edu/blog/feed.xml
+https://thegradient.pub/rss/
+https://rss.arxiv.org/rss/cs.AI
+https://rss.arxiv.org/rss/cs.LG

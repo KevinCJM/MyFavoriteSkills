@@ -1,0 +1,7 @@
+# Optional WeChat RSS feeds for this skill.
+# Add one RSS URL per line.
+# These feeds are typically generated from your own we-mp-rss or similar service.
+#
+# Example:
+# https://your-wechat-rss.example.com/feed/ai-weekly.xml
+# https://your-wechat-rss.example.com/feed/openai-observer.xml

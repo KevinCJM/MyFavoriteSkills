@@ -1,0 +1,98 @@
+{
+  "name": "default-ai-source-pack",
+  "description": "Default free/stable AI monitoring sources for Codex. RSS-compatible sources are fetched by script; Reddit and YouTube page sources are deferred to MCP or web browsing.",
+  "sources": [
+    {
+      "kind": "rss",
+      "label": "OpenAI Blog",
+      "url": "https://openai.com/blog/rss.xml"
+    },
+    {
+      "kind": "rss",
+      "label": "Hugging Face Blog",
+      "url": "https://huggingface.co/blog/feed.xml"
+    },
+    {
+      "kind": "rss",
+      "label": "Google AI Blog",
+      "url": "https://blog.google/technology/ai/rss/"
+    },
+    {
+      "kind": "rss",
+      "label": "Google DeepMind Blog",
+      "url": "https://deepmind.google/blog/rss.xml"
+    },
+    {
+      "kind": "rss",
+      "label": "Google Research Blog",
+      "url": "https://research.google/blog/rss/"
+    },
+    {
+      "kind": "rss",
+      "label": "BAIR Blog",
+      "url": "https://bair.berkeley.edu/blog/feed.xml"
+    },
+    {
+      "kind": "rss",
+      "label": "The Gradient",
+      "url": "https://thegradient.pub/rss/"
+    },
+    {
+      "kind": "rss",
+      "label": "arXiv cs.AI",
+      "url": "https://rss.arxiv.org/rss/cs.AI"
+    },
+    {
+      "kind": "rss",
+      "label": "arXiv cs.LG",
+      "url": "https://rss.arxiv.org/rss/cs.LG"
+    },
+    {
+      "kind": "reddit_subreddit",
+      "label": "r/OpenAI",
+      "subreddit": "OpenAI"
+    },
+    {
+      "kind": "reddit_subreddit",
+      "label": "r/LocalLLaMA",
+      "subreddit": "LocalLLaMA"
+    },
+    {
+      "kind": "reddit_subreddit",
+      "label": "r/MachineLearning",
+      "subreddit": "MachineLearning"
+    },
+    {
+      "kind": "reddit_subreddit",
+      "label": "r/singularity",
+      "subreddit": "singularity"
+    },
+    {
+      "kind": "youtube_channel",
+      "label": "OpenAI YouTube",
+      "channel_url": "https://www.youtube.com/@OpenAI"
+    },
+    {
+      "kind": "youtube_channel",
+      "label": "Google DeepMind YouTube",
+      "channel_url": "https://www.youtube.com/@GoogleDeepMind"
+    },
+    {
+      "kind": "youtube_channel",
+      "label": "DeepLearning.AI YouTube",
+      "channel_url": "https://www.youtube.com/@DeepLearningAI"
+    },
+    {
+      "kind": "youtube_channel",
+      "label": "Two Minute Papers YouTube",
+      "channel_url": "https://www.youtube.com/@TwoMinutePapers"
+    },
+    {
+      "kind": "local_feeds_file",
+      "label": "Local WeChat RSS",
+      "path": "local-wechat-rss-feeds.txt",
+      "file_kind": "wechat_rss",
+      "optional": true
+    }
+  ]
+}
