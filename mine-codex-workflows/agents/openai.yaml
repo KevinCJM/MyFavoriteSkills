@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mine Codex Workflows"
+  short_description: "Mine history for repeatable workflows"
+  default_prompt: "Use $mine-codex-workflows to scan this project’s Codex history for repeated workflows and skill candidates."
