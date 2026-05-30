@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Hermes User Project Memory"
+  short_description: "Remember project-scoped private user/repo preferences safely"
+  default_prompt: "Use $ai-hermes-user-project-memory when the user asks to remember, forget, enable, disable, view, audit, or apply personal project preferences; keep memory project-scoped and ensure AGENTS.md has generic guidance without hardcoded identity."

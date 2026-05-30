@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0",
+  "role": "governance_only",
+  "purpose": "Govern project-scoped AI Hermes user memory without owning project routing facts or storing personal memory content outside the project memory store.",
+  "default_state": {
+    "recall_enabled": true,
+    "learn_enabled": true,
+    "auto_learn_enabled": true
+  },
+  "switch_invariants": {
+    "auto_learn_requires_learn_enabled": true,
+    "disable_learn_disables_auto_learn": true
+  },
+  "storage": {
+    "default_memory_root": "docs/.ai-hermes-user-memory",
+    "active_memory_file": "users/<user_hash>/repos/<repo_hash>.json",
+    "fixed_memory_root": "required",
+    "custom_memory_root": "forbidden",
+    "inside_current_project": "required",
+    "inside_git_worktree": "allowed",
+    "git_tracked_memory_data": "ignored_by_default_explicit_git_sync_allowed_after_check",
+    "file_mode": "0600",
+    "dir_mode": "0700",
+    "git_force_add_after_check": "allowed_only_after_explicit_user_instruction"
+  },
+  "identity": {
+    "use_local_salt": true,
+    "sources": [
+      "git_config_user_email",
+      "git_config_user_name",
+      "git_user_config_email",
+      "git_user_config_name",
+      "system_user_repo_hash_fallback"
+    ],
+    "plaintext_identity_output": "forbidden"
+  },
+  "agents_guidance": {
+    "ensure_command": "ensure-agents-guidance",
+    "target_file": "AGENTS.md",
+    "hardcoded_identity": "forbidden",
+    "required_recall_command": "tools/ai_hermes_user_project_memory.py --json recall",
+    "identity_resolution": "runtime_tool_lookup",
+    "required_scope": "repo_user"
+  },
+  "scope_model": {
+    "memory_subject": "project",
+    "supported_scopes": [
+      "repo_user"
+    ],
+    "scope_conflict_resolution": "not_needed"
+  },
+  "allowed_memory_types": [
+    "communication_preference",
+    "workflow_preference",
+    "local_runtime_preference",
+    "project_private_config",
+    "account_alias",
+    "tool_preference",
+    "safety_preference",
+    "automation_suppression_rule"
+  ],
+  "auto_learn_allowed_types": [
+    "communication_preference",
+    "workflow_preference"
+  ],
+  "auto_learn_forbidden_value_classes": [
+    "local_path",
+    "account_alias",
+    "profile_name",
+    "host",
+    "customer_name",
+    "secret_like"
+  ],
+  "forbidden_content": [
+    "secrets",
+    "tokens",
+    "account_passwords",
+    "authorization_plaintext",
+    "raw_conversation",
+    "raw_env_file",
+    "raw_automation_prompt",
+    "unverified_project_fact",
+    "one_off_task_parameter"
+  ],
+  "suppression": {
+    "automation_prompt": {
+      "learn_suppressed": true,
+      "recall_suppressed": true
+    },
+    "subagent_instruction": {
+      "learn_suppressed": true,
+      "recall_suppressed": true
+    },
+    "user_requested": {
+      "learn_suppressed": true
+    }
+  },
+  "audit": {
+    "secret_scan": true,
+    "local_path_classification": true,
+    "project_local_memory_path_detection": true,
+    "conflict_detection": true,
+    "entire_memory_home_secret_scan": true
+  },
+  "git_sync": {
+    "default": "ignored_by_git",
+    "explicit_user_instruction_required": true,
+    "git_worktree_required": true,
+    "pre_submit_command": "tools/ai_hermes_user_project_memory.py --json git-sync-check --confirm-user-explicit",
+    "rerun_before_stage_commit_push": true,
+    "force_add_after_pass": "git add -f docs/.ai-hermes-user-memory/config.json docs/.ai-hermes-user-memory/users",
+    "block_on_sensitive_content": true,
+    "scan_scope": "entire_memory_home"
+  }
+}
