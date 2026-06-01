@@ -1,0 +1,7 @@
+interface:
+  display_name: "Volcengine Podcast MD to Audio"
+  short_description: "Portable Markdown to Volcengine podcast MP3."
+  default_prompt: "Use $volcengine-podcast-md-to-audio to convert this Markdown article into a downloaded podcast MP3."
+
+policy:
+  allow_implicit_invocation: true
