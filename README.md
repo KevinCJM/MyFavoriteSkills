@@ -60,6 +60,10 @@ Common dependencies include:
 
 ## License / 许可
 
-未显式声明统一许可证。使用、复制或改造前请按各 skill 的依赖、第三方服务条款和素材来源限制自行确认。
+本仓库代码和文档使用 [MIT License](./LICENSE)。
 
-No repository-wide license is currently declared. Before using, copying, or adapting these skills, check each skill's dependencies, external service terms, and source restrictions.
+Code and documentation in this repository are released under the [MIT License](./LICENSE).
+
+使用具体 skill 时，仍需遵守相关第三方服务、API、素材平台和依赖工具的条款。
+
+When using a specific skill, you must still follow the terms of any related third-party services, APIs, media platforms, and dependency tools.
