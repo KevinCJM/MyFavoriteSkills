@@ -29,6 +29,7 @@ You can also copy multiple skill folders from this repository. Do not copy gener
 | [`free-media-fetcher`](./free-media-fetcher) | 通过 Pexels 和 Pixabay API 搜索并下载免费图片/视频素材，支持横屏、竖屏、质量和元数据。 | Searches and downloads free stock photos/videos from Pexels and Pixabay with orientation, quality, and metadata support. |
 | [`mine-codex-workflows`](./mine-codex-workflows) | 分析本地 Codex 历史对话，发现重复工作流、常用命令模式和可沉淀为 skill 的候选项。 | Mines local Codex history for repeated workflows, command patterns, and reusable skill candidates. |
 | [`rss-digest-writer`](./rss-digest-writer) | 从 RSS、Reddit、YouTube、公众号 RSS 等来源聚合热点，由 Codex 去重、筛选、摘要和归档。 | Aggregates trends from RSS, Reddit, YouTube, WeChat RSS, and web signals, then deduplicates and summarizes them. |
+| [`tushare-fetcher`](./tushare-fetcher) | 根据 Tushare 积分和接口 JSON 生成限频数据获取脚本，支持 Parquet 输出、冒烟测试和脚本固化。 | Generates rate-limited Tushare Parquet fetch scripts from interface JSON and user points, with smoke tests and solidification. |
 | [`volcengine-podcast-md-to-audio`](./volcengine-podcast-md-to-audio) | 将本地 Markdown 或文本文章通过火山引擎播客 TTS 转成双人播客 MP3，并下载服务端最终音频。 | Converts local Markdown or text articles into two-speaker podcast MP3s through Volcengine podcast TTS. |
 | [`yt-dlp-smart-download`](./yt-dlp-smart-download) | 使用 `yt-dlp` 智能下载视频和字幕，在最佳质量和 MP4 兼容格式之间自动选择。 | Downloads videos and subtitles with `yt-dlp`, choosing best quality or MP4-compatible formats as needed. |
 
@@ -45,7 +46,7 @@ Common dependencies include:
 - Python 3
 - Network access
 - Optional command-line tools such as `yt-dlp`, `ffmpeg`, `curl`, `reader`, or `trafilatura`
-- Optional API keys such as `PEXELS_API_KEY`, `PIXABAY_API_KEY`, or Volcengine podcast TTS credentials
+- Optional API keys or account settings such as `PEXELS_API_KEY`, `PIXABAY_API_KEY`, Tushare token/points config, or Volcengine podcast TTS credentials
 
 ## 共享注意事项 / Sharing Notes
 
