@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tushare Fetcher"
+  short_description: "Generate rate-limited Tushare Parquet fetch scripts"
+  default_prompt: "Use $tushare-fetcher to generate and smoke-test a Tushare Parquet data fetch script."
