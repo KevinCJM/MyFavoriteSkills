@@ -45,7 +45,7 @@
   - 不写死用户 hash。
   - 不写死 git email。
   - 不写死账号 ID、账号别名或 profile 名称。
-- 当 `recall` 开启且当前会话没有被抑制时，`AGENTS.md` 会要求智能体先运行 `tools/ai_hermes_user_project_memory.py --json recall`，只召回当前项目的 `repo_user` 记忆。
+- 当 `recall` 开启且当前会话没有被抑制时，`AGENTS.md` 会要求智能体先运行 `skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json recall`，只召回当前项目的 `repo_user` 记忆。
 - 用户和 repo 身份由工具在运行时根据 git 配置或安全 fallback 动态查找，并使用 hash 做隔离。
 - 召回结果只在不冲突时应用；system/developer 指令、当前用户本轮要求和 `AGENTS.md` 始终优先。
 
@@ -94,8 +94,8 @@
 
 ### 自动触发机制
 
-- 使用该技能时，先确保 `AGENTS.md` 已包含用户记忆协议：`python3 tools/ai_hermes_user_project_memory.py --json ensure-agents-guidance`。
-- 普通用户面对话开始执行前，如果召回开启且没有被抑制，应运行 `python3 tools/ai_hermes_user_project_memory.py --json recall`，让工具动态查找当前用户和 repo 身份，并只读取当前项目的 `repo_user` 记忆。
+- 使用该技能时，先确保 `AGENTS.md` 已包含用户记忆协议：`python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json ensure-agents-guidance`。
+- 普通用户面对话开始执行前，如果召回开启且没有被抑制，应运行 `python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json recall`，让工具动态查找当前用户和 repo 身份，并只读取当前项目的 `repo_user` 记忆。
 - 当智能体准备运行 Python、测试、部署或本地脚本时，应先召回相关本机运行偏好。
 - 当长对话或多轮密集协作中出现稳定、低风险、可复用的偏好时，可以自动学习。
 - 自动学习只允许低敏的沟通偏好和工作流偏好。
@@ -110,14 +110,14 @@
 
 ### 常用命令
 
-优先在项目根目录使用 repo-local 工具：
+优先在项目根目录使用项目内技能脚本：
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json ensure-agents-guidance
-python3 tools/ai_hermes_user_project_memory.py --json status
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json ensure-agents-guidance
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json status
 ```
 
-如果当前项目没有 repo-local 工具，但已经安装了本地 Codex 技能，可以使用 bundled script：
+如果当前项目没有项目内技能脚本，但已经安装了本地 Codex 技能，可以使用 bundled script：
 
 ```bash
 python3 ~/.codex/skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py \
@@ -131,14 +131,14 @@ python3 ~/.codex/skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_pro
 召回当前用户在当前项目里的记忆：
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json recall
-python3 tools/ai_hermes_user_project_memory.py --json recall --scope repo_user
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json recall
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json recall --scope repo_user
 ```
 
 记住一条明确偏好：
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json learn \
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json learn \
   --scope repo_user \
   --type communication_preference \
   --key response.style \
@@ -150,43 +150,43 @@ python3 tools/ai_hermes_user_project_memory.py --json learn \
 关闭当前 repo 的自动学习：
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json disable --scope repo_user --auto-learn
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json disable --scope repo_user --auto-learn
 ```
 
 关闭当前 repo 的学习；这也会关闭自动学习：
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json disable --scope repo_user --learn
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json disable --scope repo_user --learn
 ```
 
 重新开启学习和自动学习：
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json enable --scope repo_user --learn --auto-learn
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json enable --scope repo_user --learn --auto-learn
 ```
 
 关闭当前 repo 的全部记忆开关：
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json disable --scope repo_user
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json disable --scope repo_user
 ```
 
 删除某条记忆：
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json forget --scope repo_user --key response.style
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json forget --scope repo_user --key response.style
 ```
 
 审计记忆文件：
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json audit
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json audit
 ```
 
 显式检查是否允许把用户记忆保存到云端 git 仓库：
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json git-sync-check --confirm-user-explicit
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json git-sync-check --confirm-user-explicit
 ```
 
 ### 保存到云端 git 仓库
@@ -197,7 +197,7 @@ python3 tools/ai_hermes_user_project_memory.py --json git-sync-check --confirm-u
 - 同步前必须立刻运行：
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json git-sync-check --confirm-user-explicit
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json git-sync-check --confirm-user-explicit
 ```
 
 - 该检查会扫描整个 `docs/.ai-hermes-user-memory/`，发现 token、账号密码、Authorization 明文、cookie、私钥、数据库连接串、`.env` 内容、损坏文件或旧 `profile.json` 就会失败。
@@ -298,7 +298,7 @@ git add -f docs/.ai-hermes-user-memory/config.json docs/.ai-hermes-user-memory/u
   - No hardcoded user hash.
   - No hardcoded git email.
   - No hardcoded account ID, account alias, or profile name.
-- When `recall` is enabled and the current session is not suppressed, `AGENTS.md` requires agents to run `tools/ai_hermes_user_project_memory.py --json recall` before normal user-facing work and load only current-project `repo_user` memories.
+- When `recall` is enabled and the current session is not suppressed, `AGENTS.md` requires agents to run `skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json recall` before normal user-facing work and load only current-project `repo_user` memories.
 - User and repo identity are resolved dynamically by the tool at runtime from git configuration or a safe fallback, then isolated by hashes.
 - Recalled memories apply only when they do not conflict with higher-priority instructions; system/developer instructions, the current user turn, and `AGENTS.md` always win.
 
@@ -347,8 +347,8 @@ git add -f docs/.ai-hermes-user-memory/config.json docs/.ai-hermes-user-memory/u
 
 ### Automatic Triggers
 
-- When using this skill, first ensure `AGENTS.md` contains the user memory protocol: `python3 tools/ai_hermes_user_project_memory.py --json ensure-agents-guidance`.
-- Before normal user-facing work, if recall is enabled and not suppressed, run `python3 tools/ai_hermes_user_project_memory.py --json recall` so the tool dynamically resolves the current user and repo identity and reads only current-project `repo_user` memories.
+- When using this skill, first ensure `AGENTS.md` contains the user memory protocol: `python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json ensure-agents-guidance`.
+- Before normal user-facing work, if recall is enabled and not suppressed, run `python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json recall` so the tool dynamically resolves the current user and repo identity and reads only current-project `repo_user` memories.
 - Before running Python, tests, deployment commands, or local scripts, agents should recall relevant local runtime preferences.
 - In long or dense collaborations, stable low-risk reusable preferences may be learned automatically.
 - Auto-learning is limited to low-sensitive communication and workflow preferences.
@@ -363,14 +363,14 @@ git add -f docs/.ai-hermes-user-memory/config.json docs/.ai-hermes-user-memory/u
 
 ### Common Commands
 
-Prefer the repo-local tool from the project root:
+Prefer the project-local skill script from the project root:
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json ensure-agents-guidance
-python3 tools/ai_hermes_user_project_memory.py --json status
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json ensure-agents-guidance
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json status
 ```
 
-If the current project does not have the repo-local tool but this local Codex skill is installed, use the bundled script:
+If the current project does not have the project-local skill script but this local Codex skill is installed, use the bundled script:
 
 ```bash
 python3 ~/.codex/skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py \
@@ -384,14 +384,14 @@ python3 ~/.codex/skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_pro
 Recall current user memory for the current project:
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json recall
-python3 tools/ai_hermes_user_project_memory.py --json recall --scope repo_user
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json recall
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json recall --scope repo_user
 ```
 
 Remember an explicit preference:
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json learn \
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json learn \
   --scope repo_user \
   --type communication_preference \
   --key response.style \
@@ -403,43 +403,43 @@ python3 tools/ai_hermes_user_project_memory.py --json learn \
 Disable auto-learning for this repo:
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json disable --scope repo_user --auto-learn
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json disable --scope repo_user --auto-learn
 ```
 
 Disable learning for this repo, which also disables auto-learning:
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json disable --scope repo_user --learn
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json disable --scope repo_user --learn
 ```
 
 Re-enable learning and auto-learning:
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json enable --scope repo_user --learn --auto-learn
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json enable --scope repo_user --learn --auto-learn
 ```
 
 Disable all memory switches for this repo:
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json disable --scope repo_user
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json disable --scope repo_user
 ```
 
 Forget a memory:
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json forget --scope repo_user --key response.style
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json forget --scope repo_user --key response.style
 ```
 
 Audit memory files:
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json audit
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json audit
 ```
 
 Explicitly check whether user memory can be saved to a cloud git repository:
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json git-sync-check --confirm-user-explicit
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json git-sync-check --confirm-user-explicit
 ```
 
 ### Saving To A Cloud Git Repository
@@ -450,7 +450,7 @@ python3 tools/ai_hermes_user_project_memory.py --json git-sync-check --confirm-u
 - Immediately before syncing, run:
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json git-sync-check --confirm-user-explicit
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json git-sync-check --confirm-user-explicit
 ```
 
 - The check scans the entire `docs/.ai-hermes-user-memory/` tree and fails on tokens, account passwords, Authorization plaintext, cookies, private keys, database URLs, `.env` content, corrupt files, or legacy `profile.json`.

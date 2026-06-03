@@ -38,33 +38,33 @@ Do not store project implementation facts here. Shared project facts belong in A
 
 Use a memory CLI for all persisted memory operations:
 
-- Prefer the current repo's `tools/ai_hermes_user_project_memory.py` when it exists.
+- Prefer the current repo's project-local skill script `skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py` when it exists.
 - Otherwise use this skill's bundled `scripts/ai_hermes_user_project_memory.py`.
 - Use `--repo-root <target-repo>` when operating outside the current working directory.
 
 Common commands:
 
 ```bash
-python3 tools/ai_hermes_user_project_memory.py --json ensure-agents-guidance
-python3 tools/ai_hermes_user_project_memory.py --json status
-python3 tools/ai_hermes_user_project_memory.py --json recall
-python3 tools/ai_hermes_user_project_memory.py --json recall --scope repo_user
-python3 tools/ai_hermes_user_project_memory.py --json learn --scope repo_user --type communication_preference --key response.language --value-json '{"language":"zh-CN"}' --source user_explicit --one-shot-authorized
-python3 tools/ai_hermes_user_project_memory.py --json propose --candidate-json '{"proposed_memory":{"type":"workflow_preference","scope":"repo_user","key":"response.style.bullets","value":{"enabled":true}}}'
-python3 tools/ai_hermes_user_project_memory.py --json approve --candidate-id <CANDIDATE_ID>
-python3 tools/ai_hermes_user_project_memory.py --json forget --scope repo_user --key response.language
-python3 tools/ai_hermes_user_project_memory.py --json disable --scope repo_user --auto-learn
-python3 tools/ai_hermes_user_project_memory.py --json enable --scope repo_user --learn --auto-learn
-python3 tools/ai_hermes_user_project_memory.py --json audit
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json ensure-agents-guidance
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json status
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json recall
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json recall --scope repo_user
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json learn --scope repo_user --type communication_preference --key response.language --value-json '{"language":"zh-CN"}' --source user_explicit --one-shot-authorized
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json propose --candidate-json '{"proposed_memory":{"type":"workflow_preference","scope":"repo_user","key":"response.style.bullets","value":{"enabled":true}}}'
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json approve --candidate-id <CANDIDATE_ID>
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json forget --scope repo_user --key response.language
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json disable --scope repo_user --auto-learn
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json enable --scope repo_user --learn --auto-learn
+python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json audit
 ```
 
-If the repo-local tool does not exist, run the bundled script from this skill directory with the same arguments and add `--repo-root <target-repo>` when needed.
+If the project-local skill script does not exist, run the bundled script from this skill directory with the same arguments and add `--repo-root <target-repo>` when needed.
 
 ## Recall Rules
 
 Recall is allowed only when persisted `recall=true` and the current session is not suppressed.
 
-Before normal user-facing work, run `tools/ai_hermes_user_project_memory.py --json recall` to dynamically resolve the current user/repo identity and load applicable project-scoped `repo_user` memories. Do not hardcode identity in `AGENTS.md` or prompts; let the tool look it up from git config or its safe fallback.
+Before normal user-facing work, run `skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json recall` to dynamically resolve the current user/repo identity and load applicable project-scoped `repo_user` memories. Do not hardcode identity in `AGENTS.md` or prompts; let the tool look it up from git config or its safe fallback.
 
 Recall should be silent. Mention it only when it changes an important action, such as choosing a Python interpreter, or when a remembered path is missing.
 
@@ -151,7 +151,7 @@ Default behavior: `docs/.ai-hermes-user-memory/` stays ignored by git and should
 
 If and only if the user explicitly asks to save project memory to a cloud/remote git repository:
 
-- First run `python3 tools/ai_hermes_user_project_memory.py --json git-sync-check --confirm-user-explicit`.
+- First run `python3 skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json git-sync-check --confirm-user-explicit`.
 - The check must run immediately before `git add`, commit, or push.
 - The check must scan the entire `docs/.ai-hermes-user-memory/` tree and fail on tokens, passwords, Authorization plaintext, cookies, private keys, database URLs, `.env` content, corrupt memory files, or legacy `profile.json`.
 - If the check passes, the agent may use `git add -f docs/.ai-hermes-user-memory/config.json docs/.ai-hermes-user-memory/users` because the directory is ignored by default.

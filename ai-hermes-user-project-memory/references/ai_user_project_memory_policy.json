@@ -38,7 +38,7 @@
     "ensure_command": "ensure-agents-guidance",
     "target_file": "AGENTS.md",
     "hardcoded_identity": "forbidden",
-    "required_recall_command": "tools/ai_hermes_user_project_memory.py --json recall",
+    "required_recall_command": "skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json recall",
     "identity_resolution": "runtime_tool_lookup",
     "required_scope": "repo_user"
   },
@@ -106,7 +106,7 @@
     "default": "ignored_by_git",
     "explicit_user_instruction_required": true,
     "git_worktree_required": true,
-    "pre_submit_command": "tools/ai_hermes_user_project_memory.py --json git-sync-check --confirm-user-explicit",
+    "pre_submit_command": "skills/ai-hermes-user-project-memory/scripts/ai_hermes_user_project_memory.py --json git-sync-check --confirm-user-explicit",
     "rerun_before_stage_commit_push": true,
     "force_add_after_pass": "git add -f docs/.ai-hermes-user-memory/config.json docs/.ai-hermes-user-memory/users",
     "block_on_sensitive_content": true,
