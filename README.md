@@ -15,14 +15,33 @@ mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
 cp -R <skill-folder> "${CODEX_HOME:-$HOME/.codex}/skills/"
 ```
 
-也可以复制整个仓库中的多个 skill 文件夹。不要复制生成产物、缓存、私有配置或任何包含密钥的文件。
+也可以复制多个 skill 文件夹。不要复制生成产物、缓存、私有配置或任何包含密钥的文件。
 
-You can also copy multiple skill folders from this repository. Do not copy generated outputs, caches, private config, or files containing secrets.
+You can also copy multiple skill folders. Do not copy generated outputs, caches, private config, or files containing secrets.
+
+## 推荐组合 / Recommended Bundles
+
+AI Hermes 路由闭环建议同时安装这三个 skill：
+
+For the complete AI Hermes routing loop, install these three skills together:
+
+```bash
+cp -R ai-hermes-routing-init ai-hermes-self-evolve ai-hermes-user-project-memory "${CODEX_HOME:-$HOME/.codex}/skills/"
+```
+
+- `ai-hermes-routing-init`：初始化项目路由文件、项目内置 AI Hermes 脚本和基础自审核流程。
+- `ai-hermes-self-evolve`：在代码、测试、配置、工具或路由事实变化后维护路由记忆。
+- `ai-hermes-user-project-memory`：保存项目级个人偏好和本机私有配置，并提供安全召回、学习和审计。
+- `ai-hermes-routing-init`: initializes routing files, project-local AI Hermes scripts, and bootstrap self-audits.
+- `ai-hermes-self-evolve`: maintains routing memory after code, tests, configs, tools, or routing facts change.
+- `ai-hermes-user-project-memory`: stores project-scoped personal preferences and private local config with safe recall, learning, and auditing.
 
 ## Skills / 技能列表
 
 | Skill | 中文简介 | English summary |
 | --- | --- | --- |
+| [`ai-hermes-routing-init`](./ai-hermes-routing-init) | 创建初始 AI Hermes 路由文件、项目内置脚本和自审核流程，用于新仓库补齐路由层闭环。 | Creates initial AI Hermes routing files, project-local scripts, and self-audit checks for a new repository. |
+| [`ai-hermes-self-evolve`](./ai-hermes-self-evolve) | 维护 AI Hermes 路由记忆，检查覆盖、验证路由文件，并在提交、PR、合并或发布前执行路由自演化校验。 | Maintains AI Hermes routing memory, checks coverage, validates routing files, and runs self-evolution checks before commits, PRs, merges, or releases. |
 | [`ai-hermes-user-project-memory`](./ai-hermes-user-project-memory) | 为当前项目保存用户个人偏好和本机私有配置，支持记忆召回、学习、审计和安全边界控制。 | Stores project-local personal preferences and private runtime config, with recall, learning, auditing, and safety limits. |
 | [`article-extractor`](./article-extractor) | 从文章、博客、教程 URL 中抽取干净正文，去掉导航、广告和页面噪音，并保存为本地文本。 | Extracts clean main text from article, blog, or tutorial URLs and saves readable local text. |
 | [`content-research-writer`](./content-research-writer) | 辅助资料调研、提纲设计、引用整理、正文写作和逐段反馈，适合文章和长文写作。 | Helps research topics, build outlines, manage citations, draft content, and review sections iteratively. |
@@ -32,6 +51,22 @@ You can also copy multiple skill folders from this repository. Do not copy gener
 | [`tushare-fetcher`](./tushare-fetcher) | 根据 Tushare 积分和接口 JSON 生成限频数据获取脚本，支持 Parquet 输出、冒烟测试和脚本固化。 | Generates rate-limited Tushare Parquet fetch scripts from interface JSON and user points, with smoke tests and solidification. |
 | [`volcengine-podcast-md-to-audio`](./volcengine-podcast-md-to-audio) | 将本地 Markdown 或文本文章通过火山引擎播客 TTS 转成双人播客 MP3，并下载服务端最终音频。 | Converts local Markdown or text articles into two-speaker podcast MP3s through Volcengine podcast TTS. |
 | [`yt-dlp-smart-download`](./yt-dlp-smart-download) | 使用 `yt-dlp` 智能下载视频和字幕，在最佳质量和 MP4 兼容格式之间自动选择。 | Downloads videos and subtitles with `yt-dlp`, choosing best quality or MP4-compatible formats as needed. |
+
+## 使用方式 / Usage
+
+在 Codex 中直接通过技能名触发，例如：
+
+Trigger a skill in Codex by mentioning its name, for example:
+
+```text
+$ai-hermes-routing-init 初始化这个仓库的路由文件
+$ai-hermes-self-evolve 检查这次提交是否需要更新路由记忆
+$ai-hermes-user-project-memory 记住这个项目默认用指定 Python 解释器
+```
+
+具体参数、脚本路径和安全规则以每个 skill 目录中的 `README.md` 和 `SKILL.md` 为准。
+
+For exact arguments, script paths, and safety rules, see each skill folder's `README.md` and `SKILL.md`.
 
 ## 依赖 / Dependencies
 
@@ -44,7 +79,8 @@ Dependencies vary by skill. Check each skill folder's `README.md` and `SKILL.md`
 Common dependencies include:
 
 - Python 3
-- Network access
+- Git and GitHub CLI for publishing workflows
+- Network access for skills that fetch remote content or call APIs
 - Optional command-line tools such as `yt-dlp`, `ffmpeg`, `curl`, `reader`, or `trafilatura`
 - Optional API keys or account settings such as `PEXELS_API_KEY`, `PIXABAY_API_KEY`, Tushare token/points config, or Volcengine podcast TTS credentials
 
@@ -54,10 +90,12 @@ Common dependencies include:
 - 不要提交 `__pycache__/`、`*.pyc`、`.DS_Store`、临时 JSON、下载素材、生成音频或其他产物。
 - 带脚本的 skill 应保持脚本路径相对目录可用，避免写死本机绝对路径。
 - 带外部服务的 skill 应让使用者配置自己的账号和环境变量。
+- AI Hermes user memory 数据默认应保留在项目本地并被 git 忽略，除非用户明确要求同步且安全检查通过。
 - Do not commit API keys, tokens, cookies, Authorization headers, private keys, `.env` files, or personal config.
 - Do not commit `__pycache__/`, `*.pyc`, `.DS_Store`, temporary JSON, downloaded media, generated audio, or other outputs.
 - Skills with scripts should keep paths portable and avoid hardcoded local absolute paths.
 - Skills that use external services should require users to configure their own accounts and environment variables.
+- AI Hermes user memory data should stay project-local and git-ignored by default unless the user explicitly requests sync and the safety check passes.
 
 ## License / 许可
 
