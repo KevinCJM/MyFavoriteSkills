@@ -50,6 +50,7 @@ cp -R ai-hermes-routing-init ai-hermes-self-evolve ai-hermes-user-project-memory
 | [`article-extractor`](./article-extractor) | 从文章、博客、教程 URL 中抽取干净正文，去掉导航、广告和页面噪音，并保存为本地文本。 | Extracts clean main text from article, blog, or tutorial URLs and saves readable local text. |
 | [`content-research-writer`](./content-research-writer) | 辅助资料调研、提纲设计、引用整理、正文写作和逐段反馈，适合文章和长文写作。 | Helps research topics, build outlines, manage citations, draft content, and review sections iteratively. |
 | [`free-media-fetcher`](./free-media-fetcher) | 通过 Pexels 和 Pixabay API 搜索并下载免费图片/视频素材，支持横屏、竖屏、质量和元数据。 | Searches and downloads free stock photos/videos from Pexels and Pixabay with orientation, quality, and metadata support. |
+| [`metrics-factory`](./metrics-factory) | 面向 AI 智能体的金融产品指标计算技能，封装 MetricsFactory 区间指标、滚动指标、运行时检查、环境安装和批量任务执行。 | Agent-facing financial metric calculation skill for MetricsFactory, with period metrics, rolling metrics, runtime checks, setup, and batch jobs. |
 | [`mine-codex-workflows`](./mine-codex-workflows) | 分析本地 Codex 历史对话，发现重复工作流、常用命令模式和可沉淀为 skill 的候选项。 | Mines local Codex history for repeated workflows, command patterns, and reusable skill candidates. |
 | [`rss-digest-writer`](./rss-digest-writer) | 从 RSS、Reddit、YouTube、公众号 RSS 等来源聚合热点，由 Codex 去重、筛选、摘要和归档。 | Aggregates trends from RSS, Reddit, YouTube, WeChat RSS, and web signals, then deduplicates and summarizes them. |
 | [`tushare-fetcher`](./tushare-fetcher) | 根据 Tushare 积分和接口 JSON 生成限频数据获取脚本，支持 Parquet 输出、冒烟测试和脚本固化。 | Generates rate-limited Tushare Parquet fetch scripts from interface JSON and user points, with smoke tests and solidification. |
@@ -66,6 +67,7 @@ Trigger a skill in Codex by mentioning its name, for example:
 $ai-hermes-routing-init 初始化这个仓库的路由文件
 $ai-hermes-self-evolve 检查这次提交是否需要更新路由记忆
 $ai-hermes-user-project-memory 记住这个项目默认用指定 Python 解释器
+$metrics-factory 计算多个金融产品在多个区间的指标
 ```
 
 具体参数、脚本路径和安全规则以每个 skill 目录中的 `README.md` 和 `SKILL.md` 为准。
@@ -84,6 +86,7 @@ Common dependencies include:
 
 - Python 3
 - Git and GitHub CLI for publishing workflows
+- Python scientific stack for metric calculation skills, such as `numpy`, `pandas`, `scipy`, `numba`, and `pyarrow`
 - Network access for skills that fetch remote content or call APIs
 - Optional command-line tools such as `yt-dlp`, `ffmpeg`, `curl`, `reader`, or `trafilatura`
 - Optional API keys or account settings such as `PEXELS_API_KEY`, `PIXABAY_API_KEY`, Tushare token/points config, or Volcengine podcast TTS credentials
