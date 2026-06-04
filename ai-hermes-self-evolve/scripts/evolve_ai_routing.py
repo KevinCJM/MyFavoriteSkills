@@ -125,6 +125,18 @@ class RoutingOnlyViolation:
     reason: str
 
 
+@dataclass(frozen=True)
+class ChangedEntry:
+    path: str
+    status: str | None = None
+    old_path: str | None = None
+    deleted: bool = False
+
+
+class GitDiffError(RuntimeError):
+    pass
+
+
 def _load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -210,7 +222,60 @@ def _run_git_paths(project_root: Path, args: Sequence[str]) -> list[str]:
     ]
 
 
-def collect_changed_files(project_root: Path, explicit_files: Sequence[str]) -> list[str]:
+def _run_git_changed_entries(project_root: Path, diff_args: Sequence[str]) -> list[ChangedEntry]:
+    completed = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(project_root),
+            "-c",
+            "core.quotePath=false",
+            "diff",
+            "-M",
+            "--name-status",
+            "-z",
+            *diff_args,
+        ],
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if completed.returncode != 0:
+        message = completed.stderr.decode("utf-8", errors="replace").strip()
+        if not message:
+            message = completed.stdout.decode("utf-8", errors="replace").strip()
+        raise GitDiffError(message or "git diff failed")
+
+    fields = [
+        item.decode("utf-8", errors="surrogateescape")
+        for item in completed.stdout.split(b"\0")
+        if item
+    ]
+    entries: list[ChangedEntry] = []
+    index = 0
+    while index < len(fields):
+        status = fields[index]
+        index += 1
+        code = status[:1]
+        if code in {"R", "C"}:
+            if index + 1 >= len(fields):
+                raise GitDiffError(f"malformed git diff --name-status output for {status}")
+            old_path = fields[index]
+            new_path = fields[index + 1]
+            index += 2
+            if code == "R":
+                entries.append(ChangedEntry(path=old_path, status=status, deleted=True))
+            entries.append(ChangedEntry(path=new_path, status=status, old_path=old_path))
+        else:
+            if index >= len(fields):
+                raise GitDiffError(f"malformed git diff --name-status output for {status}")
+            path = fields[index]
+            index += 1
+            entries.append(ChangedEntry(path=path, status=status, deleted=code == "D"))
+    return entries
+
+
+def _collect_changed_file_paths(project_root: Path, explicit_files: Sequence[str]) -> list[str]:
     if explicit_files:
         normalized = [_changed_arg_to_rel(project_root, item) for item in explicit_files]
         return sorted({item for item in normalized if item})
@@ -223,6 +288,25 @@ def collect_changed_files(project_root: Path, explicit_files: Sequence[str]) -> 
     ):
         changed.update(_run_git_paths(project_root, git_args))
     return sorted(changed)
+
+
+def collect_changed_files(project_root: Path, explicit_files: Sequence[str]) -> list[str]:
+    return _collect_changed_file_paths(project_root, explicit_files)
+
+
+def collect_changed_entries(
+    project_root: Path,
+    explicit_files: Sequence[str],
+    *,
+    diff_range: str | None = None,
+    base_ref: str | None = None,
+    head_ref: str = "HEAD",
+) -> list[ChangedEntry]:
+    if diff_range:
+        return _run_git_changed_entries(project_root, [diff_range])
+    if base_ref:
+        return _run_git_changed_entries(project_root, [f"{base_ref}..{head_ref}"])
+    return [ChangedEntry(path=path) for path in _collect_changed_file_paths(project_root, explicit_files)]
 
 
 def _iter_path_values(row: Mapping[str, Any], fields: set[str]) -> Iterable[tuple[str, str]]:
@@ -453,6 +537,20 @@ def filter_ignored_files(
     return kept, ignored
 
 
+def filter_ignored_entries(
+    changed_entries: Sequence[ChangedEntry],
+    ignored_globs: Sequence[str],
+) -> tuple[list[ChangedEntry], list[str]]:
+    kept: list[ChangedEntry] = []
+    ignored: list[str] = []
+    for entry in changed_entries:
+        if _matches_any_glob(entry.path, ignored_globs):
+            ignored.append(entry.path)
+        else:
+            kept.append(entry)
+    return kept, ignored
+
+
 def _is_allowed_routing_path(path: str, allowed_globs: Sequence[str]) -> bool:
     return any(fnmatch.fnmatch(path, pattern) for pattern in allowed_globs)
 
@@ -476,19 +574,25 @@ def _suggest_updates(path: str) -> list[str]:
 
 def build_report(
     project_root: Path,
-    changed_files: Sequence[str],
+    changed_files: Sequence[str] | Sequence[ChangedEntry],
     routing_only: bool,
     ignored_files: Sequence[str] = (),
 ) -> dict[str, Any]:
+    changed_entries = [
+        item if isinstance(item, ChangedEntry) else ChangedEntry(path=str(item))
+        for item in changed_files
+    ]
     coverage_index = build_coverage_index(project_root)
     allowed_globs = _load_allowed_globs(project_root)
     deleted_paths = _load_deleted_paths(project_root)
     resolved_ignored_files = list(ignored_files)
+    ignored_file_reasons: dict[str, str] = {}
     covered_files: list[CoveredFile] = []
     uncovered_files: list[UncoveredFile] = []
     routing_only_violations: list[RoutingOnlyViolation] = []
 
-    for changed_file in changed_files:
+    for entry in changed_entries:
+        changed_file = entry.path
         changed_abs = (project_root / changed_file).resolve()
         matches = find_coverage(project_root, changed_file, coverage_index)
         if matches:
@@ -498,8 +602,17 @@ def build_report(
                     matches=[asdict(match) for match in matches],
                 )
             )
+        elif entry.deleted:
+            resolved_ignored_files.append(changed_file)
+            ignored_file_reasons[changed_file] = (
+                "renamed_from_in_diff_range"
+                if entry.status and entry.status.startswith("R")
+                else "deleted_in_diff_range"
+            )
+            continue
         elif changed_file in deleted_paths and not changed_abs.exists():
             resolved_ignored_files.append(changed_file)
+            ignored_file_reasons[changed_file] = "deleted_in_worktree_or_index"
             continue
         else:
             uncovered_files.append(
@@ -527,8 +640,9 @@ def build_report(
         exit_code_reason = "ok"
 
     return {
-        "changed_files": list(changed_files),
+        "changed_files": [entry.path for entry in changed_entries],
         "ignored_files": resolved_ignored_files,
+        "ignored_file_reasons": ignored_file_reasons,
         "covered_files": [asdict(item) for item in covered_files],
         "uncovered_files": [asdict(item) for item in uncovered_files],
         "routing_only_violations": [asdict(item) for item in routing_only_violations],
@@ -547,6 +661,7 @@ def build_not_initialized_report(
     return {
         "changed_files": list(changed_files),
         "ignored_files": list(ignored_files),
+        "ignored_file_reasons": {},
         "covered_files": [],
         "uncovered_files": [],
         "routing_only_violations": [],
@@ -554,6 +669,28 @@ def build_not_initialized_report(
         "missing_required_files": list(missing_required_files),
         "next_action": ROUTING_INIT_NEXT_ACTION,
         "exit_code_reason": "routing_not_initialized",
+    }
+
+
+def build_error_report(
+    *,
+    reason: str,
+    message: str,
+    changed_files: Sequence[str] = (),
+    ignored_files: Sequence[str] = (),
+) -> dict[str, Any]:
+    return {
+        "changed_files": list(changed_files),
+        "ignored_files": list(ignored_files),
+        "ignored_file_reasons": {},
+        "covered_files": [],
+        "uncovered_files": [],
+        "routing_only_violations": [],
+        "suggested_updates": [],
+        "missing_required_files": [],
+        "next_action": None,
+        "exit_code_reason": reason,
+        "error": message,
     }
 
 
@@ -572,6 +709,10 @@ def _print_text_report(report: Mapping[str, Any]) -> None:
         print("Routing-only violations:")
         for item in report["routing_only_violations"]:
             print(f"- {item['path']}: {item['reason']}")
+    if report.get("ignored_file_reasons"):
+        print("Ignored file reasons:")
+        for path, reason in report["ignored_file_reasons"].items():
+            print(f"- {path}: {reason}")
     for suggestion in report["suggested_updates"]:
         print(f"Suggestion: {suggestion}")
     if report.get("missing_required_files"):
@@ -580,6 +721,8 @@ def _print_text_report(report: Mapping[str, Any]) -> None:
             print(f"- {path}")
     if report.get("next_action"):
         print(f"Next action: {report['next_action']}")
+    if report.get("error"):
+        print(f"Error: {report['error']}")
     print(f"exit_code_reason: {report['exit_code_reason']}")
 
 
@@ -600,6 +743,18 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="Explicit changed file to audit. Repeat to avoid scanning the whole dirty worktree.",
     )
     parser.add_argument(
+        "--diff-range",
+        help="Git diff range to audit with name-status preserved, e.g. origin/main..HEAD or origin/main...HEAD.",
+    )
+    parser.add_argument(
+        "--base-ref",
+        help="Base ref for range-aware audit. Uses <base-ref>..<head-ref>.",
+    )
+    parser.add_argument(
+        "--head-ref",
+        help="Head ref for --base-ref range-aware audit. Defaults to HEAD when --base-ref is set.",
+    )
+    parser.add_argument(
         "--routing-only",
         action="store_true",
         help="Fail if changed files include paths outside routing/tool governance files.",
@@ -613,20 +768,56 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def _validate_arg_combinations(args: argparse.Namespace) -> str | None:
+    range_options = [bool(args.diff_range), bool(args.base_ref)]
+    if sum(range_options) > 1:
+        return "Use only one of --diff-range or --base-ref."
+    if args.changed_file and (args.diff_range or args.base_ref or args.head_ref):
+        return "Do not combine --changed-file with range audit options."
+    if args.head_ref and not args.base_ref:
+        return "Use --head-ref only together with --base-ref."
+    return None
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
     project_root = args.project_root.expanduser().resolve()
-    changed_files = collect_changed_files(project_root, args.changed_file)
+    invalid_args = _validate_arg_combinations(args)
+    if invalid_args:
+        report = build_error_report(reason="invalid_args", message=invalid_args)
+        if args.json:
+            print(json.dumps(report, indent=2, sort_keys=True))
+        else:
+            _print_text_report(report)
+        return 1
+
+    try:
+        changed_entries = collect_changed_entries(
+            project_root,
+            args.changed_file,
+            diff_range=args.diff_range,
+            base_ref=args.base_ref,
+            head_ref=args.head_ref or "HEAD",
+        )
+    except GitDiffError as exc:
+        report = build_error_report(reason="git_diff_failed", message=str(exc))
+        if args.json:
+            print(json.dumps(report, indent=2, sort_keys=True))
+        else:
+            _print_text_report(report)
+        return 1
+
+    changed_files = [entry.path for entry in changed_entries]
     ignored_files: list[str] = []
     missing_required_files = _missing_routing_data_files(project_root)
     if missing_required_files:
         report = build_not_initialized_report(changed_files, ignored_files, missing_required_files)
-    elif not args.changed_file and not args.include_ignored:
+    elif not args.changed_file and not args.diff_range and not args.base_ref and not args.include_ignored:
         ignored_globs = _load_ignored_changed_globs(project_root)
-        changed_files, ignored_files = filter_ignored_files(changed_files, ignored_globs)
-        report = build_report(project_root, changed_files, args.routing_only, ignored_files)
+        changed_entries, ignored_files = filter_ignored_entries(changed_entries, ignored_globs)
+        report = build_report(project_root, changed_entries, args.routing_only, ignored_files)
     else:
-        report = build_report(project_root, changed_files, args.routing_only, ignored_files)
+        report = build_report(project_root, changed_entries, args.routing_only, ignored_files)
 
     if args.json:
         print(json.dumps(report, indent=2, sort_keys=True))

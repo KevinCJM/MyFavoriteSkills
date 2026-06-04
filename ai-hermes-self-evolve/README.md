@@ -37,6 +37,7 @@ Prefer project-local skill scripts when they exist:
 
 ```bash
 python3 skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py --changed-file <path> --json
+python3 skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py --diff-range <base>...HEAD --json
 python3 skills/ai-hermes-self-evolve/scripts/validate_ai_routing.py
 ```
 
@@ -45,9 +46,12 @@ If the target repo does not have those project-local scripts, run the bundled sc
 ```bash
 SKILL_DIR=<directory-containing-this-README>
 python3 "$SKILL_DIR/scripts/evolve_ai_routing.py" --project-root "$PWD" --changed-file <path> --json
+python3 "$SKILL_DIR/scripts/evolve_ai_routing.py" --project-root "$PWD" --diff-range <base>..<head> --json
 python3 "$SKILL_DIR/scripts/validate_ai_routing.py" --project-root "$PWD"
 python3 "$SKILL_DIR/scripts/route_task.py" --project-root "$PWD" --route-id <route-id> --mode context
 ```
+
+Use `--changed-file` for explicit current-tree paths. Use `--diff-range` or `--base-ref/--head-ref` for PR, merge, or release range audits so deleted and renamed paths keep their Git status.
 
 For routing-only checks:
 

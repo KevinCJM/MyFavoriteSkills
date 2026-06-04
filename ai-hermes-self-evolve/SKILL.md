@@ -67,8 +67,8 @@ Do not run the full self-evolution workflow before every ordinary code edit. For
 3. **Select target files**: Prefer user-specified paths or files changed by the current task. Do not default to the whole dirty worktree.
 4. **Resolve submit scope**:
    - Commit: prefer `git diff --cached --name-only`.
-   - PR: prefer `git diff --name-only <base>...HEAD` when the user provides a base.
-   - Merge/release: prefer the user-specified range.
+   - PR: prefer `--diff-range <base>...HEAD` when the user provides a base.
+   - Merge/release: prefer `--diff-range <base>..<head>` for the user-specified range.
    - If scope is unclear, report uncertainty and use current relevant changed files as candidates without editing unrelated pre-existing dirty files.
 5. **Run coverage check**: Use explicit paths:
 
@@ -76,7 +76,14 @@ Do not run the full self-evolution workflow before every ordinary code edit. For
 python3 skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py --changed-file <path> --json
 ```
 
-Repeat `--changed-file` for multiple paths. If project-local skill scripts are absent, run the bundled fallback from Required Tools with the same arguments and `--project-root "$PWD"`. Use `python3 skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py --json` only when the user explicitly requests a whole dirty-worktree audit.
+Repeat `--changed-file` for multiple current-tree paths. For PR, merge, or release range audits, use range-aware mode so deletions and renames retain their Git status:
+
+```bash
+python3 skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py --diff-range <base>...HEAD --json
+python3 skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py --base-ref <base> --head-ref <head> --json
+```
+
+Do not pipe `git diff --name-only` output into repeated `--changed-file` calls for a range audit, because that loses deleted/renamed status and can create false `uncovered_files`. If project-local skill scripts are absent, run the bundled fallback from Required Tools with the same arguments and `--project-root "$PWD"`. Use `python3 skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py --json` only when the user explicitly requests a whole dirty-worktree audit.
 
 6. **Audit semantic drift**: `covered_files` means only that a path is referenced. It does not prove the stored routing facts are still accurate.
 7. **Collect evidence**: Read the relevant code, tests, configs, tools, skill files, and command output before updating routing memory.
@@ -196,6 +203,7 @@ For non-routing project files:
 
 ```bash
 python3 skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py --changed-file <project-file> --json
+python3 skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py --diff-range <base>..<head> --json
 ```
 
 If project-local skill scripts are absent, use the bundled `scripts/evolve_ai_routing.py` with `--project-root "$PWD"`.
