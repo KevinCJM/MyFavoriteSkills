@@ -20,6 +20,7 @@ metrics-factory/
 ├── references/
 │   ├── environment.md
 │   ├── job-schema.md
+│   ├── metric-definitions.md
 │   └── metric-catalog.md
 └── scripts/
     ├── check_runtime.py
@@ -85,6 +86,11 @@ python <skill-dir>/scripts/setup_runtime.py --project-root <project-root>
 
 不会安装到系统 Python 或全局 user site-packages。
 
+## 指标说明
+
+- [references/metric-definitions.md](references/metric-definitions.md) 说明本技能支持的每一个区间指标和滚动指标的含义、计算口径和支持窗口。
+- [references/metric-catalog.md](references/metric-catalog.md) 是从源码导出的指标名和窗口快照，适合快速核对当前支持范围。
+
 ## 导出指标目录
 
 ```bash
@@ -92,7 +98,7 @@ python <skill-dir>/scripts/export_metric_catalog.py --project-root <project-root
 python <skill-dir>/scripts/export_metric_catalog.py --project-root <project-root> --format json
 ```
 
-`references/metric-catalog.md` 是快照。对目标机器或目标仓库做最终判断前，应重新运行导出脚本。
+对目标机器或目标仓库做最终判断前，应重新运行导出脚本；如果源码指标配置变化，也应同步更新 `references/metric-definitions.md`。
 
 ## 运行指标任务
 
