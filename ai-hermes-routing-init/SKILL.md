@@ -13,9 +13,11 @@ This skill creates the initial routing layer; `ai-hermes-self-evolve` maintains 
 
 ## AGENTS Protocol
 
-`AGENTS.md` is part of the routing layer. If it is missing, create it. If it exists but lacks `# AI Routing Self-Evolution`, append the self-evolution protocol before validation.
+`AGENTS.md` is part of the routing layer. If it is missing, create it. If it exists but lacks AI Hermes routing-layer instructions, append the generic routing protocol before validation.
 
-The inserted section must stay generic and protocol-only. It must include the validator-required concepts: `governance only`, `skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py`, `verified hidden contracts`, `Update AGENTS.md only when protocol`, `skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py --routing-only`, and `skills/ai-hermes-self-evolve/scripts/validate_ai_routing.py`.
+The inserted section must stay generic and protocol-only. It must include the route read order, routing ownership rules, validation workflow, and self-evolution workflow. It must include the validator-required concepts: `governance only`, `skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py`, `verified hidden contracts`, ``Update `AGENTS.md` only when protocol``, `skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py --routing-only`, and `skills/ai-hermes-self-evolve/scripts/validate_ai_routing.py`.
+
+Use the idempotent marker block `AI-HERMES-ROUTING-PROTOCOL` when adding the protocol. If a repository already has a complete legacy routing protocol without the marker, do not duplicate it. If a well-formed marker block exists but is missing required routing protocol content, repair that block in place. If marker boundaries are malformed, report the problem for manual repair instead of appending a second protocol block.
 
 ## Workflow
 

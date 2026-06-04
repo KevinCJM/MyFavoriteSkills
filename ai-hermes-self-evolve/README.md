@@ -27,6 +27,8 @@ Use this skill in a repository that follows the AI Hermes routing layout:
 - `docs/pitfalls.json`
 - `docs/ai_routing_evolution_policy.json` for full validation
 
+If these routing data-layer files are missing, run `$ai-hermes-routing-init` first. This skill maintains an initialized routing layer; it does not silently create one.
+
 The bundled scripts use only Python standard library modules. Python 3.10+ is recommended.
 
 ## Usage
@@ -57,5 +59,7 @@ python3 "$SKILL_DIR/scripts/evolve_ai_routing.py" --project-root "$PWD" --routin
 
 - The skill does not require host-specific absolute paths.
 - The bundled scripts do not modify files; they only report coverage or validation results.
+- When the target repository is not initialized, bundled scripts return a clear `routing_not_initialized` diagnostic and a next action instead of a traceback.
+- Validation checks malformed `AI-HERMES-ROUTING-PROTOCOL` marker blocks, including duplicate markers, missing boundaries, reversed order, and missing required snippets inside the block.
 - The skill is portable across repositories that use compatible AI Hermes routing JSON schemas.
 - Repositories with custom docset locations or without `docs/ai_routing_evolution_policy.json` may need local adaptation before full validation passes.

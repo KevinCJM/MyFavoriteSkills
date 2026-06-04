@@ -7,7 +7,7 @@ description: Use when the user explicitly asks to maintain AI Hermes routing mem
 
 ## Scope
 
-Use this project-local skill only inside a repository root that contains:
+Use this skill only after the AI Hermes routing data layer exists in the target repository:
 
 - `AGENTS.md`
 - `docs/repo_map.json`
@@ -15,13 +15,19 @@ Use this project-local skill only inside a repository root that contains:
 - `docs/pitfalls.json`
 - `docs/ai_routing_evolution_policy.json` for full validation
 
+If any routing data-layer file is missing, stop the self-evolution workflow and tell the user to run `$ai-hermes-routing-init` first. Do not silently initialize routing files from this skill.
+
 Keep edits inside the current project subtree. External paths may be read only for comparison or integration analysis. Do not write routing facts outside this project.
 
 ## AGENTS Protocol
 
-Before running validation, check whether `AGENTS.md` contains `# AI Routing Self-Evolution`. If the section is missing, treat that as a protocol gap and update `AGENTS.md` before continuing.
+Before running validation, check whether `AGENTS.md` contains AI Hermes routing-layer instructions. A complete legacy protocol or the `AI-HERMES-ROUTING-PROTOCOL` marker block is acceptable.
 
-The section must stay generic and protocol-only. It must include the validator-required concepts: `governance only`, `skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py`, `verified hidden contracts`, `Update AGENTS.md only when protocol`, `skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py --routing-only`, and `skills/ai-hermes-self-evolve/scripts/validate_ai_routing.py`.
+If `AGENTS.md` is missing or lacks routing-layer instructions, treat that as an initialization gap and tell the user to run `$ai-hermes-routing-init` first. Only update `AGENTS.md` from this skill when the user explicitly asks for protocol maintenance in an already initialized routing layer.
+
+Any routing protocol section must stay generic and protocol-only. It must include the validator-required concepts: `governance only`, `skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py`, `verified hidden contracts`, ``Update `AGENTS.md` only when protocol``, `skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py --routing-only`, and `skills/ai-hermes-self-evolve/scripts/validate_ai_routing.py`.
+
+If a marker block exists, validation must confirm exactly one begin marker, exactly one end marker, begin before end, and required routing protocol snippets inside the marked block.
 
 Do not add ordinary module facts, personal memory, local paths, or implementation claims to `AGENTS.md`; keep those in their JSON owners or private memory files.
 

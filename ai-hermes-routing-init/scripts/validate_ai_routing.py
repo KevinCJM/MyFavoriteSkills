@@ -41,7 +41,28 @@ MODULE_REF_FIELDS = {
 PITFALL_REF_FIELDS = {"pitfall_ids"}
 
 POLICY_PATH = "docs/ai_routing_evolution_policy.json"
+ROUTING_DATA_FILES = [
+    "AGENTS.md",
+    "docs/repo_map.json",
+    "docs/task_routes.json",
+    "docs/pitfalls.json",
+    "docs/ai_routing_evolution_policy.json",
+]
+AGENTS_PROTOCOL_BEGIN = "<!-- AI-HERMES-ROUTING-PROTOCOL:BEGIN -->"
+AGENTS_PROTOCOL_END = "<!-- AI-HERMES-ROUTING-PROTOCOL:END -->"
 AGENTS_SELF_EVOLUTION_HEADER = "# AI Routing Self-Evolution"
+REQUIRED_AGENTS_ROUTING_PROTOCOL_SNIPPETS = {
+    "# AI Hermes Routing Protocol",
+    "## Required Read Order",
+    "## Routing Ownership",
+    "## AI Routing Validation",
+    "# AI Routing Self-Evolution",
+    "Keep routing facts in JSON only",
+    "Keep `AGENTS.md` protocol-only",
+    "docs/task_routes.json",
+    "docs/repo_map.json",
+    "docs/pitfalls.json",
+}
 REQUIRED_AGENTS_SELF_EVOLUTION_SNIPPETS = {
     "governance only",
     "skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py",
@@ -66,6 +87,8 @@ REQUIRED_EVOLVE_JSON_FIELDS = {
     "uncovered_files",
     "routing_only_violations",
     "suggested_updates",
+    "missing_required_files",
+    "next_action",
     "exit_code_reason",
 }
 
@@ -104,6 +127,24 @@ def _load_json(path: Path, docset: str, problems: list[Problem]) -> Any:
     except json.JSONDecodeError as exc:
         problems.append(Problem(docset, str(path), f"invalid JSON: {exc}"))
     return {}
+
+
+def _missing_routing_data_files(project_root: Path) -> list[str]:
+    return [rel for rel in ROUTING_DATA_FILES if not (project_root / rel).exists()]
+
+
+def _marker_block(text: str) -> tuple[str | None, str | None]:
+    begin_count = text.count(AGENTS_PROTOCOL_BEGIN)
+    end_count = text.count(AGENTS_PROTOCOL_END)
+    if begin_count == 0 and end_count == 0:
+        return None, None
+    if begin_count != 1 or end_count != 1:
+        return None, "malformed AI Hermes routing protocol marker block"
+    begin_index = text.find(AGENTS_PROTOCOL_BEGIN)
+    end_index = text.find(AGENTS_PROTOCOL_END)
+    if begin_index < 0 or end_index < begin_index:
+        return None, "malformed AI Hermes routing protocol marker block order"
+    return text[begin_index : end_index + len(AGENTS_PROTOCOL_END)], None
 
 
 def _iter_refs(value: Any) -> Iterable[str]:
@@ -511,6 +552,29 @@ def validate_root_governance(
     except FileNotFoundError:
         problems.append(Problem("root", "AGENTS.md", "missing AGENTS.md"))
         agents_text = ""
+    marker_block, marker_problem = _marker_block(agents_text)
+    if marker_problem:
+        problems.append(
+            Problem(
+                "root",
+                "AGENTS.md",
+                marker_problem,
+            )
+        )
+    if marker_block:
+        missing_protocol_snippets = sorted(
+            snippet
+            for snippet in REQUIRED_AGENTS_ROUTING_PROTOCOL_SNIPPETS
+            if snippet not in marker_block
+        )
+        for snippet in missing_protocol_snippets:
+            problems.append(
+                Problem(
+                    "root",
+                    "AGENTS.md",
+                    f"AI Hermes routing protocol marker block missing snippet: {snippet}",
+                )
+            )
     if AGENTS_SELF_EVOLUTION_HEADER not in agents_text:
         problems.append(
             Problem(
@@ -826,6 +890,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 def main(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
     project_root = args.project_root.expanduser().resolve()
+    missing_routing_data_files = _missing_routing_data_files(project_root)
     docsets = default_docsets(project_root)
     if args.docset != "all":
         docsets = [docset for docset in docsets if docset.name == args.docset]
@@ -845,6 +910,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         print("AI routing validation failed:", file=sys.stderr)
         for problem in problems:
             print(f"- {problem.format()}", file=sys.stderr)
+        if missing_routing_data_files:
+            print(
+                "Next action: run $ai-hermes-routing-init before AI Hermes self-evolution.",
+                file=sys.stderr,
+            )
         return 1
 
     names = ", ".join(docset.name for docset in docsets)

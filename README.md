@@ -36,12 +36,16 @@ cp -R ai-hermes-routing-init ai-hermes-self-evolve ai-hermes-user-project-memory
 - `ai-hermes-self-evolve`: maintains routing memory after code, tests, configs, tools, or routing facts change.
 - `ai-hermes-user-project-memory`: stores project-scoped personal preferences and private local config with safe recall, learning, and auditing.
 
+`ai-hermes-routing-init` 会在缺少 `AGENTS.md` 时创建路由协议，或在普通 `AGENTS.md` 缺少路由层说明时追加带 `AI-HERMES-ROUTING-PROTOCOL` 标记的协议块；`ai-hermes-self-evolve` 在路由层未初始化时会返回 `routing_not_initialized` 并提示先初始化。
+
+`ai-hermes-routing-init` creates routing guidance when `AGENTS.md` is missing, or appends an `AI-HERMES-ROUTING-PROTOCOL` marker block when a plain `AGENTS.md` lacks routing-layer instructions; `ai-hermes-self-evolve` returns `routing_not_initialized` and points users to initialization when the routing layer is absent.
+
 ## Skills / 技能列表
 
 | Skill | 中文简介 | English summary |
 | --- | --- | --- |
-| [`ai-hermes-routing-init`](./ai-hermes-routing-init) | 创建初始 AI Hermes 路由文件、项目内置脚本和自审核流程，用于新仓库补齐路由层闭环。 | Creates initial AI Hermes routing files, project-local scripts, and self-audit checks for a new repository. |
-| [`ai-hermes-self-evolve`](./ai-hermes-self-evolve) | 维护 AI Hermes 路由记忆，检查覆盖、验证路由文件，并在提交、PR、合并或发布前执行路由自演化校验。 | Maintains AI Hermes routing memory, checks coverage, validates routing files, and runs self-evolution checks before commits, PRs, merges, or releases. |
+| [`ai-hermes-routing-init`](./ai-hermes-routing-init) | 创建初始 AI Hermes 路由文件、项目内置脚本和 AGENTS 路由协议，支持幂等追加和修复 marker 协议块。 | Creates initial AI Hermes routing files, project-local scripts, and AGENTS routing guidance, with idempotent marker insertion and repair. |
+| [`ai-hermes-self-evolve`](./ai-hermes-self-evolve) | 维护 AI Hermes 路由记忆，检查覆盖、验证路由文件；未初始化时提示先运行 routing-init。 | Maintains AI Hermes routing memory, checks coverage, validates routing files, and points uninitialized repos to routing-init first. |
 | [`ai-hermes-user-project-memory`](./ai-hermes-user-project-memory) | 为当前项目保存用户个人偏好和本机私有配置，支持记忆召回、学习、审计和安全边界控制。 | Stores project-local personal preferences and private runtime config, with recall, learning, auditing, and safety limits. |
 | [`article-extractor`](./article-extractor) | 从文章、博客、教程 URL 中抽取干净正文，去掉导航、广告和页面噪音，并保存为本地文本。 | Extracts clean main text from article, blog, or tutorial URLs and saves readable local text. |
 | [`content-research-writer`](./content-research-writer) | 辅助资料调研、提纲设计、引用整理、正文写作和逐段反馈，适合文章和长文写作。 | Helps research topics, build outlines, manage citations, draft content, and review sections iteratively. |

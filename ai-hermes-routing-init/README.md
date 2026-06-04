@@ -6,7 +6,8 @@ Portable Codex skill for bootstrapping an AI Hermes routing layer in a target re
 
 - Creates missing root routing files: `AGENTS.md`, `docs/repo_map.json`, `docs/task_routes.json`, `docs/pitfalls.json`, and `docs/ai_routing_evolution_policy.json`.
 - Installs project-local AI Hermes routing skill scripts under `skills/ai-hermes-self-evolve/` and `skills/ai-hermes-routing-init/`.
-- Appends the required `# AI Routing Self-Evolution` protocol to `AGENTS.md` when it is missing.
+- Creates `AGENTS.md` when it is missing, or appends a generic AI Hermes routing protocol when the existing file lacks routing-layer instructions.
+- Uses an idempotent `AI-HERMES-ROUTING-PROTOCOL` marker block, avoids duplicating a complete legacy routing protocol, and repairs a well-formed but incomplete marker block.
 - Runs self-audit checks so the generated routing layer is immediately validated.
 
 ## Contents
@@ -52,6 +53,8 @@ python3 "$SKILL_DIR/scripts/init_ai_routing.py" --project-root <target-repo> --d
 - Generate only conservative seed facts.
 - Mark implementation modules as `needs_code_confirmation` unless code was read and verified.
 - Keep routing facts in JSON owners, not in `AGENTS.md` or this README.
+- Keep the inserted `AGENTS.md` protocol generic: read order, routing ownership, validation, self-evolution, and output discipline only.
+- Do not append a second protocol block when marker boundaries are malformed; report the marker issue for manual repair.
 - Do not create AI Hermes tests under `tests/`; use `py_compile`, smoke checks, and routing validation.
 
 ## Portability Notes

@@ -6,9 +6,22 @@ import json
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
+ROUTING_DATA_FILES = [
+    "AGENTS.md",
+    "docs/repo_map.json",
+    "docs/task_routes.json",
+    "docs/pitfalls.json",
+    "docs/ai_routing_evolution_policy.json",
+]
+ROUTING_INIT_NEXT_ACTION = "Run $ai-hermes-routing-init before resolving AI Hermes routes."
+
 
 def _load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _missing_routing_data_files(project_root: Path) -> list[str]:
+    return [rel for rel in ROUTING_DATA_FILES if not (project_root / rel).exists()]
 
 
 def _stable_union(*lists: Sequence[str]) -> list[str]:
@@ -150,6 +163,14 @@ def resolve_route(
     expand: str = "conditional",
 ) -> dict[str, Any]:
     project_root = project_root.resolve()
+    missing_required_files = _missing_routing_data_files(project_root)
+    if missing_required_files:
+        return {
+            "status": "routing_not_initialized",
+            "route_id": route_id,
+            "missing_required_files": missing_required_files,
+            "next_action": ROUTING_INIT_NEXT_ACTION,
+        }
     agents_text = (project_root / "AGENTS.md").read_text(encoding="utf-8")
     repo_map = _load_json(project_root / "docs" / "repo_map.json")
     task_routes = _load_json(project_root / "docs" / "task_routes.json")
@@ -401,6 +422,12 @@ def _render_non_ok_markdown(resolved: Mapping[str, Any]) -> str:
         "Routing status",
         str(status),
     ]
+    missing = resolved.get("missing_required_files")
+    if isinstance(missing, Sequence) and not isinstance(missing, (str, bytes, bytearray)):
+        lines.extend(["", "Missing required routing files"])
+        lines.extend(f"- {item}" for item in missing)
+    if resolved.get("next_action"):
+        lines.extend(["", "Next action", str(resolved.get("next_action"))])
     return "\n".join(lines)
 
 
@@ -434,7 +461,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(render_brief_markdown(resolved))
     else:
         print(render_context_markdown(resolved))
-    return 0
+    return 0 if resolved.get("status") in {"ok", "no_match"} else 1
 
 
 if __name__ == "__main__":

@@ -51,30 +51,40 @@ EVOLVE_JSON_FIELDS = [
     "uncovered_files",
     "routing_only_violations",
     "suggested_updates",
+    "missing_required_files",
+    "next_action",
     "exit_code_reason",
 ]
 
-AGENTS_SECTION = """# AI Routing Self-Evolution
+AGENTS_PROTOCOL_BEGIN = "<!-- AI-HERMES-ROUTING-PROTOCOL:BEGIN -->"
+AGENTS_PROTOCOL_END = "<!-- AI-HERMES-ROUTING-PROTOCOL:END -->"
+AGENTS_ROUTING_CONCEPTS = {
+    "# Required Read Order",
+    "# AI Routing Validation",
+    "# AI Routing Self-Evolution",
+    "docs/task_routes.json",
+    "docs/repo_map.json",
+    "docs/pitfalls.json",
+    "Keep routing facts in JSON only",
+    "skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py",
+    "skills/ai-hermes-self-evolve/scripts/validate_ai_routing.py",
+}
 
-- Treat `docs/ai_routing_evolution_policy.json` as governance only; routing facts belong in `docs/task_routes.json`, `docs/repo_map.json`, and `docs/pitfalls.json`.
-- Update `AGENTS.md` only when protocol, required read order, scope rules, or tool workflow changes.
-- Promote verified hidden contracts and recurring pitfalls to the correct JSON owner.
-- Use `skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py` after code, test, config, tool, or routing changes to check coverage.
-- For routing-only work, run `skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py --routing-only` with explicit changed paths.
-- Re-run `skills/ai-hermes-self-evolve/scripts/validate_ai_routing.py` after routing file changes.
-"""
+AGENTS_PROTOCOL_SECTION = f"""{AGENTS_PROTOCOL_BEGIN}
+# AI Hermes Routing Protocol
 
-AGENTS_TEMPLATE = """# Purpose
+## Purpose
 
 Machine-first routing protocol for downstream agents operating from the current working directory.
 
-# Scope Boundary
+## Scope Boundary
 
 - Treat `.` as the writable project boundary unless higher-priority instructions say otherwise.
-- Keep routing facts in JSON files under `docs/`.
-- Record uncertain external behavior as `unknown` or `out_of_scope` instead of implementation truth.
+- External folders may be read for task understanding, comparison, or integration analysis; do not route edits outside the target project.
+- Treat external services, DB schema, and invisible callers/callees as `out_of_scope` unless directly observed from readable files.
+- Keep routing facts in JSON files under `docs/`; keep `AGENTS.md` protocol-only.
 
-# Required Read Order
+## Required Read Order
 
 1. `AGENTS.md`
 2. `docs/repo_map.json`
@@ -82,15 +92,46 @@ Machine-first routing protocol for downstream agents operating from the current 
 4. `docs/pitfalls.json`
 5. Routed code, tests, and configs
 
-# Hard Rules
+## Routing Ownership
 
 - `docs/task_routes.json` owns task matching, module expansion, and operational-list merge policy.
-- `docs/repo_map.json` owns module facts and operational lists.
-- `docs/pitfalls.json` owns hidden contracts, recurring pitfalls, and safe checks.
+- `docs/repo_map.json` owns module facts, operational file lists, tests, configs, and regression commands.
+- `docs/pitfalls.json` owns hidden contracts, recurring pitfalls, affected modules, and safe checks.
+- `AGENTS.md` owns protocol, required read order, scope rules, and tool workflow only.
 - Do not duplicate module-level file, test, config, or regression lists in `docs/task_routes.json`.
-- Verify claims from code, tests, configs, or command output before promoting them to routing memory.
 
-""" + AGENTS_SECTION
+## Default Operating Sequence
+
+1. Match the task in `docs/task_routes.json`.
+2. Load `first_read_modules` from the selected route.
+3. Expand into `expand_to_modules` only when route rule codes trigger.
+4. Resolve `first_read_files`, `then_check_files`, `related_tests`, `related_configs`, and `minimum_regression` from `docs/repo_map.json` using `docs/task_routes.json` merge policy.
+5. Load linked pitfalls from `docs/pitfalls.json`.
+6. Verify claims from code, tests, configs, or command output before promoting them to routing memory.
+
+## AI Routing Validation
+
+- Use `skills/ai-hermes-self-evolve/scripts/validate_ai_routing.py` after editing `AGENTS.md`, `docs/repo_map.json`, `docs/task_routes.json`, `docs/pitfalls.json`, or matching service routing files.
+- The validator checks route/module/pitfall references, routed path existence, git-tracked reproducibility for stable references, minimum regression command targets, and `grounding.fact_status` values.
+
+# AI Routing Self-Evolution
+
+- Treat `docs/ai_routing_evolution_policy.json` as governance only; routing facts belong in `docs/task_routes.json`, `docs/repo_map.json`, and `docs/pitfalls.json`.
+- Update `AGENTS.md` only when protocol, required read order, scope rules, or tool workflow changes.
+- Promote verified hidden contracts and recurring pitfalls to the correct JSON owner.
+- Use `skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py` after code, test, config, tool, or routing changes to check coverage.
+- For routing-only work, run `skills/ai-hermes-self-evolve/scripts/evolve_ai_routing.py --routing-only` with explicit changed paths.
+- Re-run `skills/ai-hermes-self-evolve/scripts/validate_ai_routing.py` after routing file changes.
+
+## Output Discipline
+
+- Keep routing facts in JSON only.
+- Keep `AGENTS.md` protocol-only.
+- Stop exploration once routing is sufficient for first-pass narrowing.
+{AGENTS_PROTOCOL_END}
+"""
+
+AGENTS_TEMPLATE = AGENTS_PROTOCOL_SECTION
 
 
 @dataclass
@@ -158,19 +199,49 @@ def _write_json(path: Path, data: Any, *, overwrite: bool, dry_run: bool) -> Wri
     return _write_text(path, _json_dump(data), overwrite=overwrite, dry_run=dry_run)
 
 
+def _is_complete_routing_protocol(text: str) -> bool:
+    return all(concept in text for concept in AGENTS_ROUTING_CONCEPTS)
+
+
+def _marker_bounds(text: str) -> tuple[int, int] | None:
+    begin_count = text.count(AGENTS_PROTOCOL_BEGIN)
+    end_count = text.count(AGENTS_PROTOCOL_END)
+    if begin_count != 1 or end_count != 1:
+        return None
+    begin_index = text.find(AGENTS_PROTOCOL_BEGIN)
+    end_index = text.find(AGENTS_PROTOCOL_END)
+    if begin_index < 0 or end_index < begin_index:
+        return None
+    return begin_index, end_index + len(AGENTS_PROTOCOL_END)
+
+
 def _ensure_agents(root: Path, *, overwrite: bool, dry_run: bool) -> WriteResult:
     path = root / "AGENTS.md"
     if overwrite or not path.exists():
         return _write_text(path, AGENTS_TEMPLATE, overwrite=overwrite, dry_run=dry_run)
     text = path.read_text(encoding="utf-8")
-    if "# AI Routing Self-Evolution" in text:
+    marker_bounds = _marker_bounds(text)
+    if marker_bounds:
+        start, end = marker_bounds
+        marker_block = text[start:end]
+        if _is_complete_routing_protocol(marker_block):
+            return WriteResult(str(path), "kept_existing")
+        if dry_run:
+            return WriteResult(str(path), "would_repair_protocol")
+        repaired = text[:start].rstrip() + "\n\n" + AGENTS_PROTOCOL_SECTION + "\n" + text[end:].lstrip()
+        path.write_text(repaired, encoding="utf-8")
+        return WriteResult(str(path), "repaired_protocol")
+    has_any_marker = AGENTS_PROTOCOL_BEGIN in text or AGENTS_PROTOCOL_END in text
+    if has_any_marker:
+        return WriteResult(str(path), "needs_manual_marker_repair")
+    if _is_complete_routing_protocol(text):
         return WriteResult(str(path), "kept_existing")
     if dry_run:
         return WriteResult(str(path), "would_append")
     with path.open("a", encoding="utf-8") as handle:
         if not text.endswith("\n"):
             handle.write("\n")
-        handle.write("\n" + AGENTS_SECTION)
+        handle.write("\n" + AGENTS_PROTOCOL_SECTION)
     return WriteResult(str(path), "appended_protocol")
 
 

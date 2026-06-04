@@ -12,6 +12,14 @@ from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
 POLICY_PATH = "docs/ai_routing_evolution_policy.json"
+ROUTING_DATA_FILES = [
+    "AGENTS.md",
+    "docs/repo_map.json",
+    "docs/task_routes.json",
+    "docs/pitfalls.json",
+    "docs/ai_routing_evolution_policy.json",
+]
+ROUTING_INIT_NEXT_ACTION = "Run $ai-hermes-routing-init before AI Hermes self-evolution."
 DEFAULT_ROUTING_ONLY_ALLOWED_GLOBS = [
     "AGENTS.md",
     "docs/ai_routing_evolution_policy.json",
@@ -119,6 +127,10 @@ class RoutingOnlyViolation:
 
 def _load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _missing_routing_data_files(project_root: Path) -> list[str]:
+    return [rel for rel in ROUTING_DATA_FILES if not (project_root / rel).exists()]
 
 
 def _path_tokens(value: str) -> list[str]:
@@ -521,7 +533,27 @@ def build_report(
         "uncovered_files": [asdict(item) for item in uncovered_files],
         "routing_only_violations": [asdict(item) for item in routing_only_violations],
         "suggested_updates": suggested_updates,
+        "missing_required_files": [],
+        "next_action": None,
         "exit_code_reason": exit_code_reason,
+    }
+
+
+def build_not_initialized_report(
+    changed_files: Sequence[str],
+    ignored_files: Sequence[str],
+    missing_required_files: Sequence[str],
+) -> dict[str, Any]:
+    return {
+        "changed_files": list(changed_files),
+        "ignored_files": list(ignored_files),
+        "covered_files": [],
+        "uncovered_files": [],
+        "routing_only_violations": [],
+        "suggested_updates": [ROUTING_INIT_NEXT_ACTION],
+        "missing_required_files": list(missing_required_files),
+        "next_action": ROUTING_INIT_NEXT_ACTION,
+        "exit_code_reason": "routing_not_initialized",
     }
 
 
@@ -542,6 +574,12 @@ def _print_text_report(report: Mapping[str, Any]) -> None:
             print(f"- {item['path']}: {item['reason']}")
     for suggestion in report["suggested_updates"]:
         print(f"Suggestion: {suggestion}")
+    if report.get("missing_required_files"):
+        print("Missing required routing files:")
+        for path in report["missing_required_files"]:
+            print(f"- {path}")
+    if report.get("next_action"):
+        print(f"Next action: {report['next_action']}")
     print(f"exit_code_reason: {report['exit_code_reason']}")
 
 
@@ -580,10 +618,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     project_root = args.project_root.expanduser().resolve()
     changed_files = collect_changed_files(project_root, args.changed_file)
     ignored_files: list[str] = []
-    if not args.changed_file and not args.include_ignored:
+    missing_required_files = _missing_routing_data_files(project_root)
+    if missing_required_files:
+        report = build_not_initialized_report(changed_files, ignored_files, missing_required_files)
+    elif not args.changed_file and not args.include_ignored:
         ignored_globs = _load_ignored_changed_globs(project_root)
         changed_files, ignored_files = filter_ignored_files(changed_files, ignored_globs)
-    report = build_report(project_root, changed_files, args.routing_only, ignored_files)
+        report = build_report(project_root, changed_files, args.routing_only, ignored_files)
+    else:
+        report = build_report(project_root, changed_files, args.routing_only, ignored_files)
 
     if args.json:
         print(json.dumps(report, indent=2, sort_keys=True))
