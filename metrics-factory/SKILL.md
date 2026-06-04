@@ -9,7 +9,8 @@ description: "Use when working with MetricsFactory financial metric calculators 
 
 - Runtime or portability question: run `python <skill-dir>/scripts/check_runtime.py --project-root <project-root>`.
 - Missing dependencies or native wheel mismatch: run `python <skill-dir>/scripts/setup_runtime.py --project-root <project-root>` after user accepts creating a project-local venv.
-- Metric support question: run `python <skill-dir>/scripts/export_metric_catalog.py --project-root <project-root> --format markdown`, then read `references/metric-catalog.md` only if more detail is needed.
+- Metric support question: read `references/metric-index.json` first. It is the machine-readable index of executable metrics, windows, dependencies, and risk tags. Regenerate it with `python <skill-dir>/scripts/export_metric_catalog.py --project-root <project-root> --format index --output <skill-dir>/references/metric-index.json` when checking a different MetricsFactory source tree.
+- Human metric explanation: read `references/metric-definitions.md` after `metric-index.json`.
 - AI-run calculation job: run `--dry-run` before `--execute` with `scripts/run_metrics_job.py`.
 - Metric explanation or metric changes: verify the actual `cal_*` implementation and dispatch in `period_metrics_cal.py` or `rolling_metrics_cal.py`; do not rely only on config prose.
 
@@ -129,6 +130,7 @@ python ${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-creator/scripts/quick_va
 python -m py_compile <skill-dir>/scripts/*.py
 python <skill-dir>/scripts/check_runtime.py --project-root <project-root>
 python <skill-dir>/scripts/export_metric_catalog.py --project-root <project-root> --format json
+python <skill-dir>/scripts/export_metric_catalog.py --project-root <project-root> --format index
 ```
 
 Before runtime calculation, also run a dry-run request with a Python that passed `check_runtime.py`.
@@ -137,6 +139,8 @@ Before runtime calculation, also run a dry-run request with a Python that passed
 
 - `references/environment.md`: portable Python, dependency, and auto-install rules.
 - `references/job-schema.md`: V1 JSON request schema, risk levels, output and manifest rules.
+- `references/metric-index.json`: AI-first machine-readable metric index; use this to choose executable metrics and windows.
+- `references/metric-definitions.md`: human-readable metric meaning and calculation notes.
 - `references/metric-catalog.md`: current metric catalog snapshot; regenerate for the target repository before final claims.
 - `scripts/check_runtime.py`: runtime compatibility check.
 - `scripts/setup_runtime.py`: project-local venv creation and dependency installation.

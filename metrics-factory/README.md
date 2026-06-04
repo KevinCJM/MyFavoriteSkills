@@ -21,6 +21,7 @@ metrics-factory/
 │   ├── environment.md
 │   ├── job-schema.md
 │   ├── metric-definitions.md
+│   ├── metric-index.json
 │   └── metric-catalog.md
 └── scripts/
     ├── check_runtime.py
@@ -88,17 +89,19 @@ python <skill-dir>/scripts/setup_runtime.py --project-root <project-root>
 
 ## 指标说明
 
+- [references/metric-index.json](references/metric-index.json) 是 AI 优先读取的机器索引，列出每个可执行指标的类型、支持区间/窗口、输入依赖、风险标签和输出列名模式。
 - [references/metric-definitions.md](references/metric-definitions.md) 说明本技能支持的每一个区间指标和滚动指标的含义、计算口径和支持窗口。
 - [references/metric-catalog.md](references/metric-catalog.md) 是从源码导出的指标名和窗口快照，适合快速核对当前支持范围。
 
 ## 导出指标目录
 
 ```bash
+python <skill-dir>/scripts/export_metric_catalog.py --project-root <project-root> --format index --output <skill-dir>/references/metric-index.json
 python <skill-dir>/scripts/export_metric_catalog.py --project-root <project-root> --format markdown
 python <skill-dir>/scripts/export_metric_catalog.py --project-root <project-root> --format json
 ```
 
-对目标机器或目标仓库做最终判断前，应重新运行导出脚本；如果源码指标配置变化，也应同步更新 `references/metric-definitions.md`。
+对目标机器或目标仓库做最终判断前，应重新运行导出脚本；如果源码指标配置变化，也应同步更新 `references/metric-index.json` 和 `references/metric-definitions.md`。
 
 ## 运行指标任务
 
@@ -202,6 +205,7 @@ python ${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-creator/scripts/quick_va
 python -m py_compile <skill-dir>/scripts/*.py
 python <skill-dir>/scripts/check_runtime.py --project-root <project-root>
 python <skill-dir>/scripts/export_metric_catalog.py --project-root <project-root> --format json
+python <skill-dir>/scripts/export_metric_catalog.py --project-root <project-root> --format index
 ```
 
 ## 不要打包
