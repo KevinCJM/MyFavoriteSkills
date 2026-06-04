@@ -38,6 +38,8 @@ PERIOD_KEYS = ["log_return", "close_price", "high_price", "low_price", "volume"]
 ROLLING_KEYS = ["open_price", "close_price", "high_price", "low_price", "volume"]
 VALID_MODES = {"period", "rolling", "both"}
 VALID_PARALLEL_MODES = {"auto", "on", "off"}
+VALID_SIGNAL_TIMINGS = {"eod_next_period", "research_eod", "same_day_before_close", "unknown"}
+VALID_ADJUSTMENT_ASOF = {"point_in_time", "full_sample", "not_applicable", "unknown"}
 VOLUME_METRIC_NAMES = {
     "VolAvg",
     "VolSlope",
@@ -151,6 +153,7 @@ def load_runtime(project_root: Path) -> dict[str, Any]:
         compute_metrics_for_period_initialize,
         get_start_date,
     )
+    from MetricsFactory.rolling_metrics_cal import CalRollingMetrics
 
     return {
         "np": np,
@@ -160,6 +163,7 @@ def load_runtime(project_root: Path) -> dict[str, Any]:
         "create_rolling_metrics_map": create_rolling_metrics_map,
         "compute_metrics_for_period_initialize": compute_metrics_for_period_initialize,
         "compute_all_rolling_metrics": compute_all_rolling_metrics,
+        "CalRollingMetrics": CalRollingMetrics,
         "get_start_date": get_start_date,
     }
 
@@ -222,6 +226,8 @@ def normalize_request(request: dict[str, Any], args: argparse.Namespace) -> dict
     contract.setdefault("price_basis", "unknown")
     contract.setdefault("ohlc_basis", "unknown")
     contract.setdefault("volume_basis", "unknown")
+    contract.setdefault("adjustment_asof", "unknown")
+    contract.setdefault("signal_timing", "unknown")
 
     selection = normalized["selection"]
     selection.setdefault("fund_list", None)
@@ -248,10 +254,16 @@ def normalize_request(request: dict[str, Any], args: argparse.Namespace) -> dict
     risk = normalized["risk_acceptance"]
     risk.setdefault("allow_unknown_basis", False)
     risk.setdefault("allow_rolling_open_close_risk", False)
+    risk.setdefault("allow_unknown_adjustment_asof", False)
+    risk.setdefault("allow_unknown_signal_timing", False)
     if args.allow_unknown_basis:
         risk["allow_unknown_basis"] = True
     if args.allow_rolling_open_close_risk:
         risk["allow_rolling_open_close_risk"] = True
+    if args.allow_unknown_adjustment_asof:
+        risk["allow_unknown_adjustment_asof"] = True
+    if args.allow_unknown_signal_timing:
+        risk["allow_unknown_signal_timing"] = True
     return normalized
 
 
@@ -356,6 +368,11 @@ def select_metrics(
 
 def has_volume_metric(metrics: list[str]) -> bool:
     return any(metric in VOLUME_METRIC_NAMES or metric.startswith(VOLUME_METRIC_PREFIXES) for metric in metrics)
+
+
+def is_adjusted_price_basis(price_basis: str) -> bool:
+    basis = price_basis.lower()
+    return basis in {"adjusted_nav", "adjusted_close", "adjusted_price", "qfq", "hfq"} or "adjusted" in basis
 
 
 def valid_end_dates_count(pd: Any, index: Any, period: str, spec_end_date: str | None, get_start_date: Any) -> int:
@@ -637,6 +654,68 @@ def build_plan(request_path: Path, args: argparse.Namespace) -> tuple[dict[str, 
         else:
             add_issue(plan, "blocker", "unknown_price_basis", "price_basis=unknown requires explicit risk acceptance")
 
+    adjustment_asof = str(request["data_contract"].get("adjustment_asof", "unknown")).lower()
+    if adjustment_asof not in VALID_ADJUSTMENT_ASOF:
+        add_issue(
+            plan,
+            "blocker",
+            "adjustment_asof_invalid",
+            f"data_contract.adjustment_asof must be one of {sorted(VALID_ADJUSTMENT_ASOF)}",
+        )
+    elif is_adjusted_price_basis(price_basis):
+        if adjustment_asof == "point_in_time":
+            add_issue(plan, "info", "pit_adjustment_asof_declared", "adjusted price/NAV is declared point-in-time")
+        elif adjustment_asof == "full_sample":
+            add_issue(
+                plan,
+                "blocker",
+                "full_sample_adjustment_asof",
+                "full-sample adjusted prices can leak future split/dividend/distribution information into historical signals",
+            )
+        elif adjustment_asof == "unknown":
+            if request["risk_acceptance"].get("allow_unknown_adjustment_asof"):
+                add_issue(
+                    plan,
+                    "warning",
+                    "unknown_adjustment_asof_accepted",
+                    "adjusted price/NAV as-of timing is unknown and was accepted by risk override",
+                )
+            else:
+                add_issue(
+                    plan,
+                    "blocker",
+                    "unknown_adjustment_asof",
+                    "adjusted price/NAV requires data_contract.adjustment_asof=point_in_time or explicit risk acceptance",
+                )
+
+    signal_timing = str(request["data_contract"].get("signal_timing", "unknown")).lower()
+    if signal_timing not in VALID_SIGNAL_TIMINGS:
+        add_issue(
+            plan,
+            "blocker",
+            "signal_timing_invalid",
+            f"data_contract.signal_timing must be one of {sorted(VALID_SIGNAL_TIMINGS)}",
+        )
+    elif signal_timing == "same_day_before_close":
+        add_issue(
+            plan,
+            "blocker",
+            "same_day_signal_timing_lookahead",
+            "outputs dated t include t close/high/low/volume/log_return; same-day pre-close use requires shifting features before modeling/trading",
+        )
+    elif signal_timing == "unknown":
+        if request["risk_acceptance"].get("allow_unknown_signal_timing"):
+            add_issue(plan, "warning", "unknown_signal_timing_accepted", "signal_timing=unknown was accepted by risk override")
+        else:
+            add_issue(
+                plan,
+                "blocker",
+                "unknown_signal_timing",
+                "outputs dated t include t end-of-day data; declare signal_timing=eod_next_period or research_eod, or explicitly accept unknown timing",
+            )
+    else:
+        add_issue(plan, "info", "eod_feature_timing_declared", f"signal_timing={signal_timing}")
+
     available_memory, mem_error = get_available_memory()
     if mem_error:
         add_issue(plan, "warning", "available_memory_unknown", "could not read available memory", error=mem_error)
@@ -730,15 +809,14 @@ def build_plan(request_path: Path, args: argparse.Namespace) -> tuple[dict[str, 
                     "current compute_all_rolling_metrics entrypoint does not accept a rolling metrics list; leave rolling_metrics null in V1",
                 )
             if rolling_windows_executed:
-                if not request["risk_acceptance"].get("allow_rolling_open_close_risk"):
-                    add_issue(
-                        plan,
-                        "blocker",
-                        "rolling_open_close_risk_not_accepted",
-                        "rolling execution is blocked until open/close risk is fixed or explicitly accepted",
-                    )
-                else:
-                    add_issue(plan, "warning", "rolling_open_close_risk_accepted", "rolling open/close risk was explicitly accepted")
+                add_issue(
+                    plan,
+                    "info",
+                    "rolling_open_close_mismatch_bypassed",
+                    "run_metrics_job uses CalRollingMetrics keyword arguments directly, avoiding the public rolling entrypoint open/close order mismatch",
+                )
+                if request["risk_acceptance"].get("allow_rolling_open_close_risk"):
+                    add_issue(plan, "warning", "rolling_open_close_risk_override_unneeded", "rolling risk override was provided but is not needed by this job runner")
             for window in rolling_windows_executed:
                 default_metrics = list(rolling_map[window])
                 rolling_metrics_by_window[str(window)] = default_metrics
@@ -880,6 +958,63 @@ def commit_execution_dir(temp_dir: Path, final_dir: Path | None, plan: dict[str,
         shutil.move(str(temp_dir), str(final_dir))
 
 
+def compute_rolling_metrics_keyword_safe(
+    runtime: dict[str, Any],
+    frames: dict[str, Any],
+    save_path: Path,
+    fund_list: list[str] | None,
+    roll_windows: list[int],
+    rolling_map: dict[int, list[str]],
+) -> None:
+    """Compute rolling metrics while avoiding the public entrypoint open/close argument swap."""
+    pd = runtime["pd"]
+    np = runtime["np"]
+    cal_cls = runtime["CalRollingMetrics"]
+
+    open_df = frames["open_price"]
+    close_df = frames["close_price"]
+    high_df = frames["high_price"]
+    low_df = frames["low_price"]
+    volume_df = frames["volume"]
+    if fund_list is not None:
+        open_df = open_df[fund_list]
+        close_df = close_df[fund_list]
+        high_df = high_df[fund_list]
+        low_df = low_df[fund_list]
+        volume_df = volume_df[fund_list]
+
+    funds_codes = open_df.columns.values
+    trading_days_array = pd.to_datetime(np.array(open_df.index))
+    open_price_array = open_df.values
+    close_price_array = close_df.values
+    high_price_array = high_df.values
+    low_price_array = low_df.values
+    volume_array = volume_df.values
+
+    final_df = None
+    for roll_d in roll_windows:
+        metrics = list(rolling_map[roll_d])
+        calculator = cal_cls(
+            fund_codes=funds_codes,
+            close_price_array=close_price_array,
+            open_price_array=open_price_array,
+            high_price_array=high_price_array,
+            low_price_array=low_price_array,
+            volume_array=volume_array,
+            rolling_days=roll_d,
+            days_array=trading_days_array,
+        )
+        sub_df = calculator.cal_all_metrics(metrics)
+        if sub_df is not None and not sub_df.empty:
+            if final_df is None:
+                final_df = sub_df
+            else:
+                final_df = pd.merge(final_df, sub_df, on=["date", "ts_code"], how="inner")
+    if final_df is None or final_df.empty:
+        raise RuntimeError("rolling calculation produced no rows")
+    final_df.to_parquet(save_path / "rolling_metrics.parquet")
+
+
 def execute_plan(plan: dict[str, Any], context: dict[str, Any]) -> int:
     if plan["issues"]["blockers"]:
         print(json.dumps(plan, ensure_ascii=False, indent=2, default=str))
@@ -923,15 +1058,13 @@ def execute_plan(plan: dict[str, Any], context: dict[str, Any]) -> int:
                 )
 
             if plan["mode"] in {"rolling", "both"} and context["rolling_windows_executed"]:
-                runtime["compute_all_rolling_metrics"](
-                    open_price_df=frames["open_price"],
-                    close_price_df=frames["close_price"],
-                    high_price_df=frames["high_price"],
-                    low_price_df=frames["low_price"],
-                    volume_df=frames["volume"],
-                    save_path=str(exec_dir),
+                compute_rolling_metrics_keyword_safe(
+                    runtime=runtime,
+                    frames=frames,
+                    save_path=exec_dir,
                     fund_list=fund_list,
-                    roll_list=context["rolling_windows_executed"],
+                    roll_windows=context["rolling_windows_executed"],
+                    rolling_map=context["rolling_map"],
                 )
 
         manifest = copy.deepcopy(plan)
@@ -980,7 +1113,9 @@ def build_parser() -> argparse.ArgumentParser:
     mode.add_argument("--dry-run", action="store_true", help="Validate and print the execution plan")
     mode.add_argument("--execute", action="store_true", help="Execute the planned job")
     parser.add_argument("--allow-unknown-basis", action="store_true", help="Accept price_basis=unknown risk")
-    parser.add_argument("--allow-rolling-open-close-risk", action="store_true", help="Accept current rolling open/close mismatch risk")
+    parser.add_argument("--allow-rolling-open-close-risk", action="store_true", help="Accept legacy direct-core rolling open/close mismatch risk")
+    parser.add_argument("--allow-unknown-adjustment-asof", action="store_true", help="Accept unknown adjusted-price as-of timing risk")
+    parser.add_argument("--allow-unknown-signal-timing", action="store_true", help="Accept unknown feature/signal timing risk")
     return parser
 
 

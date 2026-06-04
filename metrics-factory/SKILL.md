@@ -35,7 +35,12 @@ python <skill-dir>/scripts/setup_runtime.py --project-root <project-root>
 
 Use the Python that passed `check_runtime.py`. If `setup_runtime.py` created a venv, use `<project-root>/.metricsfactory-venv/bin/python` on macOS/Linux or `<project-root>/.metricsfactory-venv/Scripts/python.exe` on Windows.
 
-Use `--allow-unknown-basis` only when the user accepts unknown price basis risk. Use `--allow-rolling-open-close-risk` only when the user accepts the current rolling open/close mismatch risk.
+Use risk override flags only when the user explicitly accepts the related risk:
+
+- `--allow-unknown-basis`: price basis is unknown.
+- `--allow-unknown-adjustment-asof`: adjusted price/NAV as-of timing is unknown.
+- `--allow-unknown-signal-timing`: downstream feature timing is unknown.
+- `--allow-rolling-open-close-risk`: legacy flag for direct core rolling calls; normal `run_metrics_job.py` rolling execution bypasses the core open/close mismatch.
 
 V1 request and error details live in `references/job-schema.md`.
 
@@ -60,9 +65,18 @@ V1 request and error details live in `references/job-schema.md`.
 - Strongly prefer adjusted NAV or adjusted close for `close_price_df`.
 - Build `log_return_df` from the same adjusted close/NAV series.
 - Keep `open/high/low/close` on the same adjustment basis.
+- For backtests or model signals, adjusted prices/NAV must be point-in-time: adjustment factors must be known as of each output date.
+- Treat full-sample adjusted prices as unsafe for signals unless the user accepts future adjustment-factor leakage.
 - Do not mix unadjusted price, unit NAV, and accumulated NAV.
 - If NAV products lack OHLC, adjusted NAV can temporarily fill OHLC, but AR/BR/DKX/CCI style indicators become weaker.
 - Do not interpret `Vol*`, `OBV`, `PVT`, `VR`, or related volume metrics unless volume is real.
+
+## Feature Timing Contract
+
+- Outputs dated `t` include `t` end-of-day data: period jobs include `t` log return/close/high/low/volume, and rolling jobs include row `t` in rolling windows.
+- This is not a future-row leak for end-of-day research or `t+1`/next-period signals.
+- It is a lookahead risk for same-day pre-close or same-day open signals. Shift metric features by at least one trading row before same-day trading use.
+- In job JSON, set `data_contract.signal_timing` to `eod_next_period` or `research_eod`. `same_day_before_close` is blocked by the runner.
 
 ## Period Calculation Contract
 
@@ -76,8 +90,9 @@ V1 request and error details live in `references/job-schema.md`.
 
 ## Rolling Calculation Contract
 
-- `compute_all_rolling_metrics(...)` writes `rolling_metrics.parquet` and returns no result DataFrame.
+- Direct `compute_all_rolling_metrics(...)` writes `rolling_metrics.parquet` and returns no result DataFrame.
 - Direct core calls require `save_path` to already exist. The AI job runner creates and manages its output directory.
+- `run_metrics_job.py` does not call the buggy public rolling entrypoint for execution; it calls `CalRollingMetrics` with keyword arguments so close/open are bound correctly.
 - Supported rolling windows are from `create_rolling_metrics_map().keys()`: `0, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 15, 19, 20, 22, 25, 26, 30, 35, 60, 99`.
 - Window `0` is for non-window metrics such as `OBV`, `PVT`, and `TR`.
 - Rolling `num_workers` is currently ignored; do not claim rolling jobs are parallelized.
@@ -86,8 +101,10 @@ V1 request and error details live in `references/job-schema.md`.
 
 ## Known Blocking Risks
 
-- Rolling open/close mismatch: `compute_all_rolling_metrics()` passes `open_price_array, close_price_array` into `CalRollingMetrics`, while the constructor signature expects `close_price_array, open_price_array`.
-- Before trusting rolling output, fix or test with a small fixture where open and close intentionally differ. Check at least `CloseMA`, `EMA`, `KDJ`, `VR`, `OBV`, `AR`, `BR`, and `DKX`.
+- Direct core rolling open/close mismatch: `compute_all_rolling_metrics()` passes `open_price_array, close_price_array` into `CalRollingMetrics`, while the constructor signature expects `close_price_array, open_price_array`.
+- `run_metrics_job.py` bypasses that mismatch by using keyword arguments. If calling core code directly, fix or test with a small fixture where open and close intentionally differ. Check at least `CloseMA`, `EMA`, `KDJ`, `VR`, `OBV`, `AR`, `BR`, and `DKX`.
+- Unknown `signal_timing` and unsafe same-day pre-close usage are blocked by `run_metrics_job.py` unless explicitly accepted where applicable.
+- Full-sample adjusted prices are blocked for adjusted price/NAV jobs because they can leak future split/dividend/distribution factors.
 - Runtime import can fail even if `py_compile` passes when the active Python and local NumPy/Pandas wheels use different CPU architectures. Run `check_runtime.py` before diagnosing business logic.
 
 ## Dry Run And Manifest

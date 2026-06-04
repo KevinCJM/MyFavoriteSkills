@@ -14,6 +14,8 @@ Risk override flags:
 ```bash
 --allow-unknown-basis
 --allow-rolling-open-close-risk
+--allow-unknown-adjustment-asof
+--allow-unknown-signal-timing
 ```
 
 ## Request
@@ -36,8 +38,10 @@ Risk override flags:
   },
   "data_contract": {
     "price_basis": "adjusted_nav",
+    "adjustment_asof": "point_in_time",
     "ohlc_basis": "same_as_close",
-    "volume_basis": "real_or_not_used"
+    "volume_basis": "real_or_not_used",
+    "signal_timing": "eod_next_period"
   },
   "selection": {
     "fund_list": null,
@@ -63,7 +67,9 @@ Risk override flags:
   },
   "risk_acceptance": {
     "allow_unknown_basis": false,
-    "allow_rolling_open_close_risk": false
+    "allow_rolling_open_close_risk": false,
+    "allow_unknown_adjustment_asof": false,
+    "allow_unknown_signal_timing": false
   }
 }
 ```
@@ -83,6 +89,11 @@ Risk override flags:
 - `selection.roll_windows = null` uses all executable rolling windows; `[]` means no rolling calculation.
 - `output.run_id = null` creates a deterministic child directory under `save_path` using `job_name` and the normalized request hash. This keeps dry-run and execute plan hashes stable when the request is unchanged.
 - `output.run_id = "."` writes directly into `save_path` and makes overwrite checks stricter.
+- `data_contract.adjustment_asof` is `point_in_time`, `full_sample`, `not_applicable`, or `unknown`.
+- If `price_basis` is adjusted, use `adjustment_asof = "point_in_time"` for backtests/signals. `full_sample` is blocked because it can leak future split/dividend/distribution factors.
+- `data_contract.signal_timing` is `eod_next_period`, `research_eod`, `same_day_before_close`, or `unknown`.
+- Outputs dated `t` include `t` end-of-day inputs. `same_day_before_close` is blocked; use `eod_next_period` for t-close features used at t+1 or later.
+- `run_metrics_job.py` executes rolling metrics through `CalRollingMetrics` keyword arguments, not the public `compute_all_rolling_metrics()` call path, so it bypasses the known open/close argument-order mismatch.
 
 ## Issue Levels
 
@@ -101,7 +112,9 @@ Common blockers:
 - mismatched input index or columns;
 - required input missing for selected mode;
 - `price_basis = "unknown"` without explicit risk acceptance;
-- rolling execution without explicit open/close risk acceptance;
+- adjusted price/NAV with `adjustment_asof = "unknown"` or `"full_sample"` without explicit risk acceptance where allowed;
+- `signal_timing = "unknown"` without explicit risk acceptance;
+- `signal_timing = "same_day_before_close"`;
 - explicit period/window/metric not executable by current mappings;
 - target output already exists while `overwrite = false`;
 - runtime import failure for pandas, numpy, or MetricsFactory.
@@ -110,7 +123,9 @@ Common blockers:
 Common warnings:
 
 - unknown price basis accepted by user;
-- rolling open/close risk accepted by user;
+- unknown adjusted-price as-of timing accepted by user;
+- unknown signal timing accepted by user;
+- direct core rolling open/close risk accepted by user;
 - volume metrics requested when `volume_basis` is not real;
 - default period list contains unmapped periods that are skipped;
 - available memory cannot be detected, so worker count is capped conservatively.

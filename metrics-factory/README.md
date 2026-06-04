@@ -156,14 +156,19 @@ volume
 - `close_price` 使用复权净值/复权收盘价；
 - `log_return` 从同一条复权 close 序列生成；
 - open/high/low/close 保持同一复权口径；
+- 回测或信号使用时，复权因子必须是 point-in-time，即在每个输出日期当时已知；
 - 不混用未复权价格、单位净值和累计净值。
 
 无真实成交量的产品，不应解释 `Vol*`、`OBV`、`PVT`、`VR` 等量价指标。
 
 ## 重要风险
 
-- 滚动指标存在已知 open/close 参数顺序风险。默认会阻断 rolling 执行。
-- 只有用户明确接受风险时，才使用：
+- 输出 `date=t` 的指标包含 `t` 日收盘后数据。用于 `t+1` 或之后的信号可以直接使用；用于 `t` 日开盘、盘中或收盘前交易必须先 `shift(1)`。
+- `data_contract.signal_timing` 应设为 `eod_next_period` 或 `research_eod`；`same_day_before_close` 会被阻断。
+- `data_contract.adjustment_asof` 应设为 `point_in_time`；全样本复权价格会被阻断，因为可能泄露未来分红/拆分信息。
+- 核心 `compute_all_rolling_metrics()` 存在已知 open/close 参数顺序风险。
+- 本 skill 的 `run_metrics_job.py` 已绕开该核心入口，改为用关键字参数调用 `CalRollingMetrics`；只有直接调用核心 rolling 入口时才需要接受该风险。
+- 只有用户明确接受直接核心 rolling 风险时，才使用：
 
 ```bash
 --allow-rolling-open-close-risk
@@ -173,6 +178,13 @@ volume
 
 ```bash
 --allow-unknown-basis
+```
+
+- 只有用户明确接受未知复权 as-of 或未知信号时点风险时，才使用：
+
+```bash
+--allow-unknown-adjustment-asof
+--allow-unknown-signal-timing
 ```
 
 ## 验证
