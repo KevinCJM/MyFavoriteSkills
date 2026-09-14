@@ -1,14 +1,10 @@
 from __future__ import annotations
 
 import hashlib
-import importlib.util
 import json
 import os
 import shutil
-import sys
 import tempfile
-import time
-from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -130,87 +126,7 @@ def safe_relative(path: str | Path, base: str | Path) -> str:
         return str(path)
 
 
-def load_token(token_env_name: str = "TUSHARE_TOKEN", allow_config_token: bool = False) -> tuple[str, str]:
-    token = os.environ.get(token_env_name, "")
-    if token:
-        return token, f"env:{token_env_name}"
-    if allow_config_token:
-        cfg = Path.cwd() / "config.py"
-        if cfg.exists():
-            spec = importlib.util.spec_from_file_location("_tushare_fetcher_config", str(cfg))
-            if spec and spec.loader:
-                mod = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(mod)  # type: ignore[union-attr]
-                value = getattr(mod, "TUSHARE_TOKEN", "")
-                if value:
-                    return str(value), "config.py"
-    raise RuntimeError("Tushare token is missing. Set TUSHARE_TOKEN or pass --allow-config-token.")
-
-
-class RateLimiter:
-    def __init__(self, requests_per_minute: float) -> None:
-        self.interval = 60.0 / max(float(requests_per_minute), 0.1)
-        self._last = 0.0
-
-    def wait(self) -> None:
-        now = time.monotonic()
-        delay = self.interval - (now - self._last)
-        if delay > 0:
-            time.sleep(delay)
-        self._last = time.monotonic()
-
 
 def sanitize_command(argv: list[str]) -> str:
-    redacted = []
-    skip_next = False
-    sensitive_flags = {"--token", "--tushare-token"}
-    for arg in argv:
-        if skip_next:
-            redacted.append("<redacted>")
-            skip_next = False
-            continue
-        if arg in sensitive_flags:
-            redacted.append(arg)
-            skip_next = True
-        elif "token=" in arg.lower():
-            redacted.append("<redacted-token-arg>")
-        else:
-            redacted.append(arg)
-    return " ".join(redacted)
-
-
-def read_param_records(params_json: str | None, params_file: str | None) -> list[dict[str, Any]]:
-    if params_json:
-        obj = json.loads(params_json)
-    elif params_file:
-        obj = json.loads(Path(params_file).read_text(encoding="utf-8"))
-    else:
-        obj = [{}]
-    if isinstance(obj, dict):
-        return [obj]
-    if isinstance(obj, list) and all(isinstance(x, dict) for x in obj):
-        return obj
-    raise ValueError("params must be a JSON object or a list of JSON objects")
-
-
-@contextmanager
-def output_lock(output_dir: str | Path, api: str):
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    lock = output_dir / f".{api}.lock"
-    fd = None
-    try:
-        fd = os.open(str(lock), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-        os.write(fd, str(os.getpid()).encode("utf-8"))
-        yield
-    finally:
-        if fd is not None:
-            os.close(fd)
-        try:
-            lock.unlink()
-        except FileNotFoundError:
-            pass
-
-
-def timestamp() -> str:
-    return datetime.now().strftime("%Y%m%d%H%M%S")
+    import shlex
+    return shlex.join(argv)

@@ -26,6 +26,7 @@ tushare-fetcher/
 │   └── tushare_interfaces_ai_optimized.json
 └── scripts/
     ├── configure_points.py
+    ├── fetch_runtime.py
     ├── generate_fetch_script.py
     ├── smoke_test_fetch_script.py
     ├── solidify_fetch_script.py
@@ -160,11 +161,24 @@ python3 ./stock_basic_fetch.py --output-dir /path/to/output
 - 默认不读取项目 `config.py`，除非用户明确允许 `--allow-config-token`。
 - skill 内路径应相对 skill 根目录解析，避免写死个人机器路径。
 
+## 批量与恢复
+
+运行环境：Python 3.10+，`requests`、`pandas`、`pyarrow`；硬性总时限与共享文件锁目前支持 macOS/Linux。
+
+运行脚本可设置 `--connect-timeout`、`--read-timeout`、`--idle-timeout`、`--max-runtime` 与实际请求预算 `--max-requests`。同机同账户共享限流，并保留 10% 余量。
+
+提供明确的日期/代码参数列表；只有接口目录明确支持 `offset`/`limit` 时才使用 `--paginate --page-size N`。未知行数上限须核对后提供 `--row-cap N`，触及上限但无法继续分页会失败。失败后用相同脚本和参数加 `--resume`，已验证分片不会重拉。
+
+冒烟固定一次实际请求、零重试，要求新目录并核对 API、脚本/目录/Parquet 哈希、行数、字段和 dtype。空结果必须有独立核对的 `--empty-result-reason`。旧脚本须重新生成并重新冒烟，不能复用旧通过记录。
+
+详细行为与限制见 [运行契约](references/runtime-contract.md)，后续强化方向见 [对比分析](references/optimization-review.md)。
+
 ## 验证
 
 ```bash
 python3 -m py_compile "$SKILL_DIR"/scripts/*.py
 python3 "$SKILL_CREATOR_DIR/scripts/quick_validate.py" "$SKILL_DIR"
 python3 "$SKILL_DIR/scripts/generate_fetch_script.py" --help
+python3 -m pytest "$SKILL_DIR/tests" -q
 ```
 

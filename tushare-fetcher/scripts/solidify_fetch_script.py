@@ -27,8 +27,18 @@ def parse_args() -> argparse.Namespace:
 
 def load_smoke(path: str | Path) -> dict[str, Any]:
     data = json.loads(Path(path).expanduser().resolve().read_text(encoding="utf-8"))
-    if data.get("status") != "passed":
+    if (data.get("status") != "passed" or data.get("validation_version") != 2
+            or data.get("request_count") != 1 or data.get("retry_count") != 0
+            or data.get("complete") is not True or data.get("scope") != "smoke"):
         raise RuntimeError("smoke result did not pass")
+    outputs = data.get("outputs")
+    if not isinstance(outputs, list) or len(outputs) != 1:
+        raise RuntimeError("smoke output evidence missing")
+    for entry in outputs:
+        if sha256_file(entry["path"]) != entry["sha256"]:
+            raise RuntimeError("smoke output changed after validation")
+    if data.get("row_count", 0) == 0 and not str(data.get("empty_result_reason") or "").strip():
+        raise RuntimeError("empty smoke evidence needs independent review")
     return data
 
 
@@ -87,17 +97,17 @@ def main() -> int:
         ensure_under(destination, Path.cwd(), "project solidified script")
     else:
         ensure_under(destination, SKILL_ROOT, "skill solidified script")
-    destination.parent.mkdir(parents=True, exist_ok=True)
     if destination.exists() and not args.overwrite_solidified:
         raise RuntimeError(f"target script already exists: {destination}")
-    shutil.copy2(script, destination)
     relative_base = SKILL_ROOT if args.target == "skill" else Path.cwd()
     runtime_rate = smoke.get("runtime_rate_limit_policy") or {}
     patch = {
         "status": "solidified",
         "script_path": safe_relative(destination, relative_base),
         "script_sha256": current_script_hash,
-        "runtime_dependency": "scripts/tushare_runtime.py" if args.target == "skill" else "",
+        "runtime_dependency": "",
+        "runtime_contract_version": 2,
+        "validation_scope": "one_request_smoke",
         "interfaces_json_sha256": sha256_file(interfaces),
         "smoke_tested_at": smoke.get("ended_at") or datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         "smoke_command": smoke.get("command_sanitized", ""),
@@ -126,6 +136,13 @@ def main() -> int:
         if sha256_file(project_json) != sha256_file(skill_json):
             raise RuntimeError("--update-both-json requires project and skill JSON to match before update")
         update_targets = [project_json.resolve(), skill_json.resolve()]
+    for target_json in dict.fromkeys(update_targets):
+        item = get_interface(load_json(target_json), args.api)
+        if item.get("solidified_script") and not args.overwrite_solidified:
+            raise RuntimeError("solidified_script already exists; pass --overwrite-solidified to replace it")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if script.resolve() != destination.resolve():
+        shutil.copy2(script, destination)
     for target_json in dict.fromkeys(update_targets):
         update_interface_json(target_json, args.api, patch, args.overwrite_solidified)
     result = {

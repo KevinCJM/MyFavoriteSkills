@@ -5,7 +5,6 @@ import argparse
 import json
 import re
 import stat
-import textwrap
 from pathlib import Path
 from typing import Any
 
@@ -112,299 +111,28 @@ def decide_generation(permission: dict[str, Any], strategy: str, skeleton_only: 
     return "executable", reasons
 
 
-SCRIPT_TEMPLATE = r'''#!/usr/bin/env python3
-from __future__ import annotations
-
-import argparse
-import importlib.util
-import json
-import os
-import sys
-import tempfile
-import time
-from datetime import datetime
-from pathlib import Path
-from typing import Any
-
-API = __API_JSON__
-STRATEGY = __STRATEGY_JSON__
-PERMISSION_ANALYSIS = __PERMISSION_JSON__
-RATE_LIMIT_POLICY = __RATE_JSON__
-SKELETON_ONLY = __SKELETON_JSON__
-DEFAULT_OUTPUT_DIR = __DEFAULT_OUTPUT_DIR_JSON__
-
-# Permission warning:
-# Points are only a documentation-derived threshold. Real access still depends
-# on the Tushare account's actual entitlements and API responses.
-
-
-def load_token(token_env_name: str, allow_config_token: bool) -> tuple[str, str]:
-    token = os.environ.get(token_env_name, "")
-    if token:
-        return token, f"env:{token_env_name}"
-    if allow_config_token:
-        cfg = Path.cwd() / "config.py"
-        if cfg.exists():
-            spec = importlib.util.spec_from_file_location("_tushare_config", str(cfg))
-            if spec and spec.loader:
-                mod = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(mod)  # type: ignore[union-attr]
-                value = getattr(mod, "TUSHARE_TOKEN", "")
-                if value:
-                    return str(value), "config.py"
-    raise RuntimeError("Tushare token is missing. Set TUSHARE_TOKEN or pass --allow-config-token.")
-
-
-class RateLimiter:
-    def __init__(self, requests_per_minute: float) -> None:
-        self.interval = 60.0 / max(float(requests_per_minute), 0.1)
-        self.last = 0.0
-
-    def wait(self) -> None:
-        delay = self.interval - (time.monotonic() - self.last)
-        if delay > 0:
-            time.sleep(delay)
-        self.last = time.monotonic()
-
-
-def read_param_records(args: argparse.Namespace) -> tuple[list[dict[str, Any]], bool]:
-    if args.params_json:
-        obj = json.loads(args.params_json)
-        explicit = True
-    elif args.params_file:
-        obj = json.loads(Path(args.params_file).read_text(encoding="utf-8"))
-        explicit = True
-    else:
-        obj = [{}]
-        explicit = False
-    if isinstance(obj, dict):
-        records = [obj]
-    elif isinstance(obj, list) and all(isinstance(x, dict) for x in obj):
-        records = obj
-    else:
-        raise ValueError("params must be a JSON object or list of objects")
-    return records, explicit
-
-
-def apply_common_args(records: list[dict[str, Any]], explicit: bool, args: argparse.Namespace) -> list[dict[str, Any]]:
-    common = {}
-    for key in ["ts_code", "trade_date", "start_date", "end_date", "exchange"]:
-        value = getattr(args, key)
-        if value:
-            common[key] = value
-    if args.smoke and not explicit and not common and STRATEGY == "date_range":
-        today = datetime.now().strftime("%Y%m%d")
-        common.update({"start_date": today, "end_date": today})
-    if common:
-        return [{**common, **r} for r in records]
-    if not explicit and STRATEGY in {"code_loop", "date_loop", "user_params", "param_grid"}:
-        raise RuntimeError("This API strategy requires --params-json, --params-file, or explicit CLI params.")
-    return records
-
-
-def create_client(token: str):
-    import tushare as ts  # type: ignore
-    ts.set_token(token)
-    return ts.pro_api()
-
-
-def call_tushare(pro, params: dict[str, Any], fields: str | None):
-    call_params = {k: v for k, v in params.items() if v is not None and v != ""}
-    if fields:
-        call_params["fields"] = fields
-    try:
-        return pro.query(API, **call_params)
-    except Exception as first_error:
-        method = getattr(pro, API, None)
-        if callable(method):
-            return method(**call_params)
-        raise first_error
-
-
-def write_parquet_atomic(df, path: Path) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    fd, tmp_name = tempfile.mkstemp(prefix=path.name + ".", suffix=".tmp", dir=str(path.parent))
-    os.close(fd)
-    tmp = Path(tmp_name)
-    try:
-        df.to_parquet(tmp, index=False)
-        os.replace(tmp, path)
-    finally:
-        if tmp.exists():
-            tmp.unlink()
-
-
-class OutputLock:
-    def __init__(self, output_dir: Path, api: str) -> None:
-        self.path = output_dir / f".{api}.lock"
-        self.fd = None
-
-    def __enter__(self):
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.fd = os.open(str(self.path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-        os.write(self.fd, str(os.getpid()).encode("utf-8"))
-        return self
-
-    def __exit__(self, exc_type, exc, tb):
-        if self.fd is not None:
-            os.close(self.fd)
-        try:
-            self.path.unlink()
-        except FileNotFoundError:
-            pass
-
-
-def write_output(df, output_dir: Path, args: argparse.Namespace) -> list[str]:
-    import pandas as pd
-    output_dir.mkdir(parents=True, exist_ok=True)
-    if args.limit_rows is not None:
-        df = df.head(args.limit_rows)
-    files: list[str] = []
-    if args.partition_by:
-        if args.partition_by not in df.columns:
-            raise RuntimeError(f"partition column missing: {args.partition_by}")
-        groups = list(df.groupby(args.partition_by, dropna=False))
-        if len(groups) > args.max_output_files:
-            raise RuntimeError(f"too many output files: {len(groups)} > {args.max_output_files}")
-        for value, part in groups:
-            safe_value = str(value).replace("/", "_").replace("\\", "_")
-            path = output_dir / f"{API}_{args.partition_by}={safe_value}.parquet"
-            write_single(part, path, args)
-            files.append(str(path))
-    else:
-        path = output_dir / f"{API}.parquet"
-        write_single(df, path, args)
-        files.append(str(path))
-    return files
-
-
-def write_single(df, path: Path, args: argparse.Namespace) -> None:
-    import pandas as pd
-    if args.overwrite and args.append:
-        raise RuntimeError("--overwrite and --append are mutually exclusive")
-    if path.exists() and not args.overwrite and not args.append:
-        raise RuntimeError(f"output exists; pass --overwrite or --append: {path}")
-    out = df
-    if args.append and path.exists():
-        old = pd.read_parquet(path)
-        if list(old.columns) != list(df.columns):
-            raise RuntimeError("append schema mismatch")
-        out = pd.concat([old, df], ignore_index=True)
-    if args.dedupe_keys:
-        keys = [x.strip() for x in args.dedupe_keys.split(",") if x.strip()]
-        missing = [k for k in keys if k not in out.columns]
-        if missing:
-            raise RuntimeError(f"dedupe keys missing: {missing}")
-        out = out.drop_duplicates(subset=keys, keep="last")
-    write_parquet_atomic(out, path)
-
-
-def write_metadata(output_dir: Path, meta: dict[str, Any]) -> str:
-    path = output_dir / f"_fetch_meta_{API}_{datetime.now().strftime('%Y%m%d%H%M%S')}.json"
-    path.write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    return str(path)
-
-
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description=f"Fetch Tushare API {API} to Parquet")
-    parser.add_argument("--output-dir", default=DEFAULT_OUTPUT_DIR)
-    parser.add_argument("--params-json")
-    parser.add_argument("--params-file")
-    parser.add_argument("--fields")
-    parser.add_argument("--requests-per-minute", type=float, default=RATE_LIMIT_POLICY["requests_per_minute"])
-    parser.add_argument("--max-retries", type=int, default=3)
-    parser.add_argument("--smoke", action="store_true")
-    parser.add_argument("--limit-rows", type=int)
-    parser.add_argument("--overwrite", action="store_true")
-    parser.add_argument("--append", action="store_true")
-    parser.add_argument("--dedupe-keys")
-    parser.add_argument("--partition-by")
-    parser.add_argument("--token-env-name", default="TUSHARE_TOKEN")
-    parser.add_argument("--allow-config-token", action="store_true")
-    parser.add_argument("--confirm-entitlement", action="store_true")
-    parser.add_argument("--max-requests", type=int)
-    parser.add_argument("--max-output-files", type=int, default=100)
-    parser.add_argument("--ts-code")
-    parser.add_argument("--trade-date")
-    parser.add_argument("--start-date")
-    parser.add_argument("--end-date")
-    parser.add_argument("--exchange")
-    return parser.parse_args()
-
-
-def main() -> int:
-    args = parse_args()
-    if SKELETON_ONLY and not args.confirm_entitlement:
-        print("This script was generated as skeleton-only. Re-run with --confirm-entitlement after confirming Tushare access.", file=sys.stderr)
-        return 2
-    if args.smoke:
-        args.max_requests = 1 if args.max_requests is None else min(args.max_requests, 1)
-        args.max_output_files = min(args.max_output_files, 1)
-        args.overwrite = True
-    elif args.max_requests is None:
-        args.max_requests = 1000000
-    output_dir = Path(args.output_dir).expanduser().resolve()
-    token, token_source = load_token(args.token_env_name, args.allow_config_token)
-    records, explicit = read_param_records(args)
-    records = apply_common_args(records, explicit, args)
-    records = records[: args.max_requests]
-    import pandas as pd
-    pro = create_client(token)
-    limiter = RateLimiter(args.requests_per_minute)
-    frames = []
-    errors = []
-    for params in records:
-        for attempt in range(args.max_retries + 1):
-            try:
-                limiter.wait()
-                df = call_tushare(pro, params, args.fields)
-                frames.append(df)
-                break
-            except Exception as exc:
-                if attempt >= args.max_retries:
-                    errors.append({"params": params, "error": str(exc)})
-                else:
-                    time.sleep(min(30, 2 ** attempt))
-    if errors:
-        raise RuntimeError(json.dumps(errors, ensure_ascii=False))
-    data = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
-    with OutputLock(output_dir, API):
-        files = write_output(data, output_dir, args)
-        meta = {
-            "api": API,
-            "generated_permission_analysis": PERMISSION_ANALYSIS,
-            "rate_limit_policy": {**RATE_LIMIT_POLICY, "requests_per_minute_used": args.requests_per_minute},
-            "strategy": STRATEGY,
-            "token_source": token_source,
-            "smoke": bool(args.smoke),
-            "request_count": len(records),
-            "row_count": int(len(data)),
-            "output_files": files,
-            "success": True,
-        }
-        meta_path = write_metadata(output_dir, meta)
-    print(json.dumps({"success": True, "api": API, "row_count": int(len(data)), "output_files": files, "metadata": meta_path}, ensure_ascii=False))
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
-'''
-
-
-def render_script(api: str, strategy: str, permission: dict[str, Any], rate: dict[str, Any], skeleton: bool, default_output_dir: str) -> str:
-    script = SCRIPT_TEMPLATE
-    replacements = {
-        "__API_JSON__": repr(api),
-        "__STRATEGY_JSON__": repr(strategy),
-        "__PERMISSION_JSON__": repr(permission),
-        "__RATE_JSON__": repr(rate),
-        "__SKELETON_JSON__": repr(bool(skeleton)),
-        "__DEFAULT_OUTPUT_DIR_JSON__": repr(default_output_dir),
+def build_contract(api, strategy, permission, rate, skeleton, default_output_dir, item, interfaces_sha):
+    limits = "；".join(item.get("limits") or [])
+    caps = [int(m.group(1)) for m in re.finditer(
+        r"(?:最多|最大|限量)[^\d，。；]{0,12}(\d+)(?:行|条|[，。；]|$)", limits)]
+    inputs = item.get("input_params") or []
+    outputs = item.get("output_params") or []
+    return {
+        "api": api, "strategy": strategy, "permission": permission, "rate": rate,
+        "skeleton": skeleton, "default_output_dir": default_output_dir,
+        "interfaces_json_sha256": interfaces_sha,
+        "row_cap": min(caps) if caps else None,
+        "input_fields": [p["name"] for p in inputs],
+        "required_fields": [p["name"] for p in inputs if str(p.get("required", "")).upper() == "Y"],
+        "output_fields": [p["name"] for p in outputs],
+        "default_fields": [p["name"] for p in outputs if str(p.get("default_display", "")).upper() == "Y"],
     }
-    for key, value in replacements.items():
-        script = script.replace(key, value)
-    return script
+
+
+def render_script(api, strategy, permission, rate, skeleton, default_output_dir, *, item, interfaces_sha):
+    contract = build_contract(api, strategy, permission, rate, skeleton, default_output_dir, item, interfaces_sha)
+    source = Path(__file__).with_name("fetch_runtime.py").read_text(encoding="utf-8")
+    return source.replace("CONTRACT = {}", "CONTRACT = " + repr(contract), 1)
 
 
 def parse_args() -> argparse.Namespace:
@@ -449,7 +177,7 @@ def main() -> int:
         return 2
     skeleton = mode == "skeleton_only"
     default_output_dir = args.default_output_dir or f"./data/tushare/{api}"
-    script = render_script(api, strategy, permission, rate, skeleton, default_output_dir)
+    script = render_script(api, strategy, permission, rate, skeleton, default_output_dir, item=item, interfaces_sha=sha256_file(interfaces_path))
     out = Path(args.output_script).expanduser().resolve()
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(script, encoding="utf-8")
