@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "checks": "offline_structure_only",
+  "core_words": 1468,
+  "core_lines": 184,
+  "core_utf8_bytes": 11334,
+  "markdown_files": 41,
+  "local_links_checked": 67,
+  "python_files_parsed": 6,
+  "prompt_examples_linted": 7,
+  "behavior_cases_prepared_not_executed": 84,
+  "errors": []
+}

@@ -1,0 +1,279 @@
+{
+  "name": "codex-opencode-dispatch",
+  "version": "2.3.0",
+  "prompt_protocol": "ocw/1",
+  "target_mcp": "AlaeddineMessadi/opencode-mcp@3.0.0",
+  "created_on": "2026-09-18",
+  "files": [
+    {
+      "path": "CHANGELOG.md",
+      "bytes": 5393,
+      "sha256": "993b1f5a2e4b7ed8c5c84765dee20897ac9d0f0c71e1a1d034e7586d25656f6a"
+    },
+    {
+      "path": "README.md",
+      "bytes": 11823,
+      "sha256": "b969631fb1d3c6baa24c9e5db9a5d95a74f4912b627bbe6414c2ab46d8b9cdb6"
+    },
+    {
+      "path": "SKILL.md",
+      "bytes": 9766,
+      "sha256": "dcc71bb7a1ceb07ff356c1911539ca48cc7f784ed9dfa44921af0e7609a87970"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 6,
+      "sha256": "a42caf4a54bbbe27aa45b6efbc6356c5e299b19763e728b6cdb7201b02ebbe36"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "bytes": 402,
+      "sha256": "8bf05d1bcbf167719e51a36f1556fd65f1247d3a962c863c1fcc7b5ec9a22584"
+    },
+    {
+      "path": "docs/AUDIT_RESPONSE.zh-CN.md",
+      "bytes": 5362,
+      "sha256": "085e0712e01310834b9cb64151d74ee222979a47511b09adb78658dd1af67f82"
+    },
+    {
+      "path": "docs/CHANGE_POLICY.zh-CN.md",
+      "bytes": 5833,
+      "sha256": "402328a40bde9e347528b79f170c3586e68d18848f38ba15720fd270c9db4798"
+    },
+    {
+      "path": "docs/PROMPT_RESEARCH.zh-CN.md",
+      "bytes": 12773,
+      "sha256": "30d0beb3550e80ee48509bb03475c44cd3ff54f53940b1e1211651d43c4d6004"
+    },
+    {
+      "path": "docs/RESEARCH.zh-CN.md",
+      "bytes": 9868,
+      "sha256": "5b6fced8420011a7059a32ed6b4a6d384b85d40cf3c35006af415fbb8c22e81f"
+    },
+    {
+      "path": "docs/SOURCES.md",
+      "bytes": 7546,
+      "sha256": "7263a2d9bc18347b5a9b8b6ee8ec68f2a6f970d5a0f0265000a12261002b9bfc"
+    },
+    {
+      "path": "docs/VALIDATION.zh-CN.md",
+      "bytes": 5873,
+      "sha256": "a6e6d03d28b8ffa53f088028a8ced192521438ac2cb6ab088a66d0f4251efe9c"
+    },
+    {
+      "path": "docs/bundle-check.json",
+      "bytes": 308,
+      "sha256": "581e9e56ca06b1d73553028ffedf85cc649394b28f80aa9eedd4b896181aa32f"
+    },
+    {
+      "path": "docs/unit-tests.log",
+      "bytes": 12773,
+      "sha256": "07f5e30cc0b5a50e273dad308b98e10b73000a5021304ee768d870778196c2f1"
+    },
+    {
+      "path": "evals/README.md",
+      "bytes": 3597,
+      "sha256": "d26be79f3313898d9ed189a1e8a8cdc03368f9bb1c17ab185a57cd75c33c96c9"
+    },
+    {
+      "path": "evals/live-smoke-plan.md",
+      "bytes": 2570,
+      "sha256": "ffb04e0f024b107b6390aa4d973c603568906b6b6104302366860f2b940ee00a"
+    },
+    {
+      "path": "evals/scenarios.json",
+      "bytes": 32509,
+      "sha256": "ff2b3a6f274996ac02e07f5cae07db36a18b5cb56683cf0bd311496b81f2523a"
+    },
+    {
+      "path": "examples/prompts/README.md",
+      "bytes": 553,
+      "sha256": "2d897ec09e92008a4dddb3eb5e60338637788e27c92030ceff21a4677223a391"
+    },
+    {
+      "path": "examples/prompts/builder.md",
+      "bytes": 3796,
+      "sha256": "b4e5b247dc318831374147ebdfc86a0a705ad2c16e0958eb93d818c2fb9a393d"
+    },
+    {
+      "path": "examples/prompts/clarification.md",
+      "bytes": 838,
+      "sha256": "742a799133b818f45dfa99934862bb3e96d9b7de2a6e78554f180afd8dddc8a6"
+    },
+    {
+      "path": "examples/prompts/compact.md",
+      "bytes": 1187,
+      "sha256": "71ef52f71c098d62023df87a45df43a1f02f7f400bb9d71c67e9a07ea80ac2cd"
+    },
+    {
+      "path": "examples/prompts/designer.md",
+      "bytes": 2190,
+      "sha256": "b18f9e2dc1d232a61a38ce96e595f60a4192b3c81547e30d284d2063ae320236"
+    },
+    {
+      "path": "examples/prompts/rework.md",
+      "bytes": 1899,
+      "sha256": "359948d969c05107633f519f98dcfdcd8bf5ec1bfbe35fb7046f558a823dab56"
+    },
+    {
+      "path": "examples/prompts/scout.md",
+      "bytes": 1537,
+      "sha256": "f3a4236cc68d44574423c1aaa5ea1d06014e8bc16464584d157bc9f33aa58b88"
+    },
+    {
+      "path": "examples/prompts/verifier.md",
+      "bytes": 2008,
+      "sha256": "38d007456b2527a76ec81767c218fcd8ded2c3173e60ed830163a1a722850a9a"
+    },
+    {
+      "path": "references/change-admission.md",
+      "bytes": 11136,
+      "sha256": "56bfce173a67f6afc154f56f46e4503eb96243933fad81a1be3cac3ef9be40c9"
+    },
+    {
+      "path": "references/mcp-v3.md",
+      "bytes": 13140,
+      "sha256": "9904025647e5cf9d9707d0945a6d597565cc6b1d63e9018f3c65f8411462ef3c"
+    },
+    {
+      "path": "references/prompt-protocol.md",
+      "bytes": 11996,
+      "sha256": "10af1789d3ce8a4ed78e62e3d36e488f2a5a7306c1cb41184b03d8c9e604480a"
+    },
+    {
+      "path": "references/routing.md",
+      "bytes": 5004,
+      "sha256": "53d00bf413c1b0cd96e0b70da0f5a6e4dc8ddd1cb6ce42205ac25f49ba68ba3f"
+    },
+    {
+      "path": "references/state-and-context.md",
+      "bytes": 5592,
+      "sha256": "a66c22cb8eacfdb23b43a9d31be8229a30252ee95fcebd83c33b3798e150025f"
+    },
+    {
+      "path": "references/verification.md",
+      "bytes": 8863,
+      "sha256": "0c9a1d947289fb7aab4e673cd9188236401ce7b69bebe812b0d9acf12e06cac0"
+    },
+    {
+      "path": "references/workspaces.md",
+      "bytes": 5604,
+      "sha256": "be197e61a5b0e9e541e1431a6f77fd8311cb8ce36e7d67c55a0a7875673b5be4"
+    },
+    {
+      "path": "scripts/check_bundle.py",
+      "bytes": 5437,
+      "sha256": "ad2e853a5681f9d92d133079067f948378f63277131fb82f1cbe02016863a359"
+    },
+    {
+      "path": "scripts/prompt_contract.py",
+      "bytes": 13866,
+      "sha256": "bb1d3486c687d17373a750e399b0f80440e9361e5a3739d88691a46c468ea925"
+    },
+    {
+      "path": "scripts/workspace_receipt.py",
+      "bytes": 15461,
+      "sha256": "64be439ed3562b1f2cd45da30c729039b4ed0ca8382d0dd6374fa86cbb3e62c6"
+    },
+    {
+      "path": "templates/change-admission.md",
+      "bytes": 1533,
+      "sha256": "2048dbb57b4c62527ab27bc7b2c8075fa2ba0c9e528ed64cc56138be573dba16"
+    },
+    {
+      "path": "templates/ledger.json",
+      "bytes": 1478,
+      "sha256": "ace23a2a55566c9fe54aef6393be442937de48882c99028309f2a10ec50f6574"
+    },
+    {
+      "path": "templates/opencode-codex-reader.md",
+      "bytes": 815,
+      "sha256": "5e2689610bd3b4350dbbf506fdef0e49606ec1dbddd2324190714147fa09723f"
+    },
+    {
+      "path": "templates/project-profile.md",
+      "bytes": 1585,
+      "sha256": "bb41b68fb9c7e478a14db50cb78615cc1f1e733d9d2ee0221e9811a9d8b6d21b"
+    },
+    {
+      "path": "templates/project-rules-snippet.md",
+      "bytes": 1394,
+      "sha256": "bd8bb8eea3c700e04e2cffd3b9b82380bab431e7dbda841a3c68057008921c6d"
+    },
+    {
+      "path": "templates/prompts/builder-brief.md",
+      "bytes": 2839,
+      "sha256": "73763a78cafbbcc8ad4a7698137327544c14a1488b26402b4436c2af426d8b57"
+    },
+    {
+      "path": "templates/prompts/clarification.md",
+      "bytes": 961,
+      "sha256": "68705a8a2558da69b7c15df7e63d9339535f3275e655322858d234870e6831ce"
+    },
+    {
+      "path": "templates/prompts/compact-brief.md",
+      "bytes": 1338,
+      "sha256": "419a891bdc7113baf3dc7ce2d479960f622d95981a73e116a24082c7199df735"
+    },
+    {
+      "path": "templates/prompts/designer-brief.md",
+      "bytes": 2180,
+      "sha256": "b98af9f9faa2c624c89dce21aafd7455ab7abfff875a25b79e1bb805e2098fce"
+    },
+    {
+      "path": "templates/prompts/dispatch-envelope.md",
+      "bytes": 1177,
+      "sha256": "9e61a86809f594196894ec20e8f94a76dd3b41eb331f2f4940915bb056f23455"
+    },
+    {
+      "path": "templates/prompts/rework-brief.md",
+      "bytes": 1626,
+      "sha256": "21c953a25b855d1b1a64635d7771d9a5a6c3ab1bb33f4d4979ae6f95a96501f6"
+    },
+    {
+      "path": "templates/prompts/scout-brief.md",
+      "bytes": 1873,
+      "sha256": "fca6911fc4bb686a3e9a16f684392f74e77850f38960ae0f1986bbe84731be49"
+    },
+    {
+      "path": "templates/prompts/verifier-brief.md",
+      "bytes": 2923,
+      "sha256": "d32172a77eeff5924707ff9fa96557e0f312d595e45ab4faf3b0f0148f66f5a0"
+    },
+    {
+      "path": "templates/review.md",
+      "bytes": 692,
+      "sha256": "27bb113b69970f111f55bb4b24dfa274db4c6ebce6dea684b003851867eab3e5"
+    },
+    {
+      "path": "templates/task-brief.md",
+      "bytes": 1520,
+      "sha256": "156357ea6aebc5cdcd632009eaea534de48810d64c1aba12b5b49c868c4eaad9"
+    },
+    {
+      "path": "templates/worker-report.md",
+      "bytes": 2740,
+      "sha256": "9b2c8b7486f318f0be66bf5855e19d79f8b5aa6d1476f9432ec6e5631194ee51"
+    },
+    {
+      "path": "templates/worker-rules.md",
+      "bytes": 3493,
+      "sha256": "2c95d7aecbf6ef33d88fcb810e0d91bafef037ff66828eb221aa78cd8882a3f9"
+    },
+    {
+      "path": "tests/test_change_policy.py",
+      "bytes": 7703,
+      "sha256": "d2b09192ab3d385664d6eeec9e9e814abf1aab27ce6a3fa5ef770376b5187184"
+    },
+    {
+      "path": "tests/test_prompt_contract.py",
+      "bytes": 11514,
+      "sha256": "ac0d8ebcb3d022def07aa64f92030aa8b58e4c2e68f020d40d93c7253ef5c637"
+    },
+    {
+      "path": "tests/test_workspace_receipt.py",
+      "bytes": 14585,
+      "sha256": "d72714b50d4da042ba942f50957aeb6f8612d53d2321d5db6814020cff7b6596"
+    }
+  ]
+}

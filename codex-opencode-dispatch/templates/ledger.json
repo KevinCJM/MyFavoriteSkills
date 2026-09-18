@@ -1,0 +1,52 @@
+{
+  "schema_version": 2,
+  "run_id": "<unique-run-id>",
+  "repository": "<repository-identity>",
+  "server": "<OpenCode-endpoint-identity-without-secrets>",
+  "target_workspace": "<absolute-server-path>",
+  "model_binding": {
+    "label": "DeepSeek V4.1 Flash",
+    "providerID": null,
+    "modelID": null,
+    "variant": null,
+    "policy": "unresolved",
+    "effective_model_verified": false,
+    "effective_variant_verified": false
+  },
+  "tasks": [
+    {
+      "task_id": "<ID>",
+      "contract_revision": "<revision>",
+      "role": "builder",
+      "risk": "medium",
+      "depends_on": [],
+      "workspace": "<absolute-server-path>",
+      "base_revision": "<sha>",
+      "ownership": {
+        "product_paths": [],
+        "artifact_paths": [],
+        "shared_resources": []
+      },
+      "attempts": [],
+      "execution_status": "not_submitted",
+      "acceptance_status": "not_reviewed",
+      "integration_status": "not_integrated",
+      "candidate_identity": null,
+      "evidence": [],
+      "blocking_findings": [],
+      "decisions": [],
+      "next_action": "resolve brief and preflight",
+      "contract_ref": "<worker-visible authoritative brief>",
+      "contract_sha256": null,
+      "prompt_preflight": "not_checked"
+    }
+  ],
+  "measurement": {
+    "codex_tokens": null,
+    "worker_tokens": null,
+    "elapsed_seconds": null,
+    "rework_rounds": 0,
+    "notes": "No savings inferred from missing measurements."
+  },
+  "prompt_protocol": "ocw/1"
+}
