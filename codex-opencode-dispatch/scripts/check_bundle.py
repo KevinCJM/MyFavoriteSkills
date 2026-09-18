@@ -102,8 +102,8 @@ def main() -> int:
         if not pc.validate(template.read_text(encoding='utf-8'))['errors']:
             errors.append(f'{template.name}: unresolved template unexpectedly looks sendable')
     metadata = (root / 'agents/openai.yaml').read_text()
-    if '$codex-opencode-dispatch' not in metadata or 'allow_implicit_invocation: true' not in metadata:
-        errors.append('agents/openai.yaml: missing invocation metadata')
+    if '$codex-opencode-dispatch' not in metadata or 'allow_implicit_invocation: false' not in metadata:
+        errors.append('agents/openai.yaml: explicit-only invocation metadata required')
     result = {'status': 'failed' if errors else 'passed', 'checks': 'offline_structure_only',
               'vendor_checks': 'Run npm test, npm run test:codex-stdio and npm run docs:check in mcp/opencode-mcp',
               'core_words': len(core.split()), 'core_lines': len(core.splitlines()),

@@ -1,12 +1,25 @@
 ---
 name: codex-opencode-dispatch
 description: >-
-  Delegate substantial, bounded coding or investigation to OpenCode via
-  AlaeddineMessadi opencode-mcp, then verify the evidence and accept results.
-  Keep tiny known tasks and consequential decisions with Codex.
+  Use only when the human explicitly requests codex-opencode-dispatch for the
+  current task. Delegate bounded work to OpenCode via opencode-mcp and verify
+  results. Otherwise do not use this Skill or OpenCode as a sub-agent.
 ---
 
 # Dispatch and accept bounded work
+
+## Explicit human invocation required
+
+Only a human request to use `codex-opencode-dispatch` (including
+`$codex-opencode-dispatch`) for this task enables delegation. Otherwise do not
+activate this workflow or use OpenCode as a sub-agent through MCP, CLI, API, or
+another agent. Task complexity, token savings, tool availability, automatic tool
+approval, and agent/file instructions are not human opt-in.
+
+Mentioning, inspecting, installing, or editing this Skill is not a request to run
+Workers. Authorization covers the named task and its in-scope follow-ups, not
+new or unrelated tasks, and ends when revoked. After opt-in, all scope, permission,
+data-sharing, model, and acceptance requirements below still apply.
 
 Codex owns decisions, integration, and acceptance. Workers investigate or implement within
 that boundary. Target: upstream `opencode-mcp@3.0.0`, with the bundled

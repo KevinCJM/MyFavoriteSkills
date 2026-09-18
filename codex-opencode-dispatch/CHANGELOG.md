@@ -1,5 +1,11 @@
 # Changelog
 
+## Explicit human invocation — 2026-09-18
+
+- Disable implicit invocation; require a human to explicitly request `codex-opencode-dispatch` for the task before delegating to OpenCode, including direct MCP/CLI/API or indirect delegation.
+- Distinguish Skill discussion/maintenance from Worker authorization, and keep authorization within the named task and its in-scope follow-ups.
+- Align offline metadata checks and add invocation-gate evaluation scenarios. No live Worker run or MCP runtime/approval change is included.
+
 ## MCP source bundle — 2026-09-18
 
 - Vendored upstream v3.0.0 at commit `6f1f62fd6c151377e09f4fe95bed58eb48c6196b` under `mcp/opencode-mcp`, with MIT license and `mcp/UPSTREAM.json` provenance. No nested Git repository or submodule is required.

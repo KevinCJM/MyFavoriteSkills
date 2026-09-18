@@ -10,6 +10,12 @@
 
 ## 适合做什么
 
+**仅限人类明确要求使用 `codex-opencode-dispatch` 时启用。** 普通任务默认禁止使用本 Skill，也禁止绕过 Skill 通过 MCP、CLI、API 或其他智能体调用 OpenCode 作为子智能体；任务复杂、节省 token 或工具自动批准都不是授权。
+
+仅讨论、检查、安装或修改本 Skill 不等于授权启动 Worker。授权只覆盖点名的任务及其范围内的后续工作，不延续到新任务，撤回后停止。Codex 的 `allow_implicit_invocation` 已设为 `false`；其他客户端也须遵守 [SKILL.md](SKILL.md) 的调用门槛，但这不等于 MCP 运行时强制拦截。
+
+明确授权后，适合委派：
+
 - 调查范围明确、工作量较大的代码问题，返回可定位的证据。
 - 按已确定的需求修改代码、补充测试，再由 Codex 独立验收。
 - 将相互独立的问题交给多个 Worker 分析，由 Codex 汇总。

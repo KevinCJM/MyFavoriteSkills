@@ -1,6 +1,6 @@
 interface:
   display_name: "Codex 派工与验收"
-  short_description: "四问决定必要改动，通过 OpenCode 派工并验收契约与证据"
+  short_description: "仅限人类明确点名启用，委派 OpenCode 并独立验收契约与证据"
   default_prompt: "使用 $codex-opencode-dispatch 处理当前开发任务：每项改动先回答四问，不做额外美化、偿还旧债或无关修复；保留契约，按需派工并验收实际证据。"
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

@@ -7,18 +7,18 @@
   "files": [
     {
       "path": "CHANGELOG.md",
-      "bytes": 6434,
-      "sha256": "046db01dcec176197528d9332cc26d1f9225e32accc74e5df4b59583f9c17bd7"
+      "bytes": 6957,
+      "sha256": "a48e732f5196341dc39f8aac5441f2f1826acffeff88646a28bbde8a1a248276"
     },
     {
       "path": "README.md",
-      "bytes": 21649,
-      "sha256": "a939cc770b4aa53d91434ed44d151cf2c80ff36e877c97faf0faa2a6c7f1a629"
+      "bytes": 22322,
+      "sha256": "3e94632d65265beec7cd30d6a9a66f3f9186e46842be0e6b69d8cec1f57058f2"
     },
     {
       "path": "SKILL.md",
-      "bytes": 9946,
-      "sha256": "119f2274cddfd998d00110ab158b5f33afdbe67001d5c39dbd847bec720a4f51"
+      "bytes": 10677,
+      "sha256": "d076d707f7a009e3586d78d2cf4f2c46219bb0bfd8a75b970fd36c4ae770ff14"
     },
     {
       "path": "VERSION",
@@ -27,8 +27,8 @@
     },
     {
       "path": "agents/openai.yaml",
-      "bytes": 402,
-      "sha256": "8bf05d1bcbf167719e51a36f1556fd65f1247d3a962c863c1fcc7b5ec9a22584"
+      "bytes": 409,
+      "sha256": "a63359bf164227d3c264b7027a27a351bc42f97c74c9dd83c3378f7c752fa311"
     },
     {
       "path": "docs/AUDIT_RESPONSE.zh-CN.md",
@@ -72,8 +72,8 @@
     },
     {
       "path": "evals/README.md",
-      "bytes": 3597,
-      "sha256": "d26be79f3313898d9ed189a1e8a8cdc03368f9bb1c17ab185a57cd75c33c96c9"
+      "bytes": 3992,
+      "sha256": "bf8bb85d6efe31b8f7494d7fc0558dfb788c02af505f5fc37d9593abdac8888a"
     },
     {
       "path": "evals/live-smoke-plan.md",
@@ -82,8 +82,8 @@
     },
     {
       "path": "evals/scenarios.json",
-      "bytes": 32509,
-      "sha256": "ff2b3a6f274996ac02e07f5cae07db36a18b5cb56683cf0bd311496b81f2523a"
+      "bytes": 34778,
+      "sha256": "4aaa9da712d294c575aa5bab5eec2b0d1ad2e518b6afeb8e070192e7d37d6370"
     },
     {
       "path": "examples/prompts/README.md",
@@ -497,8 +497,8 @@
     },
     {
       "path": "scripts/check_bundle.py",
-      "bytes": 6148,
-      "sha256": "916d211832966ca50ecce2402d71576a95a58796595b512031870d170f7440aa"
+      "bytes": 6164,
+      "sha256": "4a2a220c7f9bc4d8ed5005c813af85d47b10fb0b668f5725bc996f8becc6082c"
     },
     {
       "path": "scripts/prompt_contract.py",
@@ -602,8 +602,8 @@
     },
     {
       "path": "tests/test_check_bundle.py",
-      "bytes": 1225,
-      "sha256": "bce9bb7f1f5abb958b918cbbcedb451a3ae0a0278cde692e623d502655c22794"
+      "bytes": 2398,
+      "sha256": "57652c5b15ef8bd23cb6673ee126139c9f51d2ba708f32f452a174de3d65236d"
     },
     {
       "path": "tests/test_prompt_contract.py",
