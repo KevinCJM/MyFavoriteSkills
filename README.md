@@ -42,8 +42,8 @@ cp -R ai-hermes-routing-init ai-hermes-self-evolve ai-hermes-user-project-memory
 
 ## Skills / 技能列表
 
-- 新增 [`codex-opencode-dispatch`](./codex-opencode-dispatch/README.md)：Codex 通过 OpenCode MCP 委派有边界的调查与实现，再独立验收；支持多 Worker、固定模型、权限止损和上下文复用，不承诺固定 token 节省比例。
-- New: [`codex-opencode-dispatch`](./codex-opencode-dispatch/README.md) delegates bounded work through OpenCode MCP and keeps acceptance with Codex. Includes multi-worker guidance, model binding, permission stops, and context reuse; token savings are workload-dependent.
+- 新增 [`codex-opencode-dispatch`](./codex-opencode-dispatch/README.md)：Codex 委派 OpenCode Worker 后独立验收；内置基于上游 v3.0.0 的 MCP 源码与 reasoning 过滤、可选紧凑返回补丁，附构建和接入说明；不承诺固定 token 节省比例。
+- New: [`codex-opencode-dispatch`](./codex-opencode-dispatch/README.md) delegates bounded work to OpenCode and keeps acceptance with Codex. Bundles a pinned MCP source snapshot, reasoning filtering, optional compact results, and setup instructions; token savings are workload-dependent.
 
 | Skill | 中文简介 | English summary |
 | --- | --- | --- |
@@ -90,7 +90,7 @@ Common dependencies include:
 
 - Python 3
 - Git and GitHub CLI for publishing workflows
-- `codex-opencode-dispatch` requires a connected AlaeddineMessadi `opencode-mcp@3.0.0`, OpenCode, and your own model access. The Skill does not install MCP or include local MCP patches; its optional helpers require Python 3.10+ and Git.
+- `codex-opencode-dispatch` bundles a patched AlaeddineMessadi `opencode-mcp` source snapshot (`3.0.0-codex.1`). Build it with Node.js 22+ and npm, then explicitly register its local entry point with Codex. OpenCode and your own model access remain required; optional Skill helpers use Python 3.10+ and Git. Downloading the Skill does not alter global configuration or credentials.
 - Python scientific stack for metric calculation skills, such as `numpy`, `pandas`, `scipy`, `numba`, and `pyarrow`
 - Network access for skills that fetch remote content or call APIs
 - Optional command-line tools such as `yt-dlp`, `ffmpeg`, `curl`, `reader`, or `trafilatura`

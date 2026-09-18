@@ -1,0 +1,16 @@
+node_modules/
+dist/
+*.js.map
+*.tsbuildinfo
+.env
+.env.*
+projects/
+.axon/
+.opencode/
+
+# Local review/scratch artifacts (e.g. dumped PR comments)
+pr_comments.txt
+*_comments.txt
+
+# Local test coverage reports
+coverage/

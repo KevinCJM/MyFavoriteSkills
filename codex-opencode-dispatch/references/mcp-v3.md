@@ -2,7 +2,9 @@
 
 Read once per changed environment. These are real tool base names; the host may prefix
 its connector namespace. Live input/output schemas outrank this reference. Target version
-is 3.0.0; do not claim a different release is compatible without checking its schema.
+is upstream 3.0.0. This Skill bundles the patched `3.0.0-codex.1` source; installation,
+patch scope and provenance are in [README](../README.md). Do not claim another release
+is compatible without checking its schema.
 Source pointers: `docs/SOURCES.md` M1–M4.
 
 ## Preflight without repeated exploration
@@ -162,7 +164,7 @@ authorized pending-input flow; it is not automatically a hard denial.
 operator setting for this Skill, not a security mechanism. Do not change the user's
 config automatically. Full profile remains valid; discover only the tools you need.
 
-The locally patched 3.0.0 installation optionally supports
+The bundled `mcp/opencode-mcp` build (`3.0.0-codex.1`) optionally supports
 `OPENCODE_COMPACT_RESULTS=true` in the MCP server environment. This is NOT an upstream
 3.0.0 capability. For `run/fire/wait/check`, read the complete report from
 `structuredContent.text`; the text content block is only a receipt. IDs, state, pending
@@ -170,6 +172,11 @@ inputs, errors and message metadata remain available. Only transport text alread
 in the report is omitted from result parts; structured business data is retained.
 `opencode_job_get` remains the full-result recovery path, not a routine extra call.
 Leave the setting off for text-only clients; the default response contract is unchanged.
+Native MCP Tasks results are not compacted; the opt-in covers ordinary tool calls only.
+The bundle also filters transport `reasoning` parts from message/job responses and session
+message resources. It does not scrub arbitrary business JSON, tool output, events, or
+OpenCode history. Existing globally installed npm packages do not gain these patches until
+the operator explicitly switches the MCP command to the bundled build.
 Keep compact Markdown reports and path:line evidence; do not replace full conclusions
 with arbitrary output truncation. Load only matching routing fields, not entire module trees.
 

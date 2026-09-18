@@ -4,9 +4,21 @@ from __future__ import annotations
 import ast
 import json
 import importlib.util
+import os
 from pathlib import Path
 import re
 import sys
+
+
+def skill_files(root: Path):
+    """Check Skill-owned files; the vendored MCP has its own build and test suite."""
+    for directory, dirs, names in os.walk(root):
+        current = Path(directory)
+        dirs[:] = [name for name in dirs
+                   if name not in {'.git', 'node_modules', '__pycache__'}
+                   and current / name != root / 'mcp' / 'opencode-mcp']
+        for name in names:
+            yield current / name
 
 
 def main() -> int:
@@ -20,7 +32,8 @@ def main() -> int:
     if len(core.split()) > 1500:
         errors.append('SKILL.md: core exceeds the 1500-word maintenance budget')
     links = 0
-    markdown_files = list(root.rglob('*.md'))
+    owned_files = list(skill_files(root))
+    markdown_files = [path for path in owned_files if path.suffix == '.md']
     for path in markdown_files:
         text = path.read_text(encoding='utf-8')
         opened = None
@@ -42,13 +55,13 @@ def main() -> int:
             destination = (path.parent / target).resolve()
             if not destination.is_relative_to(root) or not destination.exists():
                 errors.append(f'{path.relative_to(root)}: broken local link {target}')
-    python_files = list(root.rglob('*.py'))
+    python_files = [path for path in owned_files if path.suffix == '.py']
     for path in python_files:
         try:
             ast.parse(path.read_text(encoding='utf-8'), filename=str(path))
         except SyntaxError as exc:
             errors.append(f'{path.relative_to(root)}: {exc}')
-    for path in root.rglob('*.json'):
+    for path in (path for path in owned_files if path.suffix == '.json'):
         try:
             json.loads(path.read_text(encoding='utf-8'))
         except ValueError as exc:
@@ -92,6 +105,7 @@ def main() -> int:
     if '$codex-opencode-dispatch' not in metadata or 'allow_implicit_invocation: true' not in metadata:
         errors.append('agents/openai.yaml: missing invocation metadata')
     result = {'status': 'failed' if errors else 'passed', 'checks': 'offline_structure_only',
+              'vendor_checks': 'Run npm test, npm run test:codex-stdio and npm run docs:check in mcp/opencode-mcp',
               'core_words': len(core.split()), 'core_lines': len(core.splitlines()),
               'core_utf8_bytes': len(core.encode()), 'markdown_files': len(markdown_files),
               'local_links_checked': links, 'python_files_parsed': len(python_files),

@@ -9,7 +9,9 @@ description: >-
 # Dispatch and accept bounded work
 
 Codex owns decisions, integration, and acceptance. Workers investigate or implement within
-that boundary. Target: `opencode-mcp@3.0.0`; this Skill is not a security boundary.
+that boundary. Target: upstream `opencode-mcp@3.0.0`, with the bundled
+`3.0.0-codex.1` source in `mcp/opencode-mcp`. See [README](README.md) only for setup;
+do not load the vendor tree during ordinary dispatch. This Skill is not a security boundary.
 
 ## 0. Admit changes before routing work
 
@@ -115,7 +117,7 @@ Require a correlated compact report: task/revision/attempt, candidate, status, r
 AC coverage with path:line/check evidence, changes, and unresolved gaps. Reject mismatched
 identity. Worker `ready_for_review` and MCP `completed` are not Codex acceptance.
 Use [report details](templates/worker-report.md) when authoring or repairing a report contract.
-With the local compact-results patch, the full report is in `structuredContent.text`;
+With the bundled MCP's opt-in compact-results mode, the full report is in `structuredContent.text`;
 `content` is a receipt. Do not fetch the same report again without a recovery need.
 
 Compare coverage with the original request, not only Worker-selected findings. Group the

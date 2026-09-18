@@ -1,0 +1,19 @@
+{
+  "repository": "https://github.com/AlaeddineMessadi/opencode-mcp",
+  "tag": "v3.0.0",
+  "commit": "6f1f62fd6c151377e09f4fe95bed58eb48c6196b",
+  "upstream_version": "3.0.0",
+  "bundled_version": "3.0.0-codex.1",
+  "imported_on": "2026-09-18",
+  "distribution": "vendored source snapshot, not a Git submodule or a separate GitHub fork",
+  "path": "opencode-mcp",
+  "license": "MIT",
+  "license_file": "opencode-mcp/LICENSE",
+  "patches": [
+    "Filter message reasoning parts from formatted and raw message/job outputs and session message resources without recursive business-data filtering",
+    "Opt-in compact ordinary run/fire/wait/check results; preserve default output and full job_get recovery",
+    "Add 36 patch regression cases and default/compact stdio fixture smoke",
+    "Identify bundled build as 3.0.0-codex.1 and prevent accidental npm publishing"
+  ],
+  "dependencies": "Original upstream package-lock dependencies retained; install with npm ci"
+}

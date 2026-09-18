@@ -1,5 +1,13 @@
 # Changelog
 
+## MCP source bundle — 2026-09-18
+
+- Vendored upstream v3.0.0 at commit `6f1f62fd6c151377e09f4fe95bed58eb48c6196b` under `mcp/opencode-mcp`, with MIT license and `mcp/UPSTREAM.json` provenance. No nested Git repository or submodule is required.
+- Ported the previously local compiled-output patches to maintained TypeScript: message reasoning filtering and opt-in compact ordinary run/fire/wait/check results. Bundled MCP version is `3.0.0-codex.1`; Skill version and `ocw/1` protocol remain unchanged.
+- Added 36 MCP regressions and two fixture-backed stdio modes. Baseline: 503 passed / 3 skipped; patched: 539 passed / 3 skipped. No new model run or token-saving benchmark was performed.
+- Documented explicit source build, Codex registration, compatibility limits and update/rollback procedures. Existing global MCP/configuration is not modified by this package.
+- Scoped Skill structure checks to owned files, with one new regression: 105 offline Skill tests passed. Vendor build, tests and tool-documentation checks run separately.
+
 ## 2.3.0 — 2026-09-18
 
 - Hardened Git evidence: detect `assume-unchanged` / `skip-worktree` entries and require manual review instead of treating hidden changes as complete evidence.

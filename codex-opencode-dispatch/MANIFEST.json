@@ -7,18 +7,18 @@
   "files": [
     {
       "path": "CHANGELOG.md",
-      "bytes": 5393,
-      "sha256": "993b1f5a2e4b7ed8c5c84765dee20897ac9d0f0c71e1a1d034e7586d25656f6a"
+      "bytes": 6434,
+      "sha256": "046db01dcec176197528d9332cc26d1f9225e32accc74e5df4b59583f9c17bd7"
     },
     {
       "path": "README.md",
-      "bytes": 11823,
-      "sha256": "b969631fb1d3c6baa24c9e5db9a5d95a74f4912b627bbe6414c2ab46d8b9cdb6"
+      "bytes": 21649,
+      "sha256": "a939cc770b4aa53d91434ed44d151cf2c80ff36e877c97faf0faa2a6c7f1a629"
     },
     {
       "path": "SKILL.md",
-      "bytes": 9766,
-      "sha256": "dcc71bb7a1ceb07ff356c1911539ca48cc7f784ed9dfa44921af0e7609a87970"
+      "bytes": 9946,
+      "sha256": "119f2274cddfd998d00110ab158b5f33afdbe67001d5c39dbd847bec720a4f51"
     },
     {
       "path": "VERSION",
@@ -126,14 +126,349 @@
       "sha256": "38d007456b2527a76ec81767c218fcd8ded2c3173e60ed830163a1a722850a9a"
     },
     {
+      "path": "mcp/UPSTREAM.json",
+      "bytes": 966,
+      "sha256": "84fea11e52e9792204cc0dc36238f3c0ba768945a825a19ecab2e1d709e78470"
+    },
+    {
+      "path": "mcp/opencode-mcp/.github/workflows/ci.yml",
+      "bytes": 548,
+      "sha256": "00f7bb331aaf2ad2eb2f41d01f0c608162c622e652d5b82c0caa6cb651830800"
+    },
+    {
+      "path": "mcp/opencode-mcp/.gitignore",
+      "bytes": 215,
+      "sha256": "a547138b449058576afaed51750bcd4588e37ad6d6d5c0af2a962551cfeb67ef"
+    },
+    {
+      "path": "mcp/opencode-mcp/CHANGELOG.md",
+      "bytes": 25142,
+      "sha256": "46fe86fa2826881d68744fe9dfa62a099b404ee2a6629c9727a78a00cb63062d"
+    },
+    {
+      "path": "mcp/opencode-mcp/CODE_OF_CONDUCT.md",
+      "bytes": 1550,
+      "sha256": "0abf4c4407e97d487e39ec136b14e042c0a22460634d391fc9379057c4f5d74a"
+    },
+    {
+      "path": "mcp/opencode-mcp/CONTRIBUTING.md",
+      "bytes": 3745,
+      "sha256": "09eb60729b1109d834880ca727397b9a4ad2737028c9d1b455ffba1e0dbbba1e"
+    },
+    {
+      "path": "mcp/opencode-mcp/LICENSE",
+      "bytes": 1074,
+      "sha256": "d3afceaccf51cc6a933fee4ab5687617099265d6d6e71f6f9dc176e6baabc9cd"
+    },
+    {
+      "path": "mcp/opencode-mcp/README.md",
+      "bytes": 6458,
+      "sha256": "c9055b251f246189b77e35e355f0aabbc2bedc6976233acae4153e320c1b2903"
+    },
+    {
+      "path": "mcp/opencode-mcp/docs/architecture.md",
+      "bytes": 7472,
+      "sha256": "33bea33ec624cd4e554a6917aba93425c5fb71bf80afc966478d46cc601fd53e"
+    },
+    {
+      "path": "mcp/opencode-mcp/docs/configuration.md",
+      "bytes": 7701,
+      "sha256": "5f86c1daded2198856ef78d5f11e0d2be3e93b6fd67cb7748b33762c462778f1"
+    },
+    {
+      "path": "mcp/opencode-mcp/docs/examples.md",
+      "bytes": 6808,
+      "sha256": "6c3ce76cf7a330974504a3c77ef6a3ddc4ea02b64cf3ec86160f3101864ec9e9"
+    },
+    {
+      "path": "mcp/opencode-mcp/docs/getting-started.md",
+      "bytes": 3542,
+      "sha256": "a44e3045ebb37533ac9ffe6e9c459f303133a3c2331076ac64b43a53f8eff404"
+    },
+    {
+      "path": "mcp/opencode-mcp/docs/prompts.md",
+      "bytes": 2400,
+      "sha256": "69bce968ee289c35d08be6cfe11c50df9a861b6ad37bc9eaf43c73b5efe70247"
+    },
+    {
+      "path": "mcp/opencode-mcp/docs/releasing.md",
+      "bytes": 5182,
+      "sha256": "6bcf9289bbc08f9f59aadce3dce80f92713a2d26f020dad257d6b8dbe0e115fe"
+    },
+    {
+      "path": "mcp/opencode-mcp/docs/resources.md",
+      "bytes": 2619,
+      "sha256": "719c122004804a7bcf9f3975fa29b11590d4d9b539a13517f68598d75f9bb6c1"
+    },
+    {
+      "path": "mcp/opencode-mcp/docs/tools.md",
+      "bytes": 178538,
+      "sha256": "454cee4426f9709aac843ed89d909bd83737e7c1bb6f5263c63b44091ca78286"
+    },
+    {
+      "path": "mcp/opencode-mcp/package-lock.json",
+      "bytes": 94265,
+      "sha256": "1cae68746f241d7aea6cc6a6204627ac25c9e8ce6848088f3af9814bc2d87272"
+    },
+    {
+      "path": "mcp/opencode-mcp/package.json",
+      "bytes": 2010,
+      "sha256": "6b9579581021bba03f590de20b799b7ec80d38994948df13a9f75eb624ee753e"
+    },
+    {
+      "path": "mcp/opencode-mcp/scripts/codex-stdio-smoke.mjs",
+      "bytes": 5345,
+      "sha256": "fd669a0c368171cf75e43f33e325c10028374c5f7a29931ebf945d2c4467b24a"
+    },
+    {
+      "path": "mcp/opencode-mcp/scripts/generate-tool-docs.mjs",
+      "bytes": 6941,
+      "sha256": "485a609308f7e73155427da251d224972138ef22c2cec7798cfdb1d19edd6245"
+    },
+    {
+      "path": "mcp/opencode-mcp/scripts/mcp-smoke-test.mjs",
+      "bytes": 10571,
+      "sha256": "32e374e5e06694591c91d82db029a5bb0ed755df7625a46da3d70a072b605888"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/app.ts",
+      "bytes": 5387,
+      "sha256": "e9260d0b2d12d229f2eaa460c0f748c640ee0d7c3d77410f09c425ae18cadd9d"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/async.ts",
+      "bytes": 3656,
+      "sha256": "cfa8b20939cbe5c9d128d17328c0d558114881c4c2bcb86065ce1eac45ea7c15"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/client.ts",
+      "bytes": 12329,
+      "sha256": "d68af0cc2cca3cefd7ef841c3c5a39b450eb19c2978e066a7161447e0207415d"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/helpers.ts",
+      "bytes": 25501,
+      "sha256": "f6e282448bbaf5ce193b6f64ce0b30e4bcf66d6dd356809481945c19669144cb"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/index.ts",
+      "bytes": 1939,
+      "sha256": "d67b77b5234d5b16d9fb8bec95c1b90cd74913af4af1e17525095639ac6ae1a4"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/job-contract.ts",
+      "bytes": 986,
+      "sha256": "d67436c47c8b294359f60d0f5e1c6b9662e24ae360b7897ccc4af34557a185b8"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/jobs.ts",
+      "bytes": 25074,
+      "sha256": "7df68bbe5c43c41fd2bc7075a80d404b2ad6bc4fdd16326bf76c2f6a5591c9c7"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/mcp-server.ts",
+      "bytes": 7271,
+      "sha256": "ae26a7c5fb857542ab27f24828d044e1f4ae5049785ddf0020fcf7663271825d"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/prompts.ts",
+      "bytes": 10912,
+      "sha256": "2f7c3f607c3ff5b772d93ce370f14c3c8c0daa3d162e0258683ee592436e03a0"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/resources.ts",
+      "bytes": 9648,
+      "sha256": "55660a9665bd55ff294ba4ebd7d15ec94d70cefc477c4256f7371d1bcbb14012"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/server-manager.ts",
+      "bytes": 6724,
+      "sha256": "ffdc0ad2b575b701eac65186ba585d73a1665584b1b17a2f1767d31eef8c4306"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/task-input.ts",
+      "bytes": 3898,
+      "sha256": "f910d605525c49cbeb644cd5296818159633ab31086b21c59005ae6a250af955"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/task-transport.ts",
+      "bytes": 8874,
+      "sha256": "34902e39e04b607c762d60be6a820f31019506156920b95648ff7eab76c92496"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/tools/config.ts",
+      "bytes": 4666,
+      "sha256": "889884cd82db5f26ea9bc52cf968a7150ab681dab078112c9a94f1dd9cf5d4e9"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/tools/events.ts",
+      "bytes": 3378,
+      "sha256": "3ae283070141e1d57452ca935092b0c6db0830af7ebe1b06d041b33ee4324c1d"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/tools/file.ts",
+      "bytes": 7060,
+      "sha256": "acc6ef67751e574c6f8e202927071a5aed05c0ac779d79eeee6801f336651a90"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/tools/global.ts",
+      "bytes": 793,
+      "sha256": "fae32120ce4d82d227d41179bc6b75e3b3001a45187234e490f12f70c10266e5"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/tools/input.ts",
+      "bytes": 4342,
+      "sha256": "a4a543a84e967ac081bcfee9083c76d9ba0431e4ecbc823b4e3b67363cd6adc0"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/tools/message.ts",
+      "bytes": 8561,
+      "sha256": "506d474c75045476189f2d9fc208d8d05c4fc5a3cc297bf7cac857a1426d43dc"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/tools/misc.ts",
+      "bytes": 12407,
+      "sha256": "435d424763375b1210421089b696c07fff27e6e8da8725597404daef67508f97"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/tools/project.ts",
+      "bytes": 8412,
+      "sha256": "2f402833a9ead62b6d057003d2909153687540c8bf135ee9740ea3eb912fc81e"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/tools/provider.ts",
+      "bytes": 9499,
+      "sha256": "9167ff23a6d1efdbf7c69d768dd776dd211a192482df2ad2352ab9585fb0224d"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/tools/session.ts",
+      "bytes": 18349,
+      "sha256": "d0b6331fa3df2e3bb2578683b6f6f326059e856e496661fdf8cce410f7bd35c1"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/tools/tui.ts",
+      "bytes": 4417,
+      "sha256": "644487c8daefcac4492becd4fbf9cc4f5c26557d19cf669f63d296b8ef83f464"
+    },
+    {
+      "path": "mcp/opencode-mcp/src/tools/workflow.ts",
+      "bytes": 39536,
+      "sha256": "3fa80ff31f1259ad4b10048a6f6657ff080b8ee29b26ff93ca9f7f0c5507c7da"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/client.test.ts",
+      "bytes": 17263,
+      "sha256": "878b8c9189d9ba976d4493c02eea965649349a67955e7aade9d93d0231833df9"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/codex-compact.test.ts",
+      "bytes": 3831,
+      "sha256": "5fd76a030144d7bd9146c9e8e335e59b06eb8e58fae00b7081922fbeb22e9648"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/codex-filter.test.ts",
+      "bytes": 10014,
+      "sha256": "a5273404b39c7a4d74fc49699d0c3630ebb33d6d26490f18150cd506394691f9"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/contracts.test.ts",
+      "bytes": 9016,
+      "sha256": "7006f3f10dc38465038e3b537c0283b769815e3ead229109749f1d785d4d772b"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/helpers.test.ts",
+      "bytes": 39261,
+      "sha256": "c80ec71d03ff0513093f0120c3c46835773d940f44723cb036c676f717fdffea"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/http-integration.test.ts",
+      "bytes": 4406,
+      "sha256": "7e00250471ab08e61e40c8039d39c8644e471bad7a0f4cedf9a60fb0196a5bfc"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/input.test.ts",
+      "bytes": 6805,
+      "sha256": "898832ffc877e55fa4e6dee2eb248bd2bb2afacc312ec79e815aef6d6e99b060"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/jobs.test.ts",
+      "bytes": 23132,
+      "sha256": "781ed8657a686d3603d8b242d5db3cf4a2dbfc2d771ecd22f25bd7e5b4758511"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/modern-stdio.test.ts",
+      "bytes": 13068,
+      "sha256": "a70d72ddcfb1c5a0e7c6deb0fd7141fb83b0b8d6dd42718fdb779e56b614cc06"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/project-tool.test.ts",
+      "bytes": 7322,
+      "sha256": "4a70f743160f1475f3970b5690e4dfce4cb1b589283cd8a7ef21dc78e132c737"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/prompts.test.ts",
+      "bytes": 3996,
+      "sha256": "7d85e5d7b7d49ab1bedb041ada943a439f831da8964cef8dff666b54f8d0f14e"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/resources.test.ts",
+      "bytes": 4582,
+      "sha256": "58888db2a7011df46d9fe21388fcf79538b2a778ff6f978b75f55aacd2400a6d"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/server-manager.test.ts",
+      "bytes": 17514,
+      "sha256": "5a94b0791e00d0f191dc27cd3604ca6db3265b898fce669c72b770931aca089f"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/smoke-runner.test.ts",
+      "bytes": 8573,
+      "sha256": "e574b40514c56826da5b77a5c0bab8a5e42a7da358e073d221455beb65b28963"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/stdio-integration.test.ts",
+      "bytes": 1944,
+      "sha256": "b2601f6bd7281ad71b7818778e3307d9f2ea11accda1cf3118a6499daf1a4277"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/task-transport.test.ts",
+      "bytes": 10474,
+      "sha256": "92a7485bba2d8e472e331034be80509d78bb31ddaa9410b765fa9bba90cc939b"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/tools.test.ts",
+      "bytes": 101861,
+      "sha256": "d16e2de5a5440ee98752fb7ad893ad72b6e15a4f9ca7b4b4b06da3276390578e"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/transport-reliability.test.ts",
+      "bytes": 9781,
+      "sha256": "fdc5a1ba2a1e5d125c0236ebfe542fcd359349fe3f92a7373c4e8ad939986f91"
+    },
+    {
+      "path": "mcp/opencode-mcp/tests/workflow-reliability.test.ts",
+      "bytes": 9401,
+      "sha256": "0ba142b81cd928d82103d2e3709fb1d5e02fb2eee136ef82c4a5fa7f38dd7bb1"
+    },
+    {
+      "path": "mcp/opencode-mcp/tsconfig.json",
+      "bytes": 376,
+      "sha256": "c3ccffda7a6b1bf2efe42e1c62c01896ab0dfdce6adcb4dd1dbcf4becd0fd918"
+    },
+    {
+      "path": "mcp/opencode-mcp/vitest.config.ts",
+      "bytes": 176,
+      "sha256": "3d86d8b98d0fd14e66e7e27d5cc781d7708d95649b93b93a7c25dfad8c317991"
+    },
+    {
       "path": "references/change-admission.md",
       "bytes": 11136,
       "sha256": "56bfce173a67f6afc154f56f46e4503eb96243933fad81a1be3cac3ef9be40c9"
     },
     {
       "path": "references/mcp-v3.md",
-      "bytes": 13140,
-      "sha256": "9904025647e5cf9d9707d0945a6d597565cc6b1d63e9018f3c65f8411462ef3c"
+      "bytes": 13715,
+      "sha256": "3e1c2acfe250edcb67bdd0c5e9e8cc88a90a687ba4f021e1b39bec758abdc74f"
     },
     {
       "path": "references/prompt-protocol.md",
@@ -162,8 +497,8 @@
     },
     {
       "path": "scripts/check_bundle.py",
-      "bytes": 5437,
-      "sha256": "ad2e853a5681f9d92d133079067f948378f63277131fb82f1cbe02016863a359"
+      "bytes": 6148,
+      "sha256": "916d211832966ca50ecce2402d71576a95a58796595b512031870d170f7440aa"
     },
     {
       "path": "scripts/prompt_contract.py",
@@ -266,6 +601,11 @@
       "sha256": "d2b09192ab3d385664d6eeec9e9e814abf1aab27ce6a3fa5ef770376b5187184"
     },
     {
+      "path": "tests/test_check_bundle.py",
+      "bytes": 1225,
+      "sha256": "bce9bb7f1f5abb958b918cbbcedb451a3ae0a0278cde692e623d502655c22794"
+    },
+    {
       "path": "tests/test_prompt_contract.py",
       "bytes": 11514,
       "sha256": "ac0d8ebcb3d022def07aa64f92030aa8b58e4c2e68f020d40d93c7253ef5c637"
@@ -275,5 +615,9 @@
       "bytes": 14585,
       "sha256": "d72714b50d4da042ba942f50957aeb6f8612d53d2321d5db6814020cff7b6596"
     }
-  ]
+  ],
+  "bundled_mcp": {
+    "version": "3.0.0-codex.1",
+    "provenance": "mcp/UPSTREAM.json"
+  }
 }
