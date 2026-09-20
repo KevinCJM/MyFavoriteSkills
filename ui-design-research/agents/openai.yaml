@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI 设计调研"
+  short_description: "调研真实组件、布局与交互参考，形成适配当前项目的设计与实现建议"
+  default_prompt: "使用 $ui-design-research，为当前页面寻找合适的组件与设计参考，并给出可执行的适配建议。"

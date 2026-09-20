@@ -19,6 +19,10 @@ cp -R <skill-folder> "${CODEX_HOME:-$HOME/.codex}/skills/"
 
 You can also copy multiple skill folders. Do not copy generated outputs, caches, private config, or files containing secrets.
 
+`ui-design-research` 支持放入 `~/.agents/skills/` 供兼容客户端共享，Codex 可通过软链接复用同一份文件；参见其 [安装说明](./ui-design-research/README.md#安装)。
+
+`ui-design-research` can live in the shared `~/.agents/skills/` directory for compatible clients, with a Codex symlink to the same files. See its [installation guide](./ui-design-research/README.md#安装).
+
 ## 推荐组合 / Recommended Bundles
 
 AI Hermes 路由闭环建议同时安装这三个 skill：
@@ -57,6 +61,7 @@ cp -R ai-hermes-routing-init ai-hermes-self-evolve ai-hermes-user-project-memory
 | [`mine-codex-workflows`](./mine-codex-workflows) | 分析本地 Codex 历史对话，发现重复工作流、常用命令模式和可沉淀为 skill 的候选项。 | Mines local Codex history for repeated workflows, command patterns, and reusable skill candidates. |
 | [`rss-digest-writer`](./rss-digest-writer) | 从 RSS、Reddit、YouTube、公众号 RSS 等来源聚合热点，由 Codex 去重、筛选、摘要和归档。 | Aggregates trends from RSS, Reddit, YouTube, WeChat RSS, and web signals, then deduplicates and summarizes them. |
 | [`tushare-fetcher`](./tushare-fetcher) | 根据 Tushare 积分和接口 JSON 生成限频数据获取脚本，支持 Parquet 输出、冒烟测试和脚本固化。 | Generates rate-limited Tushare Parquet fetch scripts from interface JSON and user points, with smoke tests and solidification. |
+| [`ui-design-research`](./ui-design-research/README.md) | 从 20 个 UI 参考来源中按需调研真实组件、布局与交互，给出适配现有技术栈的设计与实现建议；MCP 可选。 | Researches real UI components, layouts, and interactions from a curated catalog of 20 sources, then adapts findings to the existing stack; MCP is optional. |
 | [`volcengine-podcast-md-to-audio`](./volcengine-podcast-md-to-audio) | 将本地 Markdown 或文本文章通过火山引擎播客 TTS 转成双人播客 MP3，并下载服务端最终音频。 | Converts local Markdown or text articles into two-speaker podcast MP3s through Volcengine podcast TTS. |
 | [`yt-dlp-smart-download`](./yt-dlp-smart-download) | 使用 `yt-dlp` 智能下载视频和字幕，在最佳质量和 MP4 兼容格式之间自动选择。 | Downloads videos and subtitles with `yt-dlp`, choosing best quality or MP4-compatible formats as needed. |
 
@@ -72,6 +77,7 @@ $ai-hermes-self-evolve 检查这次提交是否需要更新路由记忆
 $ai-hermes-user-project-memory 记住这个项目默认用指定 Python 解释器
 $codex-opencode-dispatch 将边界清楚的代码调查交给 OpenCode Worker，再独立验收
 $metrics-factory 计算多个金融产品在多个区间的指标
+$ui-design-research 先调研当前页面的 UI 参考，再按项目已有样式规范完成实现
 ```
 
 具体参数、脚本路径和安全规则以每个 skill 目录中的 `README.md` 和 `SKILL.md` 为准。
