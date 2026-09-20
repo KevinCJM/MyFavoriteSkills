@@ -4,7 +4,7 @@
 
 A lightweight skill for researching real UI components, layouts, and interactions, then adapting the findings to the project's existing stack and design system.
 
-版本：`1.0.0`。运行入口是 [SKILL.md](SKILL.md)；本 README 面向安装和使用者。
+版本：`1.1.0`。运行入口是 [SKILL.md](SKILL.md)；本 README 面向安装和使用者。
 
 ## 适合做什么
 
@@ -16,28 +16,37 @@ A lightweight skill for researching real UI components, layouts, and interaction
 
 ## 工作方式
 
-1. 先读取项目规则、框架、现有组件与主题，明确页面用途和用户要求。
-2. 按具体问题选择来源，通常查看 2–3 个；用户指定的来源优先。
+1. 先读取项目规则、框架、现有组件、主题和相邻页面，明确外部参考能解决什么问题；已有材料足够且未要求外部调研时可直接沿用。
+2. 按具体问题选择分类和来源，通常查看 2–3 个；一个足够时停止，用户指定的来源优先。
 3. 查官方文档与源码，实际观察渲染效果，按需操作演示。
 4. 给出具体参考链接、采用理由、适配方式和已核实的证据。
-5. 用户要求只调研时交付建议；用户已要求实现时，继续编码与相关验证。
+5. 用户要求只调研时交付建议；用户已要求实现时，继续编码，并按业务检查相关状态、转换与代表性数据。
 
 文字抓取、截图、操作演示、读取源码和本地验证分别说明。看过原站演示，不等于组件已经在你的项目里通过验证。
 
 ## 参考来源
 
-当前目录收录 20 个来源，包括最初指定的 [shadcn/ui](https://ui.shadcn.com/)、[transitions.dev](https://transitions.dev/)、[Rare UI](https://www.rareui.com/)、[beUI](https://beui.dev/) 和 [Beautiful UI](https://www.beautifului.dev/)。
+当前目录收录 23 个来源，包括最初指定的 [shadcn/ui](https://ui.shadcn.com/)、[transitions.dev](https://transitions.dev/)、[Rare UI](https://www.rareui.com/)、[beUI](https://beui.dev/) 和 [Beautiful UI](https://www.beautifului.dev/)。
 
 | 参考方向 | 目录中的部分来源 |
 | --- | --- |
 | 基础组件与业务控件 | shadcn/ui、Base UI、COSS UI、Kibo UI、Mantine、Ant Design |
+| 键盘、焦点与组件行为 | W3C ARIA APG、React Aria |
+| 企业表格与批量操作 | Carbon Design System |
 | 数据分析与仪表盘 | Tremor |
 | AI 助手与任务状态 | Beautiful UI、AI Elements |
 | 动效与交互细节 | transitions.dev、beUI、Motion Primitives |
 | 营销区块与视觉效果 | Rare UI、Tailark、Magic UI、React Bits、Aceternity UI |
 | 页面与交互灵感 | Design Spells、Landingfolio、Awwwards |
 
-完整入口、适用技术栈、读取方式和核验范围见 [来源目录](references/sources.md)。目录不是组件源码合集，也不限制使用目录外的官方来源；API、依赖、价格和许可在实际采用时重新核实。
+先读 [选源索引](references/sources.md)，再加载相关分类。完整入口、技术栈、读取方式和重要限制留在分类中；历史核验范围单独放在维护记录。目录不是组件源码合集，也不限制使用目录外的官方来源；API、依赖、价格和许可在实际采用时重新核实。
+
+## v1.1 的取舍与检查
+
+- 先满足业务、可访问性和技术约束，再比较任务效率、视觉一致、维护成本与精致度；业务后台和品牌展示页采用适合各自任务的设计。
+- 新增依赖前比较现有组件与 primitives 的组合方案，检查全局 CSS、主题及动画运行时影响；不增加形式化审批。
+- 实现复杂组件时按需检查加载、空数据、错误、焦点、选中等状态及转换，并覆盖长文本、缺失值和窄屏；不把全套状态强加给每个组件。
+- 保留 `sources.md` 作为轻量入口，原 20 个来源 ID 不变，新增行为与企业 UI 来源；不自动安装 MCP 或更换技术栈。
 
 ## 安装
 
@@ -110,12 +119,19 @@ MCP 是可选读取通道，本包不附带 MCP 服务，也不会自动安装�
 | 文件 | 用途 |
 | --- | --- |
 | [SKILL.md](SKILL.md) | 触发范围、调研流程与实现边界 |
-| [references/sources.md](references/sources.md) | 20 个来源的选源索引与核验说明 |
+| [references/sources.md](references/sources.md) | 23 个来源的轻量选源索引 |
+| [基础与行为](references/sources-foundation.md)、[业务与数据](references/sources-enterprise-data.md)、[AI 界面](references/sources-ai.md)、[动效](references/sources-motion.md)、[展示与灵感](references/sources-inspiration.md) | 按需加载的来源分类与重要限制 |
+| [references/source-maintenance.md](references/source-maintenance.md) | 历史核验记录、工具端点快照与更新约定 |
+| [references/design-rules.md](references/design-rules.md) | 布局、视觉与依赖取舍 |
+| [references/implementation-review.md](references/implementation-review.md) | 适用状态、转换和代表性数据检查 |
 | [references/research-output.md](references/research-output.md) | 简短输出和按需详细交接格式 |
+| [evals/README.md](evals/README.md) | 10 个触发用例、12 个行为用例及执行与判定方法 |
 | [agents/openai.yaml](agents/openai.yaml) | Codex 显示信息和默认调用提示 |
 | [NOTICE.md](NOTICE.md) | 三个上游项目的固定提交、归属和许可证 |
 | [LICENSE](LICENSE) | 本 Skill 的 MIT 许可证 |
 
 维护时只更新实际检查过的来源字段和日期，保留上游归属。普通 UI 任务不会自动改写全局 Skill；目录也不会自动抓取网站或下载整个组件库。
+
+评测用例需要在具有相应工具和项目环境的客户端执行；本包不附带模型执行器。用例定义、静态检查通过与真实模型评测通过是不同结果，新增用例不代表已测得触发准确率或完成独立行为评测。
 
 本 Skill 选择性改编自 `ByeongminLee/nextjs-claude-code`、`Xiaoyang-Hu-96/design-resource-library` 和 `JasonColapietro/suede-creator-skills`，独立维护。具体来源与完整许可记录见 [NOTICE.md](NOTICE.md)。Skill 的 MIT 许可不替代所引用组件、图片、图标、字体或第三方服务的许可。

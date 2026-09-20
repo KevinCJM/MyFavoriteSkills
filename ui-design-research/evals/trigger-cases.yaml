@@ -1,0 +1,44 @@
+schema_version: 1
+skill: ui-design-research
+mode: implicit
+cases:
+  - id: T01
+    context: 现有 React 后台，筛选区需要视觉与交互改版，没有完整设计稿。
+    prompt: 帮我重新设计这个 Dashboard 的筛选区，找合适的界面参考并说明取舍。
+    expected_trigger: true
+  - id: T02
+    context: 正在设计 AI 助手的任务列表。
+    prompt: 找几个适合任务进度展示的 UI 参考，区分排队、执行、失败与重试。
+    expected_trigger: true
+  - id: T03
+    context: 项目已有基础组件，需要判断 Combobox 是否值得换实现。
+    prompt: 比较 shadcn 和现有组件实现这个 Combobox，先给选型建议。
+    expected_trigger: true
+  - id: T04
+    context: Vue 品牌展示页，需要外部构图参考。
+    prompt: 调研几个适合品牌首页的布局，参考 Awwwards，但保留 Vue 技术栈。
+    expected_trigger: true
+  - id: T05
+    context: 无项目，仅希望了解可参考的 UI 来源。
+    prompt: 给我一份按用途分类的 UI 组件和设计灵感来源，标明哪些适合企业后台。
+    expected_trigger: true
+  - id: T06
+    context: 单个样式值修改，设计已确定。
+    prompt: 把这个按钮的 padding 从 12px 改成 8px。
+    expected_trigger: false
+  - id: T07
+    context: 事件绑定故障，外观无需改动。
+    prompt: 修复按钮 onclick 不触发的问题，保留当前界面。
+    expected_trigger: false
+  - id: T08
+    context: 已提供完整 Figma 设计及交互标注，无需重新选型。
+    prompt: 按这份完整 Figma 图和标注 1:1 实现，不另找视觉参考。
+    expected_trigger: false
+  - id: T09
+    context: 后端接口变更，无前端需求。
+    prompt: 给后端接口增加一个字段，并保持旧客户端兼容。
+    expected_trigger: false
+  - id: T10
+    context: 已有可复用的相邻页面与完整控件规范。
+    prompt: 完全沿用相邻页面现有布局和组件，新建同样结构的详情页。
+    expected_trigger: false

@@ -1,0 +1,103 @@
+schema_version: 1
+skill: ui-design-research
+mode: explicit
+cases:
+  - id: B01
+    context: Vue 3 项目，已有 Vue 组件与 CSS 变量；可联网，未安装 React。
+    prompt: 使用 $ui-design-research，参考 Beautiful UI 的任务状态，给现有 Vue 页面出方案，先不改代码。
+    required_observations:
+      - 检查现有 Vue 结构，区分模式借鉴与 React 源码复用。
+      - 指向实际访问的具体参考，说明用 Vue 与真实业务状态实现的适配点。
+    failure_signals:
+      - 引入 React、安装依赖或修改业务代码。
+      - 把演示定时器等同于真实任务进度。
+  - id: B02
+    context: Ant Design 5 后台已有 Table、Form 和主题；网络只提供该版本官方资料与 Carbon 文档。
+    prompt: 使用 $ui-design-research，改善订单筛选与批量操作，只给设计建议。
+    required_observations:
+      - 优先现有组件；如借鉴 Carbon，说明模式如何适配 Ant Design。
+      - 只读取业务相关分类或具体来源，结论能连接到高频操作。
+    failure_signals:
+      - 无必要理由迁移到 shadcn 或 Carbon。
+      - 顺序加载全部分类和历史核验记录。
+  - id: B03
+    context: 有文档文本与源码读取能力，无截图、视觉或交互浏览器工具。
+    prompt: 使用 $ui-design-research，研究这个展开组件是否适合当前侧栏。
+    required_observations:
+      - 给出有证据的技术或适配建议，并说明实际视觉与交互未验证。
+    failure_signals:
+      - 声称看过渲染、操作过演示或证实动画流畅。
+  - id: B04
+    context: 隔离的可运行前端项目，有开发服务与浏览器；组件、样式规范和用户要求均完整，无需额外批准。
+    prompt: 使用 $ui-design-research，调研后直接实现这个筛选区，保持现有主题并验证相关操作。
+    required_observations:
+      - 调研后继续修改授权代码，运行相应 UI 与项目检查。
+      - 证据对应本地改动，清楚说明仍未运行的部分。
+    failure_signals:
+      - 只给方案就停止并要求形式化确认。
+      - 用原站演示替代本地验证，或擅自部署、推送。
+  - id: B05
+    context: 用户指定的官方来源已提供足够资料与具体组件；其余来源不会解决新的问题。
+    prompt: 使用 $ui-design-research，仅判断这个已选 Tabs 方案与当前项目是否兼容。
+    required_observations:
+      - 完成相关兼容性判断后停止扩展搜索，不为凑数量再找来源。
+    failure_signals:
+      - 为满足固定数量浏览不相关网站。
+  - id: B06
+    context: React 项目已有 Button、图标库和 CSS transitions，用户只需轻微按下反馈。
+    prompt: 使用 $ui-design-research，给按钮补一个合适的按下反馈，按现有项目实现。
+    required_observations:
+      - 优先现有能力，比较新增依赖的实际收益后作出选择。
+      - 显式调用不强迫外部搜索或长报告。
+    failure_signals:
+      - 默认安装新的动画、图标与基础组件库。
+      - 把依赖比较变成用户未要求的额外审批。
+  - id: B07
+    context: 可运行订单表格；样例含缺失金额、0、业务允许的负数、很长名称及接口失败，支持窄屏。
+    prompt: 使用 $ui-design-research，参考业务表格模式优化页面，并检查真实内容下是否稳定。
+    required_observations:
+      - 按业务区分 null 与 0，检查长内容和窄屏下必要信息与操作。
+      - 检查适用的加载、空数据、失败重试和选中转换，记录实际证据。
+    failure_signals:
+      - 将 null 直接显示为 0，或者只检查理想短文本。
+      - 虚构检查结果，或为无关组件强加全套状态。
+  - id: B08
+    context: 用户明确要有表现力的品牌首页，允许大标题、渐变与必要动画；主要操作和可访问性仍需保留。
+    prompt: 使用 $ui-design-research，参考 Awwwards 做一个品牌展示方案，先不写代码。
+    required_observations:
+      - 按品牌目标选视觉来源，说明表达与可用性的具体取舍。
+    failure_signals:
+      - 将后台密度、禁用卡片或禁用渐变当作所有页面的硬规则。
+      - 无视用户指定的视觉来源。
+  - id: B09
+    context: 原生 HTML 表格，单元格仅包含普通链接与按钮；没有电子表格式方向键编辑需求。
+    prompt: 使用 $ui-design-research，参考 APG 检查这个表格的交互方案，只给建议。
+    required_observations:
+      - 按真实交互需求选择语义，不为形式完整而强加 grid 模式。
+      - 区分指南阅读与本地可访问性验证。
+    failure_signals:
+      - 仅增加 ARIA 属性就宣称键盘行为或可访问性已验收。
+  - id: B10
+    context: 指定来源当前请求失败，无可用官方替代，且用户只接受这个来源。
+    prompt: 使用 $ui-design-research，只参考这个网站的指定组件，给出可证实的结论。
+    required_observations:
+      - 尝试合理官方入口后说明证据缺口，保留能证实的部分。
+    failure_signals:
+      - 偷换成其他网站、编造访问内容或认定项目不存在。
+  - id: B11
+    context: 可联网并提供 React Bits 的实际许可证；只允许调研，不允许安装。
+    prompt: 使用 $ui-design-research，判断这个 React Bits 效果能否用于项目，给出采用前需要确认的条件。
+    required_observations:
+      - 分类条目保留重要许可限制，并查所选代码当前许可。
+      - 区分项目集成与组件本身再分发，以及代码与附属素材。
+    failure_signals:
+      - 仅因本 Skill 为 MIT 就认定第三方组件可无限制再分发。
+      - 自动安装 Skill、MCP、依赖或付费内容。
+  - id: B12
+    context: 现有组件与完整页面规范足够；用户显式调用 Skill，但没有要求外部调研。
+    prompt: 使用 $ui-design-research，沿用现有完整规范给详情页安排内容，不改代码。
+    required_observations:
+      - 检查现有材料后直接给适配方案，不强制搜索外部来源。
+      - 保持简短，不自动写全局 Skill 或额外设计文件。
+    failure_signals:
+      - 为调用 Skill 而强制读全部来源，或覆盖用户已有设计。
