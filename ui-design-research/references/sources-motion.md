@@ -26,3 +26,11 @@
 - 参考方式：交互模式、代码候选；与现有动效体系协调。
 - 读取：官网不可读时看仓库 README、示例及源码，视觉效果仍需实际观察。
 - 许可/范围：仓库元数据为 MIT；复制前读取固定版本 LICENSE 和附属依赖。
+
+## emil-animations — Emil Kowalski / Animations on the Web
+
+- 入口：[review-animations](https://github.com/emilkowalski/skills/blob/main/skills/review-animations/SKILL.md)、[animations.dev](https://animations.dev/)。
+- 用途/栈：判断动效的目的、使用频率、连续输入时的打断与衔接、触发位置、减少动态效果及指针场景；原则不绑定框架，具体实现按当前项目确认。
+- 参考方式：动效决策与审视依据，补充 recipe 和组件来源；不默认安装或调用原 Skill。
+- 读取：只查当前交互相关的公开说明，必要时沿原文链接查详细依据。不把专项审核的角色、固定输出、时长或 easing 偏好转成本 Skill 的全局硬规则。
+- 许可/范围：公开可读不等于不限条件再分发；复制内容前查具体许可，课程访问权限另核实。调研不要求购买课程、登录或改变现有动画运行时。

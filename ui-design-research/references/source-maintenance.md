@@ -2,6 +2,7 @@
 
 仅在维护目录、解释历史结论或排查来源变化时读取。下面的日期只覆盖注明字段，不证明全部组件、视觉、依赖或许可已验证。
 来源 ID 与分类文件保持一致；前 20 项沿用 v1.0 的实际核验记录，新增三项单列当前核验范围。本次拆分未重新完整核验旧来源。
+v1.2 另增 emil-animations；本轮只核实该新增来源，未重新验证其余 23 个来源。
 
 ## 更新约定
 
@@ -103,3 +104,7 @@
 ## carbon — Carbon Design System
 
 - 核验：2026-09-20 已读 Data table Usage、Accessibility 与 React 入口；核实选择、展开、工具栏、批量操作与键盘说明。未操作 Storybook、未复制代码、未核实全部包许可。
+
+## emil-animations — Emil Kowalski / Animations on the Web
+
+- 核验：2026-09-20 已读公开 review-animations 的动效目的、频率、打断、origin 与可访问性条目，以及 animations.dev 课程介绍。未执行原 Skill、未读取付费课程内容、未核实仓库许可证全文；未把专项阈值升级为通用约束。未进行实际动画性能或目标项目验证。

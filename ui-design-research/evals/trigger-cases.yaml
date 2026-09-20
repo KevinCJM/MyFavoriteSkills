@@ -42,3 +42,11 @@ cases:
     context: 已有可复用的相邻页面与完整控件规范。
     prompt: 完全沿用相邻页面现有布局和组件，新建同样结构的详情页。
     expected_trigger: false
+  - id: T11
+    context: 项目已有技术栈和基础组件，但没有风险页面设计、布局规范或可直接复用的同类页面。
+    prompt: 帮我设计并实现新的投资组合风险分析 Dashboard，目前没有设计稿。
+    expected_trigger: true
+  - id: T12
+    context: Portfolio Detail 页和组件规范已完整覆盖 Account Detail 所需结构与状态，仅数据实体不同。
+    prompt: 按现有 Portfolio Detail 页原样新增一个 Account Detail 页。
+    expected_trigger: false

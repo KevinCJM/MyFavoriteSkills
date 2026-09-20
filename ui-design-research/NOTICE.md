@@ -1,8 +1,10 @@
 # 来源与许可记录
 
-版本：1.1.0；制作及更新日期：2026-09-20。
+版本：1.2.0；制作及更新日期：2026-09-20。
 
 v1.1 将来源拆分为按需读取的分类，补充设计取舍、状态与数据检查、评测用例，以及 APG、Carbon、React Aria 的官方资料入口。以下上游固定提交和归属保持不变；新增资料作为参考链接，不附带第三方组件源码。
+
+v1.2 按第二轮审核补强触发边界、本地设计依据、设计主线、渲染与文案检查及评测方法，新增 Emil 的动效资料入口。核对的概念参考包括 [Anthropic frontend-design](https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md)、[PaulRBerg frontend-design](https://github.com/PaulRBerg/agent-skills/blob/main/skills/frontend-design/SKILL.md)、[nolly design-md](https://github.com/nolly-studio/agent-skills/blob/main/skills/design-md/SKILL.md) 和 mblode 的 [ui-verification](https://github.com/mblode/agent-skills/blob/main/skills/ui-verification/SKILL.md)、[评测方法](https://github.com/mblode/agent-skills/blob/main/skills/agent-skills-creator/references/evaluation-and-iteration.md)。本次仅独立表述通用方法与添加链接，不收录这些项目的正文、脚本或审美规则集；链接内容遵循各自许可，不因被引用而适用本包 MIT。
 
 本 Skill 独立维护。以下文件仅作为经过检查的改编资料，不在运行时加载，也未运行上游安装器或脚本。
 所有重写和目录选择均服务于 ui-design-research；不代表上游作者背书。

@@ -4,15 +4,15 @@
 
 A lightweight skill for researching real UI components, layouts, and interactions, then adapting the findings to the project's existing stack and design system.
 
-版本：`1.1.0`。运行入口是 [SKILL.md](SKILL.md)；本 README 面向安装和使用者。
+版本：`1.2.0`。运行入口是 [SKILL.md](SKILL.md)；本 README 面向安装和使用者。
 
 ## 适合做什么
 
-- 为新页面、视觉改版或组件选型寻找具体参考。
+- 为仍需设计判断的新页面、复杂组件、视觉/交互改版或组件选型寻找具体参考；无需用户先说“找参考”。
 - 比较布局、信息密度、字体层级、留白、状态反馈和动效。
 - 在现有技术栈内选择“改造已有组件”“改编兼容源码”或“借鉴模式后重新实现”。
 
-普通尺寸调整、纯逻辑修复和已有完整设计稿的直接还原，通常无需启用外部调研。
+普通尺寸调整、纯逻辑修复，以及按完整设计稿或完整可复用规范直接实现，通常无需启用外部调研。
 
 ## 工作方式
 
@@ -26,7 +26,7 @@ A lightweight skill for researching real UI components, layouts, and interaction
 
 ## 参考来源
 
-当前目录收录 23 个来源，包括最初指定的 [shadcn/ui](https://ui.shadcn.com/)、[transitions.dev](https://transitions.dev/)、[Rare UI](https://www.rareui.com/)、[beUI](https://beui.dev/) 和 [Beautiful UI](https://www.beautifului.dev/)。
+当前目录收录 24 个来源，包括最初指定的 [shadcn/ui](https://ui.shadcn.com/)、[transitions.dev](https://transitions.dev/)、[Rare UI](https://www.rareui.com/)、[beUI](https://beui.dev/) 和 [Beautiful UI](https://www.beautifului.dev/)。
 
 | 参考方向 | 目录中的部分来源 |
 | --- | --- |
@@ -35,18 +35,20 @@ A lightweight skill for researching real UI components, layouts, and interaction
 | 企业表格与批量操作 | Carbon Design System |
 | 数据分析与仪表盘 | Tremor |
 | AI 助手与任务状态 | Beautiful UI、AI Elements |
-| 动效与交互细节 | transitions.dev、beUI、Motion Primitives |
+| 动效与交互细节 | transitions.dev、beUI、Motion Primitives、Emil Kowalski / animations.dev |
 | 营销区块与视觉效果 | Rare UI、Tailark、Magic UI、React Bits、Aceternity UI |
 | 页面与交互灵感 | Design Spells、Landingfolio、Awwwards |
 
 先读 [选源索引](references/sources.md)，再加载相关分类。完整入口、技术栈、读取方式和重要限制留在分类中；历史核验范围单独放在维护记录。目录不是组件源码合集，也不限制使用目录外的官方来源；API、依赖、价格和许可在实际采用时重新核实。
 
-## v1.1 的取舍与检查
+## 设计取舍与检查
 
 - 先满足业务、可访问性和技术约束，再比较任务效率、视觉一致、维护成本与精致度；业务后台和品牌展示页采用适合各自任务的设计。
 - 新增依赖前比较现有组件与 primitives 的组合方案，检查全局 CSS、主题及动画运行时影响；不增加形式化审批。
 - 实现复杂组件时按需检查加载、空数据、错误、焦点、选中等状态及转换，并覆盖长文本、缺失值和窄屏；不把全套状态强加给每个组件。
 - 保留 `sources.md` 作为轻量入口，原 20 个来源 ID 不变，新增行为与企业 UI 来源；不自动安装 MCP 或更换技术栈。
+
+v1.2 补充了无设计稿场景的触发边界、本地 DESIGN.md/Storybook/Figma/tokens 的核对、新页面的一句话设计主线，以及实际渲染、运行错误、遮挡和界面文案检查；仅按本次修改范围使用，不自动生成 DESIGN.md。
 
 ## 安装
 
@@ -119,13 +121,13 @@ MCP 是可选读取通道，本包不附带 MCP 服务，也不会自动安装�
 | 文件 | 用途 |
 | --- | --- |
 | [SKILL.md](SKILL.md) | 触发范围、调研流程与实现边界 |
-| [references/sources.md](references/sources.md) | 23 个来源的轻量选源索引 |
+| [references/sources.md](references/sources.md) | 24 个来源的轻量选源索引 |
 | [基础与行为](references/sources-foundation.md)、[业务与数据](references/sources-enterprise-data.md)、[AI 界面](references/sources-ai.md)、[动效](references/sources-motion.md)、[展示与灵感](references/sources-inspiration.md) | 按需加载的来源分类与重要限制 |
 | [references/source-maintenance.md](references/source-maintenance.md) | 历史核验记录、工具端点快照与更新约定 |
 | [references/design-rules.md](references/design-rules.md) | 布局、视觉与依赖取舍 |
 | [references/implementation-review.md](references/implementation-review.md) | 适用状态、转换和代表性数据检查 |
 | [references/research-output.md](references/research-output.md) | 简短输出和按需详细交接格式 |
-| [evals/README.md](evals/README.md) | 10 个触发用例、12 个行为用例及执行与判定方法 |
+| [evals/README.md](evals/README.md) | 12 个触发用例、12 个行为用例、对照/删减规则实验及分层验证方法 |
 | [agents/openai.yaml](agents/openai.yaml) | Codex 显示信息和默认调用提示 |
 | [NOTICE.md](NOTICE.md) | 三个上游项目的固定提交、归属和许可证 |
 | [LICENSE](LICENSE) | 本 Skill 的 MIT 许可证 |
