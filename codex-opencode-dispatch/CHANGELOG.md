@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.4.0 — 2026-09-21
+
+- Keep explicit OpenCode authorization active across later turns in the same Codex conversation and project/workspace; no repeated Skill mention is required.
+- Proactively delegate useful bounded development, research, and testing after opt-in, while keeping direct execution for truly trivial commands/edits or unavailable workers.
+- Reuse compatible sessions by project/workspace, workstream, model/variant, and role; use new job/message IDs, separate parallel workers, and fresh independent verifier sessions.
+- Preserve `allow_implicit_invocation: false`: first use still requires human opt-in, and authorization ends on revocation, conversation end, or project/workspace change.
+- Add offline policy wiring and behavior scenarios. No live Worker run or MCP runtime change is included.
+
 ## Explicit human invocation — 2026-09-18
 
 - Disable implicit invocation; require a human to explicitly request `codex-opencode-dispatch` for the task before delegating to OpenCode, including direct MCP/CLI/API or indirect delegation.

@@ -1,34 +1,34 @@
 {
   "name": "codex-opencode-dispatch",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "prompt_protocol": "ocw/1",
   "target_mcp": "AlaeddineMessadi/opencode-mcp@3.0.0",
   "created_on": "2026-09-18",
   "files": [
     {
       "path": "CHANGELOG.md",
-      "bytes": 6957,
-      "sha256": "a48e732f5196341dc39f8aac5441f2f1826acffeff88646a28bbde8a1a248276"
+      "bytes": 7773,
+      "sha256": "4be300849b9cf49d194adb662a4e3a6cd066ecd262c330b4d3f0bfbad15f4d80"
     },
     {
       "path": "README.md",
-      "bytes": 22322,
-      "sha256": "3e94632d65265beec7cd30d6a9a66f3f9186e46842be0e6b69d8cec1f57058f2"
+      "bytes": 23030,
+      "sha256": "724fc77652618eeb3d1f1afd5267629f2eef0d39b033a124d47616c8cb9b82c6"
     },
     {
       "path": "SKILL.md",
-      "bytes": 10677,
-      "sha256": "d076d707f7a009e3586d78d2cf4f2c46219bb0bfd8a75b970fd36c4ae770ff14"
+      "bytes": 11460,
+      "sha256": "4a9401f305a12737533e6de7cd96335b6ad3619edcc015d4b8a9c1818fdba8be"
     },
     {
       "path": "VERSION",
       "bytes": 6,
-      "sha256": "a42caf4a54bbbe27aa45b6efbc6356c5e299b19763e728b6cdb7201b02ebbe36"
+      "sha256": "2ad7b0c3f0ede58c3165b7a8a5479e890a758d39bfe8683eaef50ce6afad7232"
     },
     {
       "path": "agents/openai.yaml",
-      "bytes": 409,
-      "sha256": "a63359bf164227d3c264b7027a27a351bc42f97c74c9dd83c3378f7c752fa311"
+      "bytes": 422,
+      "sha256": "014bbe0b13bd02758e0c4973a17e67ab2fa89c3401a0b4f028cc3f22d73567a9"
     },
     {
       "path": "docs/AUDIT_RESPONSE.zh-CN.md",
@@ -62,18 +62,18 @@
     },
     {
       "path": "docs/bundle-check.json",
-      "bytes": 308,
-      "sha256": "581e9e56ca06b1d73553028ffedf85cc649394b28f80aa9eedd4b896181aa32f"
+      "bytes": 412,
+      "sha256": "634351fdc92de1243349fccc5cd002d5e23a0975459bc3a8c6466e3452090db0"
     },
     {
       "path": "docs/unit-tests.log",
-      "bytes": 12773,
-      "sha256": "07f5e30cc0b5a50e273dad308b98e10b73000a5021304ee768d870778196c2f1"
+      "bytes": 13365,
+      "sha256": "03e37ca3da5063bac07218d0b18172a656a669f1934bcba0d588c47fb7642731"
     },
     {
       "path": "evals/README.md",
-      "bytes": 3992,
-      "sha256": "bf8bb85d6efe31b8f7494d7fc0558dfb788c02af505f5fc37d9593abdac8888a"
+      "bytes": 3983,
+      "sha256": "dbe8cce286e42331d69aa0560b83fbcb20c27307c5804479bbeb56e546917b76"
     },
     {
       "path": "evals/live-smoke-plan.md",
@@ -82,8 +82,8 @@
     },
     {
       "path": "evals/scenarios.json",
-      "bytes": 34778,
-      "sha256": "4aaa9da712d294c575aa5bab5eec2b0d1ad2e518b6afeb8e070192e7d37d6370"
+      "bytes": 36166,
+      "sha256": "97c360f106daa6be7528c753e32e07ff15999417cc4d4980be538d75f031dde5"
     },
     {
       "path": "examples/prompts/README.md",
@@ -477,13 +477,13 @@
     },
     {
       "path": "references/routing.md",
-      "bytes": 5004,
-      "sha256": "53d00bf413c1b0cd96e0b70da0f5a6e4dc8ddd1cb6ce42205ac25f49ba68ba3f"
+      "bytes": 5268,
+      "sha256": "a757fe6f1c9f4375d39b9c450cfd9766024ddc3b3b53b207557e7336a4b1991c"
     },
     {
       "path": "references/state-and-context.md",
-      "bytes": 5592,
-      "sha256": "a66c22cb8eacfdb23b43a9d31be8229a30252ee95fcebd83c33b3798e150025f"
+      "bytes": 5922,
+      "sha256": "d8f4250ee633cdeb06c86c68ad802027fb435cea13bab20c5dc12303b223116a"
     },
     {
       "path": "references/verification.md",
@@ -597,8 +597,8 @@
     },
     {
       "path": "tests/test_change_policy.py",
-      "bytes": 7703,
-      "sha256": "d2b09192ab3d385664d6eeec9e9e814abf1aab27ce6a3fa5ef770376b5187184"
+      "bytes": 8694,
+      "sha256": "bfd612cf476d87e4740b3e23ccd61bcc8d413a03921823d5ca3c1ac27ed58996"
     },
     {
       "path": "tests/test_check_bundle.py",

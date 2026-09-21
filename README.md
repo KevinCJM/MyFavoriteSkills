@@ -46,8 +46,8 @@ cp -R ai-hermes-routing-init ai-hermes-self-evolve ai-hermes-user-project-memory
 
 ## Skills / 技能列表
 
-- 新增 [`codex-opencode-dispatch`](./codex-opencode-dispatch/README.md)：仅限人类明确点名使用，Codex 委派 OpenCode Worker 后独立验收；内置基于上游 v3.0.0 的 MCP 源码与 reasoning 过滤、可选紧凑返回补丁，附构建和接入说明；不承诺固定 token 节省比例。
-- New: [`codex-opencode-dispatch`](./codex-opencode-dispatch/README.md) delegates bounded work to OpenCode only when explicitly requested by the human, and keeps acceptance with Codex. Bundles a pinned MCP source snapshot, reasoning filtering, optional compact results, and setup instructions; token savings are workload-dependent.
+- 新增 [`codex-opencode-dispatch`](./codex-opencode-dispatch/README.md)：首次由人类明确启用后，在同一对话和项目内按需委派 OpenCode Worker、复用兼容 session，并由 Codex 独立验收；首次授权前不会自动调用。
+- New: [`codex-opencode-dispatch`](./codex-opencode-dispatch/README.md) requires explicit human opt-in once, then proactively delegates within the same conversation and project, reuses compatible OpenCode sessions, and keeps acceptance with Codex.
 
 | Skill | 中文简介 | English summary |
 | --- | --- | --- |

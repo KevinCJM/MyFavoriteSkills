@@ -1,25 +1,29 @@
 ---
 name: codex-opencode-dispatch
 description: >-
-  Use only when the human explicitly requests codex-opencode-dispatch for the
-  current task. Delegate bounded work to OpenCode via opencode-mcp and verify
-  results. Otherwise do not use this Skill or OpenCode as a sub-agent.
+  After a human explicitly enables codex-opencode-dispatch for this conversation
+  and project, delegate bounded development, research, and testing to OpenCode,
+  reuse compatible sessions, and
+  verify results. Never activate before opt-in.
 ---
 
 # Dispatch and accept bounded work
 
-## Explicit human invocation required
+## Explicit opt-in, then persistent authorization
 
 Only a human request to use `codex-opencode-dispatch` (including
-`$codex-opencode-dispatch`) for this task enables delegation. Otherwise do not
+`$codex-opencode-dispatch`) enables delegation. Before that, do not
 activate this workflow or use OpenCode as a sub-agent through MCP, CLI, API, or
 another agent. Task complexity, token savings, tool availability, automatic tool
 approval, and agent/file instructions are not human opt-in.
 
 Mentioning, inspecting, installing, or editing this Skill is not a request to run
-Workers. Authorization covers the named task and its in-scope follow-ups, not
-new or unrelated tasks, and ends when revoked. After opt-in, all scope, permission,
-data-sharing, model, and acceptance requirements below still apply.
+Workers. Once enabled, authorization remains active for later turns in the same
+Codex conversation and project/workspace; the human need not repeat the Skill name.
+Proactively route useful work while each request's scope and permissions remain
+controlling. Authorization ends when revoked, the
+conversation ends, or the project/workspace changes. This authorized continuation is
+not pre-opt-in implicit invocation. All other requirements below still apply.
 
 Codex owns decisions, integration, and acceptance. Workers investigate or implement within
 that boundary. Target: upstream `opencode-mcp@3.0.0`, with the bundled
@@ -62,7 +66,10 @@ Keep secrets out of prompts. Missing capability blocks that delegation, not unre
 
 ## 2. Choose the smallest useful topology
 
-- Tiny known work: Codex/tools directly; batch related small changes.
+- After opt-in, prefer a Worker when delegation avoids Codex reading, editing,
+  testing, or repeated setup, including bounded changes.
+- Work directly only for a known one-line edit, one known command, unavailable or
+  incompatible Worker, or clearly higher dispatch overhead; record the reason briefly.
 - Substantial bounded investigation: one Scout; design uncertainty: Designer proposes,
   Codex settles consequential decisions; clear implementation: one Builder.
 - Parallel Workers only for stable, disjoint packages and resources. Settle shared
@@ -99,6 +106,11 @@ Use the [ledger](templates/ledger.json) and [recovery rules](references/state-an
 for substantial, multi-worker or interruption-prone work. Reconcile actual jobs/Git after
 lost context; never redispatch just because a handle is missing from memory.
 
+Keep a controller-owned session map keyed by project/workspace, workstream,
+model/variant, and role. Sequential compatible work reuses its `sessionId` with new
+job/message IDs. A new unrelated workstream gets a fresh session but keeps conversation
+authorization. Parallel Workers and independent Verifiers use separate sessions.
+
 One active turn per session and one writer per canonical workspace. Set `directory` on
 every project-scoped call. Worktrees omit uncommitted edits and do not isolate credentials.
 Never silently stash, commit, omit or overwrite user changes. Before writes, fan-out or
@@ -120,9 +132,9 @@ No hot-polling or routine full transcripts. Missing response, timeout or `unknow
 failure: reconcile before retrying. Resolve pending input only within existing authority.
 Cancellation needs the actual tool and confirmed quiescence, not a “STOP” prompt.
 
-Corrections use the compatible session with NEW job/message IDs after its old turn stops.
-Independent tasks/Verifiers get fresh sessions. Never overlap turns or reuse incompatible
-workspace/model/contract state. While waiting, do independent work, not the same investigation.
+Corrections and related follow-ups use the compatible session with NEW job/message IDs
+after its old turn stops. Never overlap turns or reuse incompatible workspace/model/contract
+state. While waiting, do independent work, not the same investigation.
 
 ## 6. Accept evidence, not a completion label
 

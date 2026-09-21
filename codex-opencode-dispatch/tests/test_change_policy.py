@@ -147,8 +147,23 @@ class ChangePolicyWiringTests(unittest.TestCase):
         self.assertIsNone(ledger['model_binding']['variant'])
         self.assertIn('do not invent `max`', profile)
 
+    def test_authorization_persists_and_sessions_are_reused_safely(self):
+        core = read('SKILL.md')
+        state = read('references/state-and-context.md')
+        metadata = read('agents/openai.yaml')
+        cases = {case['id']: case for case in json.loads(read('evals/scenarios.json'))['cases']}
+        self.assertIn('same Codex conversation and project/workspace', ' '.join(core.split()))
+        self.assertIn('the human need not repeat the Skill name', core)
+        self.assertIn('controller-owned session map', state)
+        self.assertIn('pass its `sessionId` explicitly', state)
+        self.assertIn('Parallel Workers and independent Reviewer roles use separate sessions', state)
+        self.assertIn('allow_implicit_invocation: false', metadata)
+        self.assertEqual('new_turn_same_session', cases['A06']['expected_route'])
+        self.assertEqual('fresh_session', cases['A07']['expected_route'])
+        self.assertEqual('direct', cases['A08']['expected_route'])
+
     def test_version_and_protocol_remain_compatible(self):
-        self.assertEqual('2.3.0', read('VERSION').strip())
+        self.assertEqual('2.4.0', read('VERSION').strip())
         self.assertIn('name: codex-opencode-dispatch', read('SKILL.md'))
         for name in ('builder', 'designer', 'compact', 'rework', 'verifier', 'scout', 'clarification'):
             self.assertEqual('ocw/1', pc.parse(read(f'examples/prompts/{name}.md')).metadata['Protocol'])

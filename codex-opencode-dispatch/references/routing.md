@@ -27,9 +27,13 @@ can be low judgment. Long duration is not itself high semantic risk.
 
 ## Topology
 
-`direct`: a trivial known edit, one lookup, or a known build/test command. Running a
-command does not itself require another LLM. Codex may launch the authorized command
-with logs redirected and inspect its summary rather than paying a Worker to press Enter.
+After explicit opt-in, route proactively instead of waiting for the human to repeat the
+Skill name. Prefer delegation when it avoids meaningful Codex reading, editing, testing,
+debugging, or repeated project setup.
+
+`direct`: an already located one-line edit, one lookup, one known build/test command,
+an unavailable/incompatible Worker, or clearly higher dispatch overhead. Record the
+reason briefly. Running a command does not itself require another LLM.
 
 `single`: give one Builder a complete coherent unit, including related code discovery,
 implementation, necessary targeted tests, and fixes of task-related failures. Avoid a Scout → designer → coder →
@@ -56,8 +60,9 @@ model's shared blind spots. Codex must still examine high-risk reasoning directl
 
 ## Cost guard
 
-Delegate only when expected avoided Codex work exceeds brief + observation + review +
-likely correction/integration work. This is a planning heuristic, not measured accounting.
+Delegate when expected avoided Codex work exceeds brief + observation + review + likely
+correction/integration work. After opt-in, uncertain ordinary bounded work should favor one
+Worker; this is a planning heuristic, not measured accounting.
 
 Good: one Builder fixes the explicitly requested validation cases and necessary checks.
 Bad: Codex reads all those files, writes the exact patch, dispatches it, then rereads all.

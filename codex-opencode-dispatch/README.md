@@ -4,7 +4,7 @@
 
 这是一个可跨项目复用的 Codex Skill，目标是减少主控重复劳动，同时保留工程质量检查。包内同时附带可构建的 MCP 源码；Skill 规则本身不是服务、模型代理或安全沙箱，也不保证每个任务都能节省 token。
 
-- Skill 版本：`2.3.0`，包含后续流程优化；本文更新于 2026-09-18。
+- Skill 版本：`2.4.0`；本文更新于 2026-09-21。
 - 内置底座：[AlaeddineMessadi/opencode-mcp](https://github.com/AlaeddineMessadi/opencode-mcp) `v3.0.0` 的修改版 `3.0.0-codex.1`，源码在 [mcp/opencode-mcp](mcp/opencode-mcp/)。
 - 正常运行入口：[SKILL.md](SKILL.md)。README 面向使用者，不需要每次派工都加载。
 
@@ -12,7 +12,9 @@
 
 **仅限人类明确要求使用 `codex-opencode-dispatch` 时启用。** 普通任务默认禁止使用本 Skill，也禁止绕过 Skill 通过 MCP、CLI、API 或其他智能体调用 OpenCode 作为子智能体；任务复杂、节省 token 或工具自动批准都不是授权。
 
-仅讨论、检查、安装或修改本 Skill 不等于授权启动 Worker。授权只覆盖点名的任务及其范围内的后续工作，不延续到新任务，撤回后停止。Codex 的 `allow_implicit_invocation` 已设为 `false`；其他客户端也须遵守 [SKILL.md](SKILL.md) 的调用门槛，但这不等于 MCP 运行时强制拦截。
+仅讨论、检查、安装或修改本 Skill 不等于授权启动 Worker。**一旦人类明确启用，授权会在当前 Codex 对话和同一项目/工作区内持续有效**；后续开发、调研和测试无需重复写 `$codex-opencode-dispatch`，Codex 应按需主动派工。用户撤回、对话结束或切换项目/工作区后失效。
+
+`allow_implicit_invocation` 仍为 `false`：它阻止首次授权前自动启用，不阻止已经明确授权后的连续工作。每个新请求仍受自身范围、权限、数据共享、模型和验收要求约束。
 
 明确授权后，适合委派：
 
@@ -21,7 +23,7 @@
 - 将相互独立的问题交给多个 Worker 分析，由 Codex 汇总。
 - 让实现者和审核者使用不同会话，避免把“Worker 已完成”当成“已经验收”。
 
-很小且答案已明确的修改，直接由 Codex 完成通常更合适。业务语义、公共接口、安全边界、发布和合并等关键决定仍由 Codex 在用户授权范围内负责。
+授权后，只要派工能减少有意义的代码阅读、修改、测试或重复准备，就优先交给 Worker。只有已定位的一行修改、单条已知命令、Worker 不可用/不兼容或派工开销明显更高时才直接完成，并简要记录原因。业务语义、公共接口、安全边界、发布和合并等关键决定仍由 Codex 在用户授权范围内负责。
 
 ## 工作方式
 
@@ -32,6 +34,8 @@
 5. **窄范围返工或交付。** 返工只补具体差异；权限不足、范围冲突或证据不足时报告阻塞。
 
 每个独立修改先回答四个问题：属于当前需求吗？不改会阻塞什么？是不是最小正确修改？是否保留已有契约？小任务用一行 `Boundary:` 即可，不强制建立完整台账。
+
+Codex 维护 `项目/工作区 + 工作流 + 模型/variant + 角色` 的 session 映射。相同工作流的连续任务和返工显式传入已有 `sessionId`，每轮使用新的 job/message ID；同一对话里的无关工作流新建 session，但不丢失授权。并行 Worker 与独立 Verifier 必须使用不同 session，同一 session 不并发两个回合。
 
 Scout、Designer、Builder、Verifier 是任务角色，不是自动安装好的 OpenCode agent。`ocw/1` 是放在 MCP `prompt` 字符串中的任务约定，不是新的 MCP 参数。
 
@@ -261,7 +265,7 @@ python3 scripts/workspace_receipt.py scope-delta \
 
 ## 验证与效果边界
 
-Skill 离线工具与规则连接测试 **105 项通过**（原有 104 项，加 1 项目录检查边界测试）；另外准备的 **84 个行为场景并未全部执行**，二者不能混为一谈。可自行复验：
+Skill 离线工具与规则连接测试 **108 项通过**；另外准备的 **92 个行为场景并未全部执行**，二者不能混为一谈。可自行复验：
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v

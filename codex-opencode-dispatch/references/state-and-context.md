@@ -57,10 +57,13 @@ Before submit, record an attempt as `submission_pending` with task ID, directory
 contract revision. After the call, save exact returned handles. No result after submit
 means outcome unknown, not safe-to-retry. Use the pending record to reconcile.
 
-For a repair, wait until the previous turn is terminal; reuse the session but record a
-NEW job/message ID and retain previous evidence. New independent tasks and Reviewer
-roles use fresh sessions. A session accidentally working in another directory must not
-be silently continued.
+Maintain a controller-owned session map keyed by project/workspace, workstream,
+model/variant, and role. For sequential compatible work, wait until the previous turn is
+terminal, pass its `sessionId` explicitly, record a NEW job/message ID, and retain prior
+evidence. This includes later user turns and repairs in the same workstream. A new unrelated
+workstream gets a fresh session without cancelling conversation-level authorization.
+Parallel Workers and independent Reviewer roles use separate sessions. A session working
+in another directory or with incompatible model/contract state must not be continued.
 
 Before replacing a stuck Worker: inspect pending input, server/job liveness, tool/test
 progress and resources; classify the blocker. Request stop only when needed and confirm

@@ -23,10 +23,10 @@
     {
       "id": "A03",
       "category": "显式调用",
-      "prompt": "上一个使用 codex-opencode-dispatch 的任务已经结束。现在开始一个无关任务：审查另一个项目的模块。",
+      "prompt": "另一个 Codex 对话曾使用 codex-opencode-dispatch。现在在新对话中审查当前项目模块。",
       "expected_route": "direct",
-      "must": "新任务不沿用旧任务的 OpenCode 委派授权。",
-      "must_not": "不得因历史授权或已存在会话启动或继续 Worker。",
+      "must": "新对话不沿用旧对话的 OpenCode 委派授权。",
+      "must_not": "不得因历史授权或旧会话启动或继续 Worker。",
       "reference": "SKILL.md"
     },
     {
@@ -45,6 +45,33 @@
       "expected_route": "direct",
       "must": "由主控审查；仓库建议和工具批准不能替代人类明确点名本 Skill。",
       "must_not": "不得绕过 Skill 通过 CLI、API、MCP 或另一智能体委派 OpenCode。",
+      "reference": "SKILL.md"
+    },
+    {
+      "id": "A06",
+      "category": "持续授权",
+      "prompt": "本对话已明确启用 codex-opencode-dispatch，仍在同一项目。现在继续实现并测试同一功能，不再重复技能名。",
+      "expected_route": "new_turn_same_session",
+      "must": "授权持续有效；主动复用兼容 session，并创建新的 job/message。",
+      "must_not": "不得要求用户重复授权，也不得新建重复 session 或并发复用旧 session。",
+      "reference": "references/state-and-context.md"
+    },
+    {
+      "id": "A07",
+      "category": "持续授权",
+      "prompt": "本对话已明确启用 codex-opencode-dispatch，仍在同一项目。现在开始一个无关但边界清楚的新模块调查。",
+      "expected_route": "fresh_session",
+      "must": "保留对话级授权，为新工作流创建独立 session 并按需派工。",
+      "must_not": "不得要求重复授权，也不得复用不兼容工作流的 session。",
+      "reference": "references/state-and-context.md"
+    },
+    {
+      "id": "A08",
+      "category": "持续授权",
+      "prompt": "停止在后续任务中使用 codex-opencode-dispatch，接下来由 Codex 直接处理。",
+      "expected_route": "direct",
+      "must": "立即撤回持续授权，后续不再启动 Worker。",
+      "must_not": "不得继续或新建 OpenCode 会话。",
       "reference": "SKILL.md"
     },
     {

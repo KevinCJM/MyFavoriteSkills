@@ -1,3 +1,4 @@
+test_authorization_persists_and_sessions_are_reused_safely (test_change_policy.ChangePolicyWiringTests.test_authorization_persists_and_sessions_are_reused_safely) ... ok
 test_behavior_cases_are_not_claimed_executed (test_change_policy.ChangePolicyWiringTests.test_behavior_cases_are_not_claimed_executed) ... ok
 test_compact_example_passes_existing_format_without_cid_table (test_change_policy.ChangePolicyWiringTests.test_compact_example_passes_existing_format_without_cid_table) ... ok
 test_compact_policy_avoids_management_overhead (test_change_policy.ChangePolicyWiringTests.test_compact_policy_avoids_management_overhead) ... ok
@@ -16,6 +17,9 @@ test_structural_pass_does_not_claim_semantic_gate (test_change_policy.ChangePoli
 test_verifier_cannot_create_style_or_debt_rework (test_change_policy.ChangePolicyWiringTests.test_verifier_cannot_create_style_or_debt_rework) ... ok
 test_version_and_protocol_remain_compatible (test_change_policy.ChangePolicyWiringTests.test_version_and_protocol_remain_compatible) ... ok
 test_worker_rules_are_self_contained (test_change_policy.ChangePolicyWiringTests.test_worker_rules_are_self_contained) ... ok
+test_enabling_implicit_invocation_fails_bundle_check (test_check_bundle.BundleScopeTests.test_enabling_implicit_invocation_fails_bundle_check) ... ok
+test_explicit_only_bundle_passes (test_check_bundle.BundleScopeTests.test_explicit_only_bundle_passes) ... ok
+test_vendor_is_pruned_but_skill_and_provenance_are_checked (test_check_bundle.BundleScopeTests.test_vendor_is_pruned_but_skill_and_provenance_are_checked) ... ok
 test_all_resolved_examples (test_prompt_contract.PromptContractTests.test_all_resolved_examples) ... ok
 test_cli_bad_input_and_invalid_contract (test_prompt_contract.PromptContractTests.test_cli_bad_input_and_invalid_contract) ... ok
 test_cli_render_does_not_execute_prompt_commands (test_prompt_contract.PromptContractTests.test_cli_render_does_not_execute_prompt_commands) ... ok
@@ -104,6 +108,6 @@ test_unsupported_glob_rejected (test_workspace_receipt.ReceiptTests.test_unsuppo
 test_untracked_file (test_workspace_receipt.ReceiptTests.test_untracked_file) ... ok
 
 ----------------------------------------------------------------------
-Ran 104 tests in 5.549s
+Ran 108 tests in 9.842s
 
 OK
