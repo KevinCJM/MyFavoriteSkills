@@ -28,16 +28,20 @@ can be low judgment. Long duration is not itself high semantic risk.
 ## Topology
 
 After explicit opt-in, route proactively instead of waiting for the human to repeat the
-Skill name. Prefer delegation when it avoids meaningful Codex reading, editing, testing,
-debugging, or repeated project setup.
+Skill name. Honor explicit user choices to delegate or work directly. Otherwise compare
+avoided Codex work with briefing, observation, review and likely repairs before dispatch.
 
-`direct`: an already located one-line edit, one lookup, one known build/test command,
-an unavailable/incompatible Worker, or clearly higher dispatch overhead. Record the
-reason briefly. Running a command does not itself require another LLM.
+`direct`: work whose execution and necessary checks cost less than delegation, or an
+unavailable/incompatible Worker. This is not restricted to one-line edits. Record the
+reason briefly. Running a known command does not itself require another LLM. An explicit
+user instruction to delegate simple work still controls; optimize that dispatch instead.
 
 `single`: give one Builder a complete coherent unit, including related code discovery,
 implementation, necessary targeted tests, and fixes of task-related failures. Avoid a Scout → designer → coder →
 tester pipeline for a routine task when a Builder can do all four.
+For bounded low-risk work use the compact brief and one controller acceptance; no default
+ledger, independent Reviewer or repeated environment discovery. Contract-sensitive work
+still needs risk-appropriate review even when its diff is small.
 
 `parallel`: independent components with frozen contracts, separate directories/resources,
 and small integration cost. Parallelism is a latency choice, not guaranteed token saving.
@@ -61,8 +65,9 @@ model's shared blind spots. Codex must still examine high-risk reasoning directl
 ## Cost guard
 
 Delegate when expected avoided Codex work exceeds brief + observation + review + likely
-correction/integration work. After opt-in, uncertain ordinary bounded work should favor one
-Worker; this is a planning heuristic, not measured accounting.
+correction/integration work. Opt-in permits useful delegation; it does not make uncertain
+benefit a reason to delegate. Respect the user's chosen priority: Codex usage, combined
+usage or elapsed time. These objectives can conflict and none waives correctness.
 
 Good: one Builder fixes the explicitly requested validation cases and necessary checks.
 Bad: Codex reads all those files, writes the exact patch, dispatches it, then rereads all.
@@ -78,14 +83,27 @@ known model/API capacity, memory/test-resource budget, and clear ownership. A fa
 resource check serializes work; it does not authorize disabling gates.
 
 Begin with one compact brief and at most one independent Reviewer for a high-risk or
-broad package. Repeated unexplained stalls, two failed repairs of the same issue, an
-expanding diff, or missing verifiability trigger Codex diagnosis. Split/rebrief/take over;
-do not lower requirements, recursively spawn helpers, or switch the model.
+broad package. Repeated unexplained stalls, an expanding diff or missing verifiability
+trigger diagnosis. After two unsuccessful controller-requested implementation repairs
+across the whole task, diagnose and record a narrower package, revised brief or takeover
+decision before another repair. Different findings, job IDs and sessions do not reset the
+counter. Initial implementation, local fixes before handoff and report-only repairs are
+excluded. Consolidate known findings rather than repeatedly interrupting safe active work.
+Keep the user's delegation/model choices, scope and correctness; do not recursively spawn
+helpers. A checkpoint is not permission to accept unfinished work.
 
 ## Measuring improvement
 
-Track per comparable task: measured Codex input/output/cached tokens when available,
-worker tokens separately, model/effort, elapsed time, correction rounds, and post-acceptance
-defects. Use `null` for missing measurements. File byte counts and tool-output sizes are
-context proxies, not token counts or dollar savings. Compare matched workloads with the
-same quality gates; do not optimize a percentage by skipping difficult tests.
+Use the existing receipt/ledger, not a new monitor. Record the user's priority, elapsed
+time, task-wide unsuccessful repair count and next decision. At a chosen soft time/work
+checkpoint, inspect actual progress before continuing, narrowing or taking over. Waiting
+time alone does not prove a stall; never cancel a healthy test solely because time elapsed.
+
+When usage is exposed, record Codex and Worker separately: input, output, reasoning and
+cache, using task-level deltas or correlated messages rather than lifetime session totals.
+Normalize provider fields without double-counting cache already included in input or
+reasoning already included in output. Different tokenizers are not directly equivalent.
+Missing usage/limits remain `null`; no extra polling solely to fill a metric. Compact tasks
+need only an inline receipt. Counts are not subscription charges; byte counts are proxies.
+Compare matched workloads and quality gates, including post-acceptance defects. Static
+policy checks cannot establish latency, quality or token improvements.

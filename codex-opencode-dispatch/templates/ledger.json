@@ -28,6 +28,15 @@
         "shared_resources": []
       },
       "attempts": [],
+      "unsuccessful_repair_rounds": 0,
+      "repair_checkpoint_decision": null,
+      "session_context": {
+        "latest_input_tokens_including_cache": null,
+        "context_limit_tokens": null,
+        "review_fraction": 0.5,
+        "action": null,
+        "reason": null
+      },
       "execution_status": "not_submitted",
       "acceptance_status": "not_reviewed",
       "integration_status": "not_integrated",
@@ -42,11 +51,13 @@
     }
   ],
   "measurement": {
+    "priority": null,
     "codex_tokens": null,
     "worker_tokens": null,
     "elapsed_seconds": null,
     "rework_rounds": 0,
-    "notes": "No savings inferred from missing measurements."
+    "soft_checkpoint_seconds": null,
+    "notes": "Use task-level observed input/output/reasoning/cache with provider field semantics; unknown is null. No savings or subscription charges inferred. Task unsuccessful_repair_rounds excludes initial work, local pre-handoff fixes and report-only repair; session changes never reset it."
   },
   "prompt_protocol": "ocw/1"
 }

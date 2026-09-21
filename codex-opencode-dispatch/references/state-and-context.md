@@ -58,12 +58,37 @@ contract revision. After the call, save exact returned handles. No result after 
 means outcome unknown, not safe-to-retry. Use the pending record to reconcile.
 
 Maintain a controller-owned session map keyed by project/workspace, workstream,
-model/variant, and role. For sequential compatible work, wait until the previous turn is
+model/variant, and role. Reuse requires a coherent task and healthy relevant context, not
+merely the same repository. For sequential compatible work, wait until the previous turn is
 terminal, pass its `sessionId` explicitly, record a NEW job/message ID, and retain prior
 evidence. This includes later user turns and repairs in the same workstream. A new unrelated
 workstream gets a fresh session without cancelling conversation-level authorization.
 Parallel Workers and independent Reviewer roles use separate sessions. A session working
 in another directory or with incompatible model/contract state must not be continued.
+
+### Review session health before continuation
+
+Use already available usage metadata: latest request input including cached input, and
+the verified model context limit. Count cached input only once according to provider field
+semantics; cumulative session usage is not the current context size. Missing values stay
+`null`. Do not fetch whole transcripts or poll merely to collect usage.
+
+Review reuse when input reaches 50% of the known context limit, substantial unrelated
+history remains, or constraints repeatedly disappear. The 50% value is a configurable
+planning heuristic, not a proven optimum, hard failure or permission to drop requirements.
+Choose and briefly record one action:
+
+- Reuse when the context remains useful and enough space remains for the task.
+- Compact only through a capability verified in the current runtime; do not invent an API.
+- Handoff to a fresh session when history outweighs useful context or compaction cannot
+  preserve the contract. Wait for the old writer to stop and confirm its state first.
+
+A handoff carries the authoritative requirement/authorization, model binding, workspace,
+original dirty baseline and current candidate, decisions, trusted checks with dependencies,
+remaining work and task-wide repair count. Keep the task identity; new transport IDs do
+not reset budgets or failed repairs. Supply concise state and source pointers, not a full
+transcript or another whole-repository discovery task. Verify required constraints after
+compaction before further writes. Session replacement does not revoke valid authorization.
 
 Before replacing a stuck Worker: inspect pending input, server/job liveness, tool/test
 progress and resources; classify the blocker. Request stop only when needed and confirm

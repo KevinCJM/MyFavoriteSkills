@@ -1,29 +1,29 @@
 {
   "name": "codex-opencode-dispatch",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "prompt_protocol": "ocw/1",
   "target_mcp": "AlaeddineMessadi/opencode-mcp@3.0.0",
   "created_on": "2026-09-18",
   "files": [
     {
       "path": "CHANGELOG.md",
-      "bytes": 7773,
-      "sha256": "4be300849b9cf49d194adb662a4e3a6cd066ecd262c330b4d3f0bfbad15f4d80"
+      "bytes": 8742,
+      "sha256": "714749f22e206377fd10f03a2e5d51517818914b9780ba711c3fee07ccd1d1e7"
     },
     {
       "path": "README.md",
-      "bytes": 23030,
-      "sha256": "724fc77652618eeb3d1f1afd5267629f2eef0d39b033a124d47616c8cb9b82c6"
+      "bytes": 26085,
+      "sha256": "778149037a5025dc1e732b7cdcac3220b7c07625c159baf4f29cb07f376a147c"
     },
     {
       "path": "SKILL.md",
-      "bytes": 11460,
-      "sha256": "4a9401f305a12737533e6de7cd96335b6ad3619edcc015d4b8a9c1818fdba8be"
+      "bytes": 11098,
+      "sha256": "6781b7f9530a46aab035b6f19f86397456f73fc22a668598152006d6e21987d7"
     },
     {
       "path": "VERSION",
       "bytes": 6,
-      "sha256": "2ad7b0c3f0ede58c3165b7a8a5479e890a758d39bfe8683eaef50ce6afad7232"
+      "sha256": "732f64d874f90788c0199b0c19bfd9b3b6436e140114e53e462832532d74c61c"
     },
     {
       "path": "agents/openai.yaml",
@@ -72,8 +72,8 @@
     },
     {
       "path": "evals/README.md",
-      "bytes": 3983,
-      "sha256": "dbe8cce286e42331d69aa0560b83fbcb20c27307c5804479bbeb56e546917b76"
+      "bytes": 4667,
+      "sha256": "d4df3e143ff46b751a83a834be277425d5c280f58cfb8c79f0f5516301cc9430"
     },
     {
       "path": "evals/live-smoke-plan.md",
@@ -82,8 +82,8 @@
     },
     {
       "path": "evals/scenarios.json",
-      "bytes": 36166,
-      "sha256": "97c360f106daa6be7528c753e32e07ff15999417cc4d4980be538d75f031dde5"
+      "bytes": 41030,
+      "sha256": "3027c810f8abd227e65524012096de665c58688db847a84bb7128f18e7b9f331"
     },
     {
       "path": "examples/prompts/README.md",
@@ -467,28 +467,28 @@
     },
     {
       "path": "references/mcp-v3.md",
-      "bytes": 13715,
-      "sha256": "3e1c2acfe250edcb67bdd0c5e9e8cc88a90a687ba4f021e1b39bec758abdc74f"
+      "bytes": 13803,
+      "sha256": "475fb3612c418c9dcee8f3ccc778bfc24ae4e347c6be7c4e8ca43ca93f5f0fd0"
     },
     {
       "path": "references/prompt-protocol.md",
-      "bytes": 11996,
-      "sha256": "10af1789d3ce8a4ed78e62e3d36e488f2a5a7306c1cb41184b03d8c9e604480a"
+      "bytes": 12103,
+      "sha256": "0a812cc4184aa72b376b9b812bdb3e104bfd5576996d356e73b1cfefb919f007"
     },
     {
       "path": "references/routing.md",
-      "bytes": 5268,
-      "sha256": "a757fe6f1c9f4375d39b9c450cfd9766024ddc3b3b53b207557e7336a4b1991c"
+      "bytes": 6830,
+      "sha256": "3d31542cbe3d4cb57a7555968ecca7a8490e925c2d12555f9476be453602879f"
     },
     {
       "path": "references/state-and-context.md",
-      "bytes": 5922,
-      "sha256": "d8f4250ee633cdeb06c86c68ad802027fb435cea13bab20c5dc12303b223116a"
+      "bytes": 7589,
+      "sha256": "0492d3e99af40faae7c1f2b4f39f125a63bf50162b29a59fa4023edd5a5c6ea8"
     },
     {
       "path": "references/verification.md",
-      "bytes": 8863,
-      "sha256": "0c9a1d947289fb7aab4e673cd9188236401ce7b69bebe812b0d9acf12e06cac0"
+      "bytes": 9801,
+      "sha256": "f17a7cf1bf614ea5dc2fcb5aff692f224c01478010eda3dd48c026f619a8e6ae"
     },
     {
       "path": "references/workspaces.md",
@@ -517,8 +517,8 @@
     },
     {
       "path": "templates/ledger.json",
-      "bytes": 1478,
-      "sha256": "ace23a2a55566c9fe54aef6393be442937de48882c99028309f2a10ec50f6574"
+      "bytes": 2058,
+      "sha256": "4a8ac678b77dea0c5b8ed199e63195411a8fd11370c0b3d418f6ad48d539159b"
     },
     {
       "path": "templates/opencode-codex-reader.md",
@@ -598,7 +598,7 @@
     {
       "path": "tests/test_change_policy.py",
       "bytes": 8694,
-      "sha256": "bfd612cf476d87e4740b3e23ccd61bcc8d413a03921823d5ca3c1ac27ed58996"
+      "sha256": "48d1ae5bed2c7b044131ce5ce007142511a3a0375ec81a97fe91f82a770ccff1"
     },
     {
       "path": "tests/test_check_bundle.py",

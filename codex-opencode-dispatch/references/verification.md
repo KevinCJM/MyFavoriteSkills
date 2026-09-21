@@ -69,6 +69,10 @@ repository hash a proof of whole-system identity.
 Missing or untrusted evidence → run the check through a trusted path. Matching trusted
 CI evidence need not be rerun merely to change the speaker. Label worker-reported evidence
 as such; never turn it into “I verified” without observing a sufficient basis.
+Reuse the observed command result, not just a completion summary. Track relevant source,
+test and environment dependencies so an unrelated edit does not invalidate every check.
+An affected dependency invalidates its checks; unknown impact requires investigation or
+rerunning the necessary checks. User/project-required final runs remain mandatory.
 
 ## Review depth
 
@@ -116,9 +120,16 @@ scope expansion, contract changes, or open-ended cleanup.
 
 Collect concrete current-task defects into one correction request. Specify affected
 requirement IDs, checks and the correction's Q1–Q4 delta. A review cannot redefine the
-user's requirement or make a new contract change mandatory. Resume the same Builder; use a fresh one only after diagnosis and confirmed
-release of the old writer. Two failed focused repair rounds for the same issue are the
-default escalation threshold, not permission to accept defective work.
+user's requirement or make a new contract change mandatory. Resume a healthy compatible
+Builder session; use context handoff only after confirmed release of the old writer.
+Count unsuccessful controller-requested implementation repair rounds across the whole
+task, including different defects and sessions. After two, diagnose the combined cause
+and record a narrower package, changed brief or takeover decision before further repair.
+Initial implementation, local pre-handoff fixes and report-only corrections do not count.
+Preserve user delegation choices. Do not reset the counter by renaming the task or session,
+blindly continue the same loop, or accept defects because the checkpoint was reached.
+Do not interrupt safe active edits for each newly noticed issue; send consolidated findings
+after handoff unless an actual scope, safety or data-loss risk requires stopping sooner.
 
 Review new changes against the last reviewed snapshot; also revisit impacted invariants
 and tests. Do not rerun an entire suite twice on identical trusted inputs by habit. A

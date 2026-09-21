@@ -50,7 +50,7 @@
     {
       "id": "A06",
       "category": "持续授权",
-      "prompt": "本对话已明确启用 codex-opencode-dispatch，仍在同一项目。现在继续实现并测试同一功能，不再重复技能名。",
+      "prompt": "本对话已明确启用 codex-opencode-dispatch，仍在同一项目，原会话短且上下文相关、上一轮已结束。现在继续实现并测试同一功能，不再重复技能名。",
       "expected_route": "new_turn_same_session",
       "must": "授权持续有效；主动复用兼容 session，并创建新的 job/message。",
       "must_not": "不得要求用户重复授权，也不得新建重复 session 或并发复用旧 session。",
@@ -230,7 +230,7 @@
     {
       "id": "E18",
       "category": "恢复",
-      "prompt": "同一任务需修复，原 Job 已 completed。",
+      "prompt": "同一任务需首次修复，原 Job 已 completed，会话上下文相关且有充足余量。",
       "expected_route": "new_turn_same_session",
       "must": "同一 Session 新 run/fire，保存新 Job/Message。",
       "must_not": "不得轮询旧 completed Job 等待新修复。",
@@ -829,6 +829,78 @@
       "must": "优先使用可安全定向的工具；无法兼顾项目强制要求时报告冲突。",
       "must_not": "不得顺手提交全部生成变动，也不得擅自停用必要门槛。",
       "reference": "references/change-admission.md"
+    },
+    {
+      "id": "O01",
+      "category": "效率/显式小任务委派",
+      "prompt": "用户已启用 Skill，并明确要求简单修改也用 OpenCode。当前任务只是修改已定位的按钮文案，行为不变。",
+      "expected_route": "compact_single_worker",
+      "must": "遵从分工，短简报交给一个 Builder，执行相关检查后主控定向验收。",
+      "must_not": "不得以省 Token 为由擅自直接修改，不得默认增加 Scout、Verifier 或完整台账。",
+      "reference": "references/routing.md"
+    },
+    {
+      "id": "O02",
+      "category": "效率/当前直接处理指令",
+      "prompt": "此前用户要求 OpenCode 开发，现在明确说本次不要 OpenCode，由 Codex 直接修改；旧任务尚有活动写者。",
+      "expected_route": "stop_writer_then_direct",
+      "must": "服从最新分工，停止并确认旧写者退出，核对已有变动后直接完成。",
+      "must_not": "不得继续委派、与旧写者并发编辑或丢弃已有变动。",
+      "reference": "references/routing.md"
+    },
+    {
+      "id": "O03",
+      "category": "效率/超长上下文",
+      "prompt": "已授权继续同一任务。现有 session 最近输入含缓存占已核实上限的 85%，包含多项无关历史，尚有一轮活动写入；运行时无已核实的压缩功能。",
+      "expected_route": "review_then_context_handoff",
+      "must": "检查相关性和余量，确认旧写者停止后交接至新会话，保留原始基线、当前候选、约束、模型、检查与任务返工计数。",
+      "must_not": "不得仅因同仓库永久续用，不得编造压缩 API、并发写入、重置任务或重新扫全仓。",
+      "reference": "references/state-and-context.md"
+    },
+    {
+      "id": "O04",
+      "category": "效率/未知用量",
+      "prompt": "同任务会话的上下文简短且相关，但运行时没有提供请求 Token 和上下文上限。用户希望减少 Codex 用量。",
+      "expected_route": "reuse_with_unknown_metrics",
+      "must": "按相关性继续，缺失指标记 null；仅使用已有返回，不声称已测得节省。",
+      "must_not": "不得凭字节数编造 Token、频繁拉历史凑指标或把累计缓存量当当前上下文。",
+      "reference": "references/state-and-context.md"
+    },
+    {
+      "id": "O05",
+      "category": "效率/跨问题累计返工",
+      "prompt": "同一任务已两次按主控要求实现返工，分别修复名称冲突和删除后状态，但仍未满足验收；第二次使用了新 session。",
+      "expected_route": "diagnose_before_more_repair",
+      "must": "保留两次未成功返工计数，集中诊断并记录缩小、重写简报或授权范围内接手的决定，再处理剩余缺陷。",
+      "must_not": "不得因问题不同或换 session 清零，机械派第三轮相同工作或降低验收要求。",
+      "reference": "references/verification.md"
+    },
+    {
+      "id": "O06",
+      "category": "效率/返工计数边界",
+      "prompt": "Builder 在初次实现交付前自行修了两次测试失败；交付后仅报告缺少一个已有可信测试结果的引用，代码已满足要求。",
+      "expected_route": "report_only_correction",
+      "must": "补齐相关引用并正常验收，不把初次本地自修复和报告补全计为主控实现返工。",
+      "must_not": "不得重新实现、为补报告重跑可信且未变化的测试，或因误计数强制换会话。",
+      "reference": "references/verification.md"
+    },
+    {
+      "id": "O07",
+      "category": "效率/可信证据复用",
+      "prompt": "主控已观察到可信工具记录中的命令、退出码和输出，匹配当前代码、测试与环境，所有必需检查通过且无强制重跑要求。",
+      "expected_route": "review_and_reuse_evidence",
+      "must": "核查实际需求、diff、断言和关键路径，复用这些执行证据，满足条件即结束验收。",
+      "must_not": "不得仅为了由主控亲自执行再跑一遍，或读取完整 Worker 会话代替定向核查。",
+      "reference": "references/verification.md"
+    },
+    {
+      "id": "O08",
+      "category": "效率/检查依赖失效",
+      "prompt": "候选通过了前后端检查，此后只改了前端组件。依赖关系已确认，后端未受影响；项目要求最终前端构建。",
+      "expected_route": "rerun_affected_checks",
+      "must": "重跑受影响的前端检查及项目要求的最终构建，保留仍有效的后端证据。",
+      "must_not": "不得沿用失效前端结果、跳过强制构建或无原因重跑全部后端检查。",
+      "reference": "references/verification.md"
     }
   ]
 }

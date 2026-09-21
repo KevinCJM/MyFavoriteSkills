@@ -46,8 +46,9 @@ verification, reporting, and stop behavior. These can be compressed, not omitted
 | Full | Substantial, high-risk, design, dependency-heavy or parallel work | Above + Inputs/Decisions/Stop and versioned dependency/resource information |
 | Delta | Same-task correction or pending answer | Identity + failed criterion/question + evidence/answer + preserved limits/checks |
 
-These are authoring forms, not workload routing thresholds. A tiny change should often be
-done directly, without writing any worker prompt. No fixed word/token limit overrides
+These are authoring forms, not workload routing thresholds. Without an explicit user
+delegation preference, a tiny change can be done directly. When the user requires OpenCode
+for small work, use the compact form instead of a management pipeline. No fixed word/token limit overrides
 correctness. Aim for a few hundred words for ordinary task-specific briefs; full technical
 specifications may legitimately need more. Put long accessible detail in referenced files,
 but never reference inaccessible context merely to make the prompt appear short.

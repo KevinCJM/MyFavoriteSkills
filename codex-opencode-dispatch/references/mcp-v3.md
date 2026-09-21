@@ -112,8 +112,9 @@ parameters for these tools. Workspace management and our acceptance states are s
 `messageID` in review is not `messageId` in async outputs/observation.
 
 `run`/`fire` yield correlated job/session/message identifiers and structured state.
-For repeated Builder cycles prefer `run`/`fire` with the existing session: each new turn
-has a new job/message ID. The original completed job must not be polled for its repair.
+For repeated Builder cycles prefer `run`/`fire` with a healthy compatible session: each
+new turn has a new job/message ID. Apply the [context rules](state-and-context.md) before
+continuation or handoff. The original completed job must not be polled for its repair.
 `reply` can continue the session, but its generic result is not the same durable-job
 contract. Recover using the actual returned message/schema rather than inventing handles.
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.5.0 — 2026-09-21
+
+- Honor explicit direct/delegated work choices; otherwise compare avoided work with total coordination cost. Use compact briefs and one Builder/acceptance pass for bounded low-risk work.
+- Review relevant session context before continuation, using available latest-input/cache metadata and a configurable 50% context-limit checkpoint; support verified compaction or a concise handoff after the old writer stops.
+- Count unsuccessful implementation repairs across the whole task, not just one defect or session. Diagnose and record a revised approach after two; preserve authority, model binding and acceptance gates.
+- Reuse trusted evidence at matching source/test/environment dependencies and rerun affected checks; distinguish task-level Codex/Worker usage, elapsed time and subscription charges.
+- Extend the existing optional ledger and add eight unexecuted behavior scenarios. No new runtime, MCP changes or measured performance claims.
+
 ## 2.4.0 — 2026-09-21
 
 - Keep explicit OpenCode authorization active across later turns in the same Codex conversation and project/workspace; no repeated Skill mention is required.
