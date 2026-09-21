@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.5.2 — 2026-09-21
+
+- Set task-aware progress checkpoints before dispatch; use an adjustable five-minute diagnostic default when timing is unknown, never a cancellation deadline.
+- Distinguish meaningful progress from heartbeats and liveness; reuse existing evidence and retain ownership when observation cannot be restored.
+- Classify transient, deterministic and unknown failures; bound automatic infrastructure resubmissions to two per task, preserve counts across sessions and reconcile partial effects before retrying.
+- Update README/recovery guidance and add four unexecuted behavior scenarios. No MCP runtime change or measured efficiency claim.
+
 ## 2.5.1 — 2026-09-21
 
 - Continue observing the same job through repeated wait timeouts; keep required work under observation until it stops or report an explicit handoff/blocker.

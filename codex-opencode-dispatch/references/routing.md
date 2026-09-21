@@ -95,9 +95,10 @@ helpers. A checkpoint is not permission to accept unfinished work.
 ## Measuring improvement
 
 Use the existing receipt/ledger, not a new monitor. Record the user's priority, elapsed
-time, task-wide unsuccessful repair count and next decision. At a chosen soft time/work
-checkpoint, inspect actual progress before continuing, narrowing or taking over. Waiting
-time alone does not prove a stall; never cancel a healthy test solely because time elapsed.
+time, task-wide repair/infrastructure retry counts and next decision. Follow the
+[progress checkpoint and retry rules](mcp-v3.md#choose-a-progress-checkpoint-not-a-kill-timer):
+inspect actual progress when due, using existing evidence first. Waiting time alone does
+not prove a stall; never cancel a healthy test solely because time elapsed.
 
 When usage is exposed, record Codex and Worker separately: input, output, reasoning and
 cache, using task-level deltas or correlated messages rather than lifetime session totals.

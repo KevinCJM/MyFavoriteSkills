@@ -126,10 +126,11 @@ Save handles immediately. While `accepted/running`, continue bounded waits on th
 `jobId`; never resubmit or finish the user turn merely because a wait expired. Keep each
 observation below the host deadline and update interval (at most 55 seconds). This is not
 a task deadline. Prefer wait over check-then-wait; no hot-polling or full transcripts.
-Slow or quiet execution is not failure; inspect targeted progress if a stall is suspected.
+Set a task-aware progress checkpoint; when due, inspect targeted evidence, not every wait.
+Slow or quiet execution is not failure.
 For `unknown`, reconcile identity/liveness; for `input_required`, resolve within authority.
-Read the [observation and cancellation rules](references/mcp-v3.md#observation-and-recovery)
-before stopping active work: record a valid cause, use the actual cancel tool and verify
+Follow the [progress, retry and cancellation rules](references/mcp-v3.md#observation-and-recovery)
+for diagnostics and retries. Before cancelling, record a valid cause, use the actual cancel tool and verify
 quiescence. A “STOP” prompt or cancel acknowledgement alone is insufficient.
 
 Corrections use a healthy compatible session with NEW job/message IDs after its old turn
@@ -167,7 +168,8 @@ narrow correction scope and affected checks. Same contract keeps its revision; c
 requirements need user authority and a new revision after stopping affected work.
 Report-format defects usually need report repair, not repeated implementation.
 
-Permission denials stop immediately; no alternate-tool bypass. Two unsuccessful
+Infrastructure retries are bounded task-wide; no blind resubmission. Permission denials
+stop immediately; no alternate-tool bypass. Two unsuccessful
 controller-requested implementation repairs across the whole task trigger diagnosis and
 a recorded narrow/rebrief/takeover decision before more repairs, even for different defects
 or sessions. Initial work, local pre-handoff fixes and report-only corrections do not count.

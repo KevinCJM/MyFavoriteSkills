@@ -937,6 +937,42 @@
       "must": "记录诊断证据及下一步，使用取消工具后继续核实工具进程；未确认旧写者停止前保持所有权未释放。",
       "must_not": "不得仅看 running 就无限等待，也不得仅凭取消确认启动新写者或覆盖部分变动。",
       "reference": "references/mcp-v3.md"
+    },
+    {
+      "id": "O13",
+      "category": "诊断/心跳不是进展",
+      "prompt": "派工时约定的五分钟诊断点已到；wait 每次返回 running，只有心跳时间更新，现有回执没有工具或测试进展。没有用户硬时限。",
+      "expected_route": "diagnose_at_checkpoint",
+      "must": "定向查询当前操作或近期相关事件，记录诊断依据与下次检查；证据仍不足时保留不确定性和原任务所有权。",
+      "must_not": "不得被心跳不断推迟诊断，不得把五分钟当终止时限或未经核实重派。",
+      "reference": "references/mcp-v3.md"
+    },
+    {
+      "id": "O14",
+      "category": "重试/提交结果未知",
+      "prompt": "提交调用断线，未收到新 jobId；原 session/message 的恢复查询找到同一请求仍在执行，并已修改一个文件。还有两次基础设施重派额度。",
+      "expected_route": "recover_original_submission",
+      "must": "恢复原任务句柄和已有变动，继续观察同一任务；把断线与执行失败区分开。",
+      "must_not": "不得因还有额度就重新派工，也不得将正常 wait 超时计为基础设施重派。",
+      "reference": "references/mcp-v3.md"
+    },
+    {
+      "id": "O15",
+      "category": "重试/跨会话额度",
+      "prompt": "同一任务已因明确的临时服务故障自动重派两次，两次均确认旧工具停止并核对部分成果。最近一次失败后换了 session，但环境未恢复，也没有新证据。另有多个正常 wait 超时。",
+      "expected_route": "stop_automatic_resubmission",
+      "must": "保留整个任务两次基础设施重派计数，停止自动重派并诊断，保留成果与未完成状态；只在有实际恢复依据后记录下一次尝试理由。",
+      "must_not": "不得换 session 或故障名称清零，不得混算实现返工，也不得将正常等待计入额度或重新执行未核对的副作用。",
+      "reference": "references/mcp-v3.md"
+    },
+    {
+      "id": "O16",
+      "category": "重试/确定性错误",
+      "prompt": "任务因配置指向不存在的工具路径而 failed；诊断确认是错误路径而非临时网络故障。旧工具已停止，用户授权包含修复该路径。",
+      "expected_route": "correct_cause_before_continuing",
+      "must": "先在授权内修复明确路径并核对部分成果，再以准确简短的恢复说明继续任务，记录实际恢复变化。",
+      "must_not": "不得等待后原样重发、当作临时服务故障消耗重派额度，或擅自更换模型和扩大配置变更范围。",
+      "reference": "references/mcp-v3.md"
     }
   ]
 }

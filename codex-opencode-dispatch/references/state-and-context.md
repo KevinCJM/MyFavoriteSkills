@@ -85,7 +85,8 @@ Choose and briefly record one action:
 
 A handoff carries the authoritative requirement/authorization, model binding, workspace,
 original dirty baseline and current candidate, decisions, trusted checks with dependencies,
-remaining work and task-wide repair count. Keep the task identity; new transport IDs do
+remaining work, next progress checkpoint and task-wide repair/infrastructure retry counts.
+Keep the task identity; new transport IDs do
 not reset budgets or failed repairs. Supply concise state and source pointers, not a full
 transcript or another whole-repository discovery task. Verify required constraints after
 compaction before further writes. Session replacement does not revoke valid authorization.

@@ -157,14 +157,30 @@ returning `running` means another observation of that job, not another implement
 | `input_required` | Inspect the actual question/permission and resolve only within existing authority; otherwise request the missing user input. Do not silently wait forever or retry through another job. |
 | `unknown`, disconnect or missing handle | Reconcile saved identity with session messages, server/tool liveness and workspace state. Do not assume the writer stopped. |
 | `completed` | Retrieve the correlated result and verify it; completion is not acceptance. |
-| `failed` / `cancelled` | Inspect the cause and partial changes; confirm no active writer before repair or replacement. |
+| `failed` / `cancelled` | Inspect the cause and partial changes; confirm no active writer, then apply the retry rules below. A user cancellation is not permission to restart. |
 
 Keep each wait within host/update deadlines; a sequence of waits can cover a task lasting
-many minutes. No fresh output during a wait is not a stall. If concerned, inspect the
-smallest available progress evidence: current tool/test activity, recent event timestamps,
-process liveness or a bounded log tail. A long quiet test can be healthy. Repeated `running`
-labels alone neither prove useful progress nor justify cancellation; diagnose the active
-operation before deciding. A soft time checkpoint requests this diagnosis, not automatic stop.
+many minutes. No fresh output during a wait is not a stall.
+
+### Choose a progress checkpoint, not a kill timer
+
+Before dispatch, choose the next diagnostic checkpoint from the expected phase or known
+tool/test duration. Without useful timing evidence, start with five minutes; this is an
+adjustable diagnostic default, not a measured optimum or execution deadline. Keep the next
+check and last meaningful progress in the existing receipt; no extra ledger is required.
+
+At that point, inspect only the active tool/test, recent relevant events or a bounded log
+tail. Inspect earlier for explicit errors, pending input or resource trouble. Prefer evidence
+already returned by waits; do not fetch transcripts or query every process on each timeout.
+Record the active phase, evidence and next check. A new completed step, tool transition or
+test milestone is progress; repeated status/heartbeat timestamps or a live PID alone are not.
+Do not keep postponing diagnosis on those signals alone.
+
+For a healthy quiet test, continue the same job and set the next check using its expected
+duration. With uncertain progress, perform a bounded targeted diagnosis; insufficient
+telemetry is not proof of failure. If observation cannot be restored, report the blocker and
+retain ownership rather than inventing progress or starting a second writer. A diagnosed
+stall follows the cancellation rules below; elapsed time alone never authorizes cancellation.
 
 Do not end the user turn with a required job still running unless the user explicitly asks
 to pause, stop or leave it in the background, or observation is genuinely blocked. In that
@@ -184,6 +200,30 @@ and the next action in the existing receipt/ledger. Use the real cancellation to
 verify session/tool/process quiescence and reconcile partial changes. If stop cannot be
 confirmed, keep ownership unresolved and do not start another writer. No new logging service
 or permission question is required for an already-authorized stop.
+
+### Classify failures before retrying
+
+An observation timeout/disconnect is not a failed execution. Recover the same job first;
+an unknown submission outcome must be reconciled before any new submit. Retrying a read-only
+status query is not resubmitting work. Do not count healthy waits as retries.
+
+- **Transient infrastructure failure:** after confirming the old turn and its tools have
+  stopped (or submission never occurred), reconcile partial effects before resubmitting.
+  Retry only when safe to resume without duplicating effects. Default to at most two
+  automatic infrastructure resubmissions across the task, in addition to its initial submit;
+  honor a stricter user budget. Respect any server retry-after and increase delays between
+  retries, keeping individual waits within host/update deadlines.
+- **Deterministic input/configuration error:** correct the diagnosed cause within authority
+  before continuing; no unchanged retry. Permission denials follow the separate stop rule.
+  Code/test defects use the implementation-repair process, not an infrastructure retry.
+- **Budget exhausted or cause unresolved:** stop automatic resubmission, preserve results and
+  diagnose. Proceed only after an evidenced recovery change within authority or necessary
+  user input; record why another attempt is justified. New IDs or labels do not reset the
+  task counter. A progress checkpoint does not replenish it.
+
+Record count/cause, any recovery change and next action in the existing receipt; retain them
+through session changes and compaction. This budget bounds controller resubmissions, not
+hidden retries inside providers/tools; do not claim to control those through this Skill.
 
 ### Permission denial is an infrastructure stop
 
