@@ -163,7 +163,7 @@ class ChangePolicyWiringTests(unittest.TestCase):
         self.assertEqual('direct', cases['A08']['expected_route'])
 
     def test_version_and_protocol_remain_compatible(self):
-        self.assertEqual('2.5.0', read('VERSION').strip())
+        self.assertEqual('2.5.1', read('VERSION').strip())
         self.assertIn('name: codex-opencode-dispatch', read('SKILL.md'))
         for name in ('builder', 'designer', 'compact', 'rework', 'verifier', 'scout', 'clarification'):
             self.assertEqual('ocw/1', pc.parse(read(f'examples/prompts/{name}.md')).metadata['Protocol'])

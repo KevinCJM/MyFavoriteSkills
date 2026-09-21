@@ -139,10 +139,51 @@ Runtime `accepted` means accepted for execution, NOT our final acceptance.
   `pollIntervalMs` is the server's internal observation interval, not a cue to make the
   Codex model issue calls every two seconds.
 - Job cancellation ultimately aborts a session. Never overlap task turns in one session.
-  Confirm quiescence before replacement, cleanup, or handing writing ownership elsewhere.
+  A cancellation acknowledgement is not proof that remote tools or child processes have
+  stopped. Confirm quiescence before replacement, cleanup, or handing writing ownership elsewhere.
 - An external `opencode serve` can outlive the MCP connection. A server child owned by
   `OPENCODE_AUTO_SERVE=true` is shut down with that MCP process. Neither arrangement
   supplies automatic model-execution checkpoint/restart.
+
+### Follow the same job until it stops
+
+Use the existing `wait`/`check`/job tools; no separate monitor or new submission is needed.
+Retain `jobId`, `sessionId`, `messageId` and directory throughout observation. A wait
+returning `running` means another observation of that job, not another implementation turn.
+
+| Observed state | Controller action |
+| --- | --- |
+| `accepted` / `running` | Continue bounded waits on the same job. Give concise progress updates; do not cancel, resubmit or declare completion because an observation window ended. |
+| `input_required` | Inspect the actual question/permission and resolve only within existing authority; otherwise request the missing user input. Do not silently wait forever or retry through another job. |
+| `unknown`, disconnect or missing handle | Reconcile saved identity with session messages, server/tool liveness and workspace state. Do not assume the writer stopped. |
+| `completed` | Retrieve the correlated result and verify it; completion is not acceptance. |
+| `failed` / `cancelled` | Inspect the cause and partial changes; confirm no active writer before repair or replacement. |
+
+Keep each wait within host/update deadlines; a sequence of waits can cover a task lasting
+many minutes. No fresh output during a wait is not a stall. If concerned, inspect the
+smallest available progress evidence: current tool/test activity, recent event timestamps,
+process liveness or a bounded log tail. A long quiet test can be healthy. Repeated `running`
+labels alone neither prove useful progress nor justify cancellation; diagnose the active
+operation before deciding. A soft time checkpoint requests this diagnosis, not automatic stop.
+
+Do not end the user turn with a required job still running unless the user explicitly asks
+to pause, stop or leave it in the background, or observation is genuinely blocked. In that
+case report the last known state, handles and remaining work without claiming completion
+or promising an automatic wake-up. Preserve the single-writer boundary when state is unknown.
+
+### Cancel only for a concrete reason
+
+Valid grounds are a user stop/revocation or incompatible redirection, an observed
+scope/permission/safety/data-loss violation, a diagnosed blocked operation that cannot
+continue without stopping, or an explicit hard user/resource limit. A wait timeout, slow
+execution, quiet logs, a context-review threshold or an ordinary review finding is not enough.
+Queue ordinary findings until handoff; let safe edits/tests finish before session rotation.
+
+Before cancellation, record one short reason with the user instruction or observed evidence
+and the next action in the existing receipt/ledger. Use the real cancellation tool, then
+verify session/tool/process quiescence and reconcile partial changes. If stop cannot be
+confirmed, keep ownership unresolved and do not start another writer. No new logging service
+or permission question is required for an already-authorized stop.
 
 ### Permission denial is an infrastructure stop
 

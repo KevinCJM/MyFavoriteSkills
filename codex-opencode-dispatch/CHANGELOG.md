@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.5.1 — 2026-09-21
+
+- Continue observing the same job through repeated wait timeouts; keep required work under observation until it stops or report an explicit handoff/blocker.
+- Diagnose quiet/slow tools using targeted progress evidence; handle input-required and unknown states without duplicate submissions.
+- Require concrete cancellation grounds and confirmed tool/process quiescence before replacement; ordinary findings and context checkpoints do not interrupt healthy work.
+- Update the README and recovery guidance; extend timeout coverage and add four unexecuted behavior scenarios. No MCP runtime change or measured efficiency claim.
+
 ## 2.5.0 — 2026-09-21
 
 - Honor explicit direct/delegated work choices; otherwise compare avoided work with total coordination cost. Use compact briefs and one Builder/acceptance pass for bounded low-risk work.

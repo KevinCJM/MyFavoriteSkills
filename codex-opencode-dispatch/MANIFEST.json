@@ -1,29 +1,29 @@
 {
   "name": "codex-opencode-dispatch",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "prompt_protocol": "ocw/1",
   "target_mcp": "AlaeddineMessadi/opencode-mcp@3.0.0",
   "created_on": "2026-09-18",
   "files": [
     {
       "path": "CHANGELOG.md",
-      "bytes": 8742,
-      "sha256": "714749f22e206377fd10f03a2e5d51517818914b9780ba711c3fee07ccd1d1e7"
+      "bytes": 9393,
+      "sha256": "9e87df53857019899a044c9bff2d7ec3ae82011821fb6736ca4e23d5bc11b311"
     },
     {
       "path": "README.md",
-      "bytes": 26085,
-      "sha256": "778149037a5025dc1e732b7cdcac3220b7c07625c159baf4f29cb07f376a147c"
+      "bytes": 27605,
+      "sha256": "48470d24ece1ee7b64e5431580e46c37602286ea9554ed4fc2c4257af82df0c0"
     },
     {
       "path": "SKILL.md",
-      "bytes": 11098,
-      "sha256": "6781b7f9530a46aab035b6f19f86397456f73fc22a668598152006d6e21987d7"
+      "bytes": 11366,
+      "sha256": "a10afdf121b1614f35a48f89ba764784aef046b3ea5f83d9571533543e3fe61a"
     },
     {
       "path": "VERSION",
       "bytes": 6,
-      "sha256": "732f64d874f90788c0199b0c19bfd9b3b6436e140114e53e462832532d74c61c"
+      "sha256": "99600f6a7bfe6c33ebd1a2518f44a861a67afc40c25da42bc622595716529584"
     },
     {
       "path": "agents/openai.yaml",
@@ -72,8 +72,8 @@
     },
     {
       "path": "evals/README.md",
-      "bytes": 4667,
-      "sha256": "d4df3e143ff46b751a83a834be277425d5c280f58cfb8c79f0f5516301cc9430"
+      "bytes": 5120,
+      "sha256": "2126bf375ffbadd77070710a69527593d6c0c5f00e5da2f6d39f87cbb04fe49a"
     },
     {
       "path": "evals/live-smoke-plan.md",
@@ -82,8 +82,8 @@
     },
     {
       "path": "evals/scenarios.json",
-      "bytes": 41030,
-      "sha256": "3027c810f8abd227e65524012096de665c58688db847a84bb7128f18e7b9f331"
+      "bytes": 43769,
+      "sha256": "7f21e1a6c02602449e2eccfc72e7e3204020d1c03ddf54c7b38223f3bcdb9703"
     },
     {
       "path": "examples/prompts/README.md",
@@ -467,8 +467,8 @@
     },
     {
       "path": "references/mcp-v3.md",
-      "bytes": 13803,
-      "sha256": "475fb3612c418c9dcee8f3ccc778bfc24ae4e347c6be7c4e8ca43ca93f5f0fd0"
+      "bytes": 16868,
+      "sha256": "5922b209183c2acff494af8cd8bc9974fa80863ef15ec714f39525a326507c3f"
     },
     {
       "path": "references/prompt-protocol.md",
@@ -482,8 +482,8 @@
     },
     {
       "path": "references/state-and-context.md",
-      "bytes": 7589,
-      "sha256": "0492d3e99af40faae7c1f2b4f39f125a63bf50162b29a59fa4023edd5a5c6ea8"
+      "bytes": 7748,
+      "sha256": "70a1ccda26526d4619e93337f93c7c30f434e5d51410814bb298ad243593b941"
     },
     {
       "path": "references/verification.md",
@@ -598,7 +598,7 @@
     {
       "path": "tests/test_change_policy.py",
       "bytes": 8694,
-      "sha256": "48d1ae5bed2c7b044131ce5ce007142511a3a0375ec81a97fe91f82a770ccff1"
+      "sha256": "67fc21d315dbf1af47d2df4f9a4015abe76bee76ae738e89492fe62961d963d8"
     },
     {
       "path": "tests/test_check_bundle.py",

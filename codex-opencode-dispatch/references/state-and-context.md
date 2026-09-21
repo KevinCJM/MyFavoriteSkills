@@ -90,10 +90,12 @@ not reset budgets or failed repairs. Supply concise state and source pointers, n
 transcript or another whole-repository discovery task. Verify required constraints after
 compaction before further writes. Session replacement does not revoke valid authorization.
 
-Before replacing a stuck Worker: inspect pending input, server/job liveness, tool/test
-progress and resources; classify the blocker. Request stop only when needed and confirm
-no active writer remains. Then record the replacement attempt and its accessible context.
-Elapsed waiting alone is not proof the model is stuck.
+Before replacing a suspected stuck Worker, follow the
+[observation and cancellation rules](mcp-v3.md#observation-and-recovery). Inspect pending input,
+server/job liveness, tool/test progress and resources; classify the blocker. Keep observing
+the same job while it can continue. Record concrete grounds before cancellation and confirm
+no active writer remains before replacement. Elapsed waiting, quiet output and the context
+review threshold alone are not cancellation grounds.
 
 ## Recovery after context compaction or reconnect
 

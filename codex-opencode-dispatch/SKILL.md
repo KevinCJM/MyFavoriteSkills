@@ -122,12 +122,15 @@ Timeout ends observation, not execution. Send the contract through `prompt`, wit
 model/variant/agent and live-schema fields. A role is not an installed agent; never invent
 `task`, `readOnly` or `max_tokens` arguments.
 
-Save handles immediately. Prefer one bounded wait over check-then-wait; do not insert
-unchanged-status checks or empty shell calls between waits. Keep each observation below
-the host deadline and at most 55 seconds when interactive updates are due within a minute.
-No hot-polling or routine full transcripts. Missing response, timeout or `unknown` is not
-failure: reconcile before retrying. Resolve pending input only within existing authority.
-Cancellation needs the actual tool and confirmed quiescence, not a “STOP” prompt.
+Save handles immediately. While `accepted/running`, continue bounded waits on the SAME
+`jobId`; never resubmit or finish the user turn merely because a wait expired. Keep each
+observation below the host deadline and update interval (at most 55 seconds). This is not
+a task deadline. Prefer wait over check-then-wait; no hot-polling or full transcripts.
+Slow or quiet execution is not failure; inspect targeted progress if a stall is suspected.
+For `unknown`, reconcile identity/liveness; for `input_required`, resolve within authority.
+Read the [observation and cancellation rules](references/mcp-v3.md#observation-and-recovery)
+before stopping active work: record a valid cause, use the actual cancel tool and verify
+quiescence. A “STOP” prompt or cancel acknowledgement alone is insufficient.
 
 Corrections use a healthy compatible session with NEW job/message IDs after its old turn
 stops. Handoff preserves the task and repair count. While waiting, do independent work,

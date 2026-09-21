@@ -46,8 +46,8 @@ cp -R ai-hermes-routing-init ai-hermes-self-evolve ai-hermes-user-project-memory
 
 ## Skills / 技能列表
 
-- [`codex-opencode-dispatch`](./codex-opencode-dispatch/README.md) v2.5：首次明确授权后按需委派，尊重用户直接/委派选择；小任务轻量执行，长会话按需交接，累计返工并复用可信验收证据。
-- [`codex-opencode-dispatch`](./codex-opencode-dispatch/README.md) v2.5: persistent explicit opt-in, user-directed delegation, compact tasks, healthy session reuse/handoff, task-wide repair checkpoints and trusted evidence reuse.
+- [`codex-opencode-dispatch`](./codex-opencode-dispatch/README.md) v2.5.1：首次明确授权后按需委派，小任务轻量执行；持续跟进同一任务，慢任务不重发，按明确依据取消，复用健康会话与可信验收证据。
+- [`codex-opencode-dispatch`](./codex-opencode-dispatch/README.md) v2.5.1: persistent explicit opt-in, compact tasks, same-job observation through timeouts, evidence-based cancellation, healthy sessions and trusted evidence reuse.
 
 | Skill | 中文简介 | English summary |
 | --- | --- | --- |
